@@ -177,7 +177,6 @@
 
         .important-note { background-color: var(--important-note-bg); border-left: 4px solid var(--important-note-border); padding: 15px; margin-top: 10px; border-radius: 4px; }
         
-        /* --- NEW: Styles for Today's Focus Panel --- */
         #todays-focus-container {
             background-color: var(--current-day-bg);
             border: 1px solid var(--current-day-border);
@@ -392,7 +391,6 @@
         <p class="credits">Adaptado por: Juan Miguel Rios Redondo</p>
         <p class="important-note">Este plan progresa a través de la "Torre de Entrenamiento". Avance a la siguiente semana solo cuando cumpla el <strong>Criterio de Avance</strong>.</p>
         
-        <!-- NEW: Today's Focus Panel -->
         <div id="todays-focus-container" style="display: none;"></div>
 
         <select id="mobile-nav" class="mobile-nav"></select>
@@ -543,7 +541,7 @@
             btn.addEventListener('click', () => showModal(welcomeModal));
         });
 
-        // --- Session Start ---
+        // --- CORRECTED Session Start ---
         function startSession(userName, config) {
             currentProfile = userName;
             isGuest = !!config; 
@@ -552,11 +550,27 @@
             if (isGuest) {
                 userConfig = config;
             } else {
-                const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX));
-                userConfig = profiles[currentProfile].config;
+                // Safely parse profiles from localStorage, providing an empty object {} as a fallback if storage is empty.
+                const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX)) || {};
+                
+                // Check if the current profile exists before trying to access its properties.
+                if (profiles[currentProfile]) {
+                    userConfig = profiles[currentProfile].config;
+                } else {
+                    // This is a safeguard. If a profile that was just saved can't be found, something is wrong.
+                    console.error("Error: Perfil recién guardado no encontrado.", userName);
+                    showModal(welcomeModal); // Go back to the welcome screen for safety.
+                    return;
+                }
             }
             
-            generatePlan(currentProfile, userConfig.selectedDays);
+            // Final check to ensure userConfig is valid before generating the plan.
+            if (userConfig && userConfig.selectedDays) {
+                generatePlan(currentProfile, userConfig.selectedDays);
+            } else {
+                console.error("Error: Configuración de usuario inválida.", userConfig);
+                showModal(welcomeModal);
+            }
         }
         
         function parseGlossaryTerms(text) {
@@ -589,14 +603,13 @@
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
                 weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
 
-                if(daysInThisWeek.length > 0 && daysInThisWeek[daysInThisWeek.length-1].criteria) {
+                if(daysInThisWeek[daysInThisWeek.length-1].criteria) {
                     weekContent += `<p><strong>Criterio de Avance:</strong> ${parseGlossaryTerms(daysInThisWeek[daysInThisWeek.length-1].criteria)}</p>`;
                 }
                 weekContent += `<div class="progress-container"><div class="task-counter"></div><div class="progress-bar"><div class="progress-bar-fill"></div></div></div>`;
 
                 daysInThisWeek.forEach((day, index) => {
                     const dayName = selectedDays[index % selectedDays.length];
-                    // MODIFIED: Added unique ID to day-section
                     let dayHTML = `<div class="day-section" id="day-section-${day.id}">
                         <h4>${dayName}: ${day.title.split(': ')[1]}</h4>
                         <p class="day-focus">Foco: ${parseGlossaryTerms(day.focus)}</p>
@@ -611,7 +624,6 @@
                     dayHTML += `<div class="diary-section"><label for="${diaryId}">Diario de Práctica:</label><textarea id="${diaryId}" class="diary-textarea" placeholder="Notas del día..."></textarea></div>`;
                     
                     if(index === daysInThisWeek.length - 1){
-                        // MODIFIED: Added an error message paragraph and removed the alert() call
                         dayHTML += `<div class="assessment-section" style="display: none;">
                             <h4>Autoevaluación Semanal</h4>
                             <form id="assessment-form-w${i}">
@@ -660,7 +672,6 @@
             initializePlanLogic(totalWeeks);
         }
 
-        // NEW: Function to display the training session for the current day
         function displayTodaysFocus(totalWeeks) {
             if (!currentProfile) return;
 
@@ -903,22 +914,21 @@
                     e.target.closest('.modal-overlay').style.display = 'none';
                 });
             });
-
-            // MODIFIED: Replaced alert with inline error message
+            
             document.querySelectorAll('.btn-get-recommendation').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const form = e.target.closest('form');
                     const errorMessage = form.querySelector('.error-message');
                     const criteriaMet = form.querySelector('input[name="criteria-met"]:checked');
-                    const confidence = form.querySelector('select[name="confidence"]');
-
-                    errorMessage.style.display = 'none'; // Reset
+                    
+                    errorMessage.style.display = 'none';
 
                     if (!criteriaMet) {
                         errorMessage.style.display = 'block';
                         return;
                     }
 
+                    const confidence = form.querySelector('select[name="confidence"]');
                     const recommendationText = document.getElementById('recommendation-text');
                     if (criteriaMet.value === 'no' || (criteriaMet.value === 'somewhat' && parseInt(confidence.value) < 3)) {
                         recommendationText.innerHTML = "<strong>Recomendación: Repetir la semana.</strong><br>Parece que todavía hay conceptos clave que necesitan refuerzo. Repetir los ejercicios te ayudará a construir una base más sólida antes de avanzar. ¡La consistencia es la clave!";
@@ -960,8 +970,7 @@
             
              const firstTab = document.querySelector('.tab-input');
              if(firstTab) firstTab.dispatchEvent(new Event('change'));
-            
-             // NEW: Display today's focus panel
+
              displayTodaysFocus(totalWeeks);
         }
         
@@ -1040,4 +1049,5 @@
     </script>
 </body>
 </html>
+
 
