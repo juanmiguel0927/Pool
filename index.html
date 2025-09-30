@@ -550,26 +550,22 @@
             if (isGuest) {
                 userConfig = config;
             } else {
-                // Safely parse profiles from localStorage, providing an empty object {} as a fallback if storage is empty.
                 const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX)) || {};
                 
-                // Check if the current profile exists before trying to access its properties.
-                if (profiles[currentProfile]) {
+                if (profiles[currentProfile] && profiles[currentProfile].config) {
                     userConfig = profiles[currentProfile].config;
                 } else {
-                    // This is a safeguard. If a profile that was just saved can't be found, something is wrong.
-                    console.error("Error: Perfil recién guardado no encontrado.", userName);
-                    showModal(welcomeModal); // Go back to the welcome screen for safety.
+                     console.error("Error: Could not find profile or config for:", userName);
+                    showModal(welcomeModal);
                     return;
                 }
             }
             
-            // Final check to ensure userConfig is valid before generating the plan.
             if (userConfig && userConfig.selectedDays) {
                 generatePlan(currentProfile, userConfig.selectedDays);
             } else {
-                console.error("Error: Configuración de usuario inválida.", userConfig);
-                showModal(welcomeModal);
+                 console.error("Error: Invalid or missing user configuration for:", userName);
+                 showModal(welcomeModal);
             }
         }
         
@@ -603,7 +599,7 @@
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
                 weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
 
-                if(daysInThisWeek[daysInThisWeek.length-1].criteria) {
+                if(daysInThisWeek.length > 0 && daysInThisWeek[daysInThisWeek.length-1].criteria) {
                     weekContent += `<p><strong>Criterio de Avance:</strong> ${parseGlossaryTerms(daysInThisWeek[daysInThisWeek.length-1].criteria)}</p>`;
                 }
                 weekContent += `<div class="progress-container"><div class="task-counter"></div><div class="progress-bar"><div class="progress-bar-fill"></div></div></div>`;
@@ -1002,6 +998,10 @@
             const userName = userNameInput.value.trim();
             const userConfig = { selectedDays };
 
+            function getStorage() { return isGuest ? sessionStorage : localStorage; }
+            function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
+            function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
+
             if (isEditMode) {
                 const originalName = setupForm.dataset.originalName;
                 const profiles = getProfiles();
@@ -1021,21 +1021,16 @@
                 saveProfiles(profiles);
                 startSession(userName);
 
-            } else {
-                if(isGuest){
-                    sessionStorage.setItem(STORAGE_PREFIX, JSON.stringify({ [userName]: { config: userConfig, progress: {} } }));
-                    startSession(userName, userConfig);
-                } else {
-                    const profiles = getProfiles();
-                    if (profiles[userName]) {
-                        nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
-                        nameError.style.display = 'block';
-                        return;
-                    }
-                    profiles[userName] = { config: userConfig, progress: {} };
-                    saveProfiles(profiles);
-                    startSession(userName);
+            } else { // New user mode
+                const profiles = getProfiles();
+                if (profiles[userName] && !isGuest) { // Check for existing name only for non-guests
+                    nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
+                    nameError.style.display = 'block';
+                    return;
                 }
+                profiles[userName] = { config: userConfig, progress: {} };
+                saveProfiles(profiles);
+                startSession(userName, isGuest ? userConfig : null);
             }
             
             const submitButton = setupForm.querySelector('button[type="submit"]');
