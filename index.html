@@ -116,7 +116,7 @@
         .task-item label { flex-grow: 1; cursor: pointer; }
         .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
         
-        .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+        .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: background-color 0.5s; }
         .day-focus { font-weight: bold; color: var(--focus-color); }
         
         .activity-block { margin-bottom: 15px; padding: 15px; border-left: 3px solid var(--activity-block-border); background-color: var(--activity-block-bg); border-radius: 4px; }
@@ -177,6 +177,37 @@
 
         .important-note { background-color: var(--important-note-bg); border-left: 4px solid var(--important-note-border); padding: 15px; margin-top: 10px; border-radius: 4px; }
         
+        /* --- NEW: Styles for Today's Focus Panel --- */
+        #todays-focus-container {
+            background-color: var(--current-day-bg);
+            border: 1px solid var(--current-day-border);
+            border-left-width: 5px;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        #todays-focus-container h3 {
+            margin-top: 0;
+            border-bottom: none;
+            color: var(--current-day-border);
+        }
+        #todays-focus-container p {
+            margin-bottom: 15px;
+        }
+        #todays-focus-container button {
+            background-color: var(--current-day-border);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: opacity 0.2s;
+        }
+        #todays-focus-container button:hover {
+            opacity: 0.85;
+        }
+
         .glossary-term {
             color: var(--accent-color);
             text-decoration: underline;
@@ -361,6 +392,9 @@
         <p class="credits">Adaptado por: Juan Miguel Rios Redondo</p>
         <p class="important-note">Este plan progresa a través de la "Torre de Entrenamiento". Avance a la siguiente semana solo cuando cumpla el <strong>Criterio de Avance</strong>.</p>
         
+        <!-- NEW: Today's Focus Panel -->
+        <div id="todays-focus-container" style="display: none;"></div>
+
         <select id="mobile-nav" class="mobile-nav"></select>
         <div class="tabs-container" id="tabs-container"></div>
     </div>
@@ -555,14 +589,15 @@
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
                 weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
 
-                if(daysInThisWeek[daysInThisWeek.length-1].criteria) {
+                if(daysInThisWeek.length > 0 && daysInThisWeek[daysInThisWeek.length-1].criteria) {
                     weekContent += `<p><strong>Criterio de Avance:</strong> ${parseGlossaryTerms(daysInThisWeek[daysInThisWeek.length-1].criteria)}</p>`;
                 }
                 weekContent += `<div class="progress-container"><div class="task-counter"></div><div class="progress-bar"><div class="progress-bar-fill"></div></div></div>`;
 
                 daysInThisWeek.forEach((day, index) => {
                     const dayName = selectedDays[index % selectedDays.length];
-                    let dayHTML = `<div class="day-section">
+                    // MODIFIED: Added unique ID to day-section
+                    let dayHTML = `<div class="day-section" id="day-section-${day.id}">
                         <h4>${dayName}: ${day.title.split(': ')[1]}</h4>
                         <p class="day-focus">Foco: ${parseGlossaryTerms(day.focus)}</p>
                         <div class="activity-block"><h5>Tareas: <span class="time-estimate">(${day.estTime})</span></h5><ul>`;
@@ -576,6 +611,7 @@
                     dayHTML += `<div class="diary-section"><label for="${diaryId}">Diario de Práctica:</label><textarea id="${diaryId}" class="diary-textarea" placeholder="Notas del día..."></textarea></div>`;
                     
                     if(index === daysInThisWeek.length - 1){
+                        // MODIFIED: Added an error message paragraph and removed the alert() call
                         dayHTML += `<div class="assessment-section" style="display: none;">
                             <h4>Autoevaluación Semanal</h4>
                             <form id="assessment-form-w${i}">
@@ -584,6 +620,7 @@
                                     <label><input type="radio" name="criteria-met" value="yes" required> Sí, consistentemente.</label>
                                     <label><input type="radio" name="criteria-met" value="somewhat"> Parcialmente, aún fallo a veces.</label>
                                     <label><input type="radio" name="criteria-met" value="no"> No, me costó mucho.</label>
+                                    <p class="error-message" style="margin-top:10px;">Por favor, selecciona una opción.</p>
                                 </div>
                                  <div class="form-group">
                                     <label>Califica tu confianza con las técnicas de esta semana (1=Baja, 5=Alta)</label>
@@ -622,6 +659,85 @@
 
             initializePlanLogic(totalWeeks);
         }
+
+        // NEW: Function to display the training session for the current day
+        function displayTodaysFocus(totalWeeks) {
+            if (!currentProfile) return;
+
+            const getSpanishDayName = () => {
+                const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                return days[new Date().getDay()];
+            };
+
+            const todayName = getSpanishDayName();
+            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            const user = profiles[currentProfile];
+            if (!user || !user.config.selectedDays.includes(todayName)) {
+                document.getElementById('todays-focus-container').style.display = 'none';
+                return; // Not a training day
+            }
+
+            const progress = user.progress || {};
+            let currentWeek = -1;
+            let dayIndexOffset = 0;
+
+            // Find the first incomplete week
+            for (let i = 1; i <= totalWeeks; i++) {
+                const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, user.config.selectedDays.length ? dayIndexOffset + user.config.selectedDays.length : allTrainingDays.length);
+                if (daysInThisWeek.length === 0) break;
+
+                const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
+                const completedTasks = tasksInWeek.filter(taskId => progress[taskId] === true).length;
+                
+                if (completedTasks < tasksInWeek.length) {
+                    currentWeek = i;
+                    break;
+                }
+                dayIndexOffset += user.config.selectedDays.length;
+            }
+
+            if (currentWeek === -1 && totalWeeks > 0) {
+                const container = document.getElementById('todays-focus-container');
+                container.innerHTML = `<h3>¡Felicidades!</h3><p>Has completado todo el plan de entrenamiento. ¡Es hora de volver a empezar desde la Semana 1 para afianzar tu maestría!</p>`;
+                container.style.display = 'block';
+                return;
+            }
+            
+            // Find today's training session within the current week
+            const todayIndexInSchedule = user.config.selectedDays.indexOf(todayName);
+            const trainingDayData = allTrainingDays[dayIndexOffset + todayIndexInSchedule];
+
+            if (!trainingDayData) return;
+
+            const container = document.getElementById('todays-focus-container');
+            container.innerHTML = `
+                <h3>Foco de Hoy: ${todayName}</h3>
+                <p><strong>Sesión:</strong> ${trainingDayData.title.split(': ')[1]}</p>
+                <p><strong>Meta:</strong> ${parseGlossaryTerms(trainingDayData.focus)}</p>
+                <button id="goto-today-btn">Ir al Entrenamiento</button>
+            `;
+            container.style.display = 'block';
+
+            document.getElementById('goto-today-btn').addEventListener('click', () => {
+                const tabInput = document.getElementById(`tab${currentWeek}`);
+                if (tabInput) {
+                    tabInput.checked = true;
+                    tabInput.dispatchEvent(new Event('change'));
+                }
+                
+                setTimeout(() => {
+                    const daySection = document.getElementById(`day-section-${trainingDayData.id}`);
+                    if (daySection) {
+                        daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        daySection.style.backgroundColor = 'var(--current-day-bg)';
+                        setTimeout(() => {
+                            daySection.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                }, 100);
+            });
+        }
+
 
         function initializePlanLogic(totalWeeks) {
             const themeToggle = document.getElementById('theme-toggle');
@@ -787,15 +903,22 @@
                     e.target.closest('.modal-overlay').style.display = 'none';
                 });
             });
+
+            // MODIFIED: Replaced alert with inline error message
             document.querySelectorAll('.btn-get-recommendation').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const form = e.target.closest('form');
+                    const errorMessage = form.querySelector('.error-message');
                     const criteriaMet = form.querySelector('input[name="criteria-met"]:checked');
                     const confidence = form.querySelector('select[name="confidence"]');
+
+                    errorMessage.style.display = 'none'; // Reset
+
                     if (!criteriaMet) {
-                        alert('Por favor, responde a todas las preguntas de la autoevaluación.');
+                        errorMessage.style.display = 'block';
                         return;
                     }
+
                     const recommendationText = document.getElementById('recommendation-text');
                     if (criteriaMet.value === 'no' || (criteriaMet.value === 'somewhat' && parseInt(confidence.value) < 3)) {
                         recommendationText.innerHTML = "<strong>Recomendación: Repetir la semana.</strong><br>Parece que todavía hay conceptos clave que necesitan refuerzo. Repetir los ejercicios te ayudará a construir una base más sólida antes de avanzar. ¡La consistencia es la clave!";
@@ -837,6 +960,9 @@
             
              const firstTab = document.querySelector('.tab-input');
              if(firstTab) firstTab.dispatchEvent(new Event('change'));
+            
+             // NEW: Display today's focus panel
+             displayTodaysFocus(totalWeeks);
         }
         
         const glossaryContent = document.getElementById('glossary-content');
@@ -914,5 +1040,4 @@
     </script>
 </body>
 </html>
-
 
