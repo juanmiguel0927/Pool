@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiro Maestro: Plan de Entrenamiento de Billar</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --container-bg: #fff;
+            --text-color: #333;
+            --header-color: #2c3e50;
+            --accent-color: #3498db;
+            --border-color: #ccc;
+            --tab-bg: #ddd;
+            --tab-active-bg: #457b9d;
+            --tab-active-text: #fff;
+            --day-section-bg: #f8f8f8;
+            --current-day-bg: #e2f9e9;
+            --current-day-border: #28a745;
+            --important-note-bg: #fff3cd;
+            --important-note-border: #ffc107;
+            --activity-block-bg: #f0f8ff;
+            --activity-block-border: #457b9d;
+            --shot-desc-bg: #fcfcfc;
+            --shot-desc-border: #aed6f1;
+            --focus-color: #c0392b;
+            --danger-color: #dc3545;
+            --secondary-color: #6c757d;
+            --warning-color: #ff9800; /* Color for Edit button */
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --accent-color: #5fa8e3;
+            --border-color: #444;
+            --tab-bg: #2c2c2c;
+            --tab-active-bg: #5fa8e3;
+            --tab-active-text: #121212;
+            --day-section-bg: #2a2a2a;
+            --current-day-bg: #2a3a2f;
+            --current-day-border: #3c8d40;
+            --important-note-bg: #332701;
+            --important-note-border: #a67c00;
+            --activity-block-bg: #212f3c;
+            --activity-block-border: #5fa8e3;
+            --shot-desc-bg: #2c2c2c;
+            --shot-desc-border: #3e5a70;
+            --danger-color: #e4606d;
+            --secondary-color: #8c959d;
+            --warning-color: #ffb74d; /* Lighter orange for dark mode */
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: auto; 
+            background: var(--container-bg); 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            border: 1px solid var(--border-color);
+            display: none; /* Hidden by default until setup is complete */
+        }
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .theme-switch-wrapper { display: flex; align-items: center; }
+        .theme-switch { display: inline-block; height: 24px; position: relative; width: 48px; }
+        .theme-switch input { display:none; }
+        .slider { background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 24px; }
+        .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
+        .action-buttons button {
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.2s;
+        }
+        .btn-print, .btn-glossary { background-color: var(--accent-color); }
+        .btn-reset-current { background-color: var(--secondary-color); }
+        .btn-reset-all { background-color: var(--danger-color); }
+        .btn-edit { background-color: var(--warning-color); }
+        
+        h1 { text-align: center; color: var(--header-color); margin-bottom: 5px; }
+        .credits, .user-welcome { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
+        .user-welcome { font-weight: bold; font-size: 1.1em; color: var(--text-color); }
+        h2, h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-top: 20px; color: var(--header-color); }
+        h3 { border-bottom-width: 1px; }
+        h4 { color: var(--accent-color); margin-top: 20px; }
+        h5 { margin-top: 0; color: var(--header-color); }
+        ul { list-style-type: none; padding-left: 0; }
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 8px; }
+        .task-item input[type="checkbox"] { margin-right: 10px; margin-top: 4px; flex-shrink: 0; width: 18px; height: 18px; }
+        .task-item label { flex-grow: 1; cursor: pointer; }
+        .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
+        
+        .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; }
+        .day-focus { font-weight: bold; color: var(--focus-color); }
+        
+        .activity-block { margin-bottom: 15px; padding: 15px; border-left: 3px solid var(--activity-block-border); background-color: var(--activity-block-bg); border-radius: 4px; }
+        .shot-description { margin-top: 15px; padding: 15px; border: 1px dashed var(--shot-desc-border); background-color: var(--shot-desc-bg); font-size: 0.9em; border-radius: 4px; }
+        .citation { font-size: 0.8em; color: #777; vertical-align: super; }
+        body.dark-mode .citation { color: #aaa; }
+        .time-estimate { font-weight: bold; color: var(--accent-color); margin-left: 10px; }
+        strong { color: var(--focus-color); }
+
+        .tabs-container { position: relative; margin-top: 20px; }
+        .tab-input { display: none; }
+        .tab-label { float: left; padding: 10px 15px; cursor: pointer; background: var(--tab-bg); border: 1px solid var(--border-color); border-bottom: none; border-radius: 5px 5px 0 0; margin-right: 2px; transition: background 0.3s, color 0.3s; white-space: nowrap; }
+        .tab-label:hover { opacity: 0.8; }
+        .tab-input:checked + .tab-label { background: var(--tab-active-bg); color: var(--tab-active-text); border: 1px solid var(--tab-active-bg); border-bottom: 1px solid var(--container-bg); z-index: 1; position: relative; margin-bottom: -1px; font-weight: bold; }
+        .tab-content-wrapper { border: 1px solid var(--border-color); background: var(--container-bg); padding: 20px; border-radius: 0 0 5px 5px; clear: both; }
+        .tab-content { display: none; }
+        
+        .progress-container { margin-bottom: 20px; }
+        .progress-bar { width: 100%; background-color: var(--tab-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--border-color); }
+        .progress-bar-fill { height: 20px; width: 0%; background-color: var(--current-day-border); transition: width 0.5s ease-in-out; text-align: center; color: white; font-weight: bold; line-height: 20px; }
+        .task-counter { text-align: right; font-size: 0.9em; margin-top: 5px; color: var(--text-color); }
+
+        .diary-section, .assessment-section { margin-top: 20px; }
+        .diary-section label, .assessment-section h4 { font-weight: bold; color: var(--accent-color); }
+        .diary-textarea { width: 100%; min-height: 80px; margin-top: 5px; background-color: var(--day-section-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; box-sizing: border-box; resize: vertical; }
+        
+        .mobile-nav { display: none; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--container-bg); color: var(--text-color); }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--container-bg); padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-width: 450px; width: 90%; }
+        .modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        #modal-confirm { background-color: var(--danger-color); color: white; }
+        #modal-cancel { background-color: var(--secondary-color); color: white; }
+        
+        #welcome-modal .modal-content button, #load-user-modal .modal-content button { width: 100%; padding: 12px; margin-bottom: 10px; font-size: 1.1em; }
+        .user-profile-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .user-profile-item button { flex-grow: 1; }
+        .delete-profile-btn { background-color: var(--danger-color); color: white; border: none; border-radius: 5px; cursor: pointer; padding: 8px; margin-left: 10px; }
+        #load-user-list p { color: var(--secondary-color); }
+        
+        #new-user-modal .modal-content, #term-definition-modal .modal-content { text-align: left; }
+        #new-user-modal h2, #term-definition-modal h2 { margin-top: 0; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--day-section-bg); color: var(--text-color); box-sizing: border-box; }
+        .form-group button { padding: 12px; font-size: 1.1em; border: none; border-radius: 5px; cursor: pointer; }
+        .form-buttons { display: flex; gap: 10px; }
+        .form-buttons button { width: 100%; }
+        
+        .error-message { color: var(--danger-color); font-size: 0.9em; margin-top: 5px; display: none; }
+        
+        .days-checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; background-color: var(--day-section-bg); padding: 15px; border-radius: 5px; }
+        .days-checkbox-group label { display: flex; align-items: center; cursor: pointer; padding: 8px; border-radius: 4px; transition: background-color 0.2s; }
+        .days-checkbox-group input { margin-right: 8px; }
+        .days-checkbox-group label:hover { background-color: rgba(0,0,0,0.05); }
+        body.dark-mode .days-checkbox-group label:hover { background-color: rgba(255,255,255,0.05); }
+
+
+        .important-note { background-color: var(--important-note-bg); border-left: 4px solid var(--important-note-border); padding: 15px; margin-top: 10px; border-radius: 4px; }
+        
+        .glossary-term {
+            color: var(--accent-color);
+            text-decoration: underline;
+            text-decoration-style: dotted;
+            cursor: pointer;
+            position: relative;
+        }
+
+        #tooltip {
+            position: absolute;
+            display: none;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1001;
+            max-width: 300px;
+            font-size: 0.9em;
+        }
+
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content {
+            max-width: 700px;
+            text-align: left;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #term-definition-modal .modal-content, #recommendation-modal .modal-content {
+            height: auto;
+            max-height: 80vh;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .modal-header h2 { margin: 0; border: none; }
+        .modal-close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; color: var(--text-color); }
+        
+        #glossary-content, #fitness-content { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
+        #glossary-content dl dt { font-weight: bold; color: var(--accent-color); margin-top: 15px; }
+        #glossary-content dl dd { margin-left: 20px; }
+        .highlight-term { background-color: var(--important-note-bg); transition: background-color 0.5s; }
+
+
+        @media (max-width: 768px) {
+            .tabs-container .tab-label { display: none; }
+            .mobile-nav { display: block; }
+            .container { padding: 15px; }
+            .header-controls { flex-direction: column; align-items: flex-start; }
+            .action-buttons { margin-top: 15px; }
+            .action-buttons button { margin-left: 0; margin-right: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Bienvenido a Tiro Maestro</h2>
+            <p>Selecciona una opción para comenzar.</p>
+            <div class="modal-buttons">
+                <button id="btn-load-user">Cargar Perfil</button>
+                <button id="btn-new-user">Nuevo Perfil</button>
+                <button id="btn-guest-user">Modo Invitado</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="load-user-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Cargar Perfil</h2>
+            <div id="load-user-list"></div>
+            <div class="modal-buttons">
+                 <button class="btn-back-to-welcome">Volver</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="new-user-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 id="new-user-title">Crear Nuevo Perfil</h2>
+            <p>Personaliza tu camino hacia la maestría.</p>
+            <form id="setup-form">
+                <div class="form-group">
+                    <label for="user-name">Tu Nombre:</label>
+                    <input type="text" id="user-name" required>
+                    <p class="error-message" id="name-error">Por favor, introduce un nombre.</p>
+                </div>
+                <div class="form-group">
+                    <label>Días de Entrenamiento:</label>
+                    <div class="days-checkbox-group" id="training-days-group">
+                        <label><input type="checkbox" value="Lunes">Lunes</label>
+                        <label><input type="checkbox" value="Martes">Martes</label>
+                        <label><input type="checkbox" value="Miércoles">Miércoles</label>
+                        <label><input type="checkbox" value="Jueves">Jueves</label>
+                        <label><input type="checkbox" value="Viernes">Viernes</label>
+                        <label><input type="checkbox" value="Sábado">Sábado</label>
+                        <label><input type="checkbox" value="Domingo">Domingo</label>
+                    </div>
+                    <p class="error-message" id="days-error">Por favor, selecciona al menos 2 días.</p>
+                </div>
+                <div class="form-group form-buttons">
+                    <button type="submit" style="background-color: var(--accent-color); color: white;">Crear Mi Plan</button>
+                    <button type="button" id="btn-cancel-edit" style="display: none; background-color: var(--secondary-color); color: white;">Cancelar</button>
+                </div>
+            </form>
+            <div id="back-button-container" class="modal-buttons">
+                <button class="btn-back-to-welcome" style="background-color: var(--secondary-color);">Volver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reset-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Confirmar Reinicio</h3>
+            <p>¿Estás seguro de que quieres borrar este progreso? Esta acción no se puede deshacer.</p>
+            <div class="modal-buttons">
+                <button id="modal-cancel">Cancelar</button>
+                <button id="modal-confirm">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="glossary-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Glosario de Billar</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div id="glossary-content"></div>
+        </div>
+    </div>
+
+    <div id="term-definition-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2 id="term-modal-title"></h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <p id="term-modal-definition"></p>
+        </div>
+    </div>
+
+     <div id="recommendation-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2>Recomendación Semanal</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <p id="recommendation-text"></p>
+        </div>
+    </div>
+
+    <div id="tooltip"></div>
+
+    <div class="container" id="main-container">
+        <div class="header-controls">
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="theme-toggle">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span style="margin-left: 8px;">Modo Oscuro</span>
+            </div>
+            <div class="action-buttons">
+                <button id="btn-glossary" class="btn-glossary">Glosario</button>
+                <button id="btn-edit-plan" class="btn-edit">Editar Plan</button>
+                <button id="btn-print" class="btn-print">Imprimir / PDF</button>
+                <button id="btn-reset-current-week" class="btn-reset-current">Reiniciar Semana</button>
+                <button id="btn-reset-all" class="btn-reset-all">Reiniciar Todo</button>
+            </div>
+        </div>
+        
+        <h1>Tiro Maestro</h1>
+        <p id="user-welcome-message" class="user-welcome"></p>
+        <p class="credits">Adaptado por: Juan Miguel Rios Redondo</p>
+        <p class="important-note">Este plan progresa a través de la "Torre de Entrenamiento". Avance a la siguiente semana solo cuando cumpla el <strong>Criterio de Avance</strong>.</p>
+        
+        <select id="mobile-nav" class="mobile-nav"></select>
+        <div class="tabs-container" id="tabs-container"></div>
+    </div>
+
+    <script>
+    // --- DATA SOURCE ---
+    const proPoolPlayers = ["Efren Reyes", "Shane Van Boening", "Earl Strickland", "Jayson Shaw", "Mike Sigel", "Francisco Bustamante"];
+    const glossaryData = {
+        "Stop Shot": { translation: "Parada Seca", definition: "Un tiro donde la bola blanca se detiene completamente después de impactar la bola objetivo. Se logra golpeando la bola blanca en su centro vertical exacto para que llegue deslizándose (sin rotación) al punto de contacto." },
+        "Stun": { translation: "Deslizamiento / Bola Aturdida", definition: "El estado de la bola blanca cuando se desliza sobre el paño sin rotación hacia adelante o hacia atrás. Es la base para el Stop Shot y para controlar la línea tangente." },
+        "Follow": { translation: "Seguida / Correr la bola", definition: "Un tiro donde la bola blanca continúa moviéndose hacia adelante después de contactar la bola objetivo. Se logra golpeando la bola blanca por encima de su centro (topspin)." },
+        "Draw": { translation: "Retroceso", definition: "Un tiro donde la bola blanca retrocede después de contactar la bola objetivo. Se logra golpeando la bola blanca por debajo de su centro (backspin)." },
+        "Stroke": { translation: "Golpeo / Mecánica de Tiro", definition: "El movimiento completo del brazo y el taco al ejecutar un tiro. Incluye el péndulo del brazo, la aceleración y la finalización (follow-through)." },
+        "Sidespin": { translation: "Efecto Lateral / 'English'", definition: "Efecto aplicado a la bola blanca al golpearla a la izquierda o derecha de su centro vertical. Altera la trayectoria de la bola blanca después de tocar una banda." },
+        "Tangent Line": { translation: "Línea Tangente", definition: "Una línea imaginaria a 90 grados de la línea de tiro en el punto de contacto entre la bola blanca y la objetivo. Es la dirección que tomará la bola blanca si llega con 'stun' (deslizándose)." },
+        "Shape Zone": { translation: "Zona de Posición", definition: "El área en la mesa donde quieres que la bola blanca aterrice para tener un buen tiro a la siguiente bola objetivo. Planificar hacia una zona es más efectivo que apuntar a un punto exacto." },
+        "Squirt": { translation: "Deflexión / Desviación", definition: "La desviación de la trayectoria inicial de la bola blanca causada por el uso de sidespin. Los tacos de baja deflexión (low deflection) minimizan este efecto." },
+        "Swerve": { translation: "Curva / Comba", definition: "La ligera curva que toma la trayectoria de la bola blanca, especialmente en tiros lentos con sidespin o cuando el taco está elevado. Es causado por la fricción con el paño." },
+        "Bank Shot": { translation: "Tiro por Banda", definition: "Un tiro donde la bola objetivo es enviada a una o más bandas antes de entrar en la tronera." },
+        "Kick Shot": { translation: "Tiro de Rebote / Patada", definition: "Un tiro donde la bola blanca es enviada a una o más bandas antes de contactar la bola objetivo." },
+        "Carom": { translation: "Carambola", definition: "Un tiro donde la bola blanca, después de contactar una primera bola objetivo, contacta una segunda bola (intencionadamente o no)." },
+        "Puente": { translation: "Puente", definition: "La configuración de la mano que guía la varilla del taco. Un puente estable (abierto o cerrado) es fundamental para la precisión." },
+        "Follow-through": { translation: "Finalización del Golpe", definition: "La continuación del movimiento del taco hacia adelante después de haber impactado la bola blanca. Es crucial para un golpeo suave y preciso." },
+        "Choking up": { translation: "Agarrar Corto / Subir la Mano", definition: "Una técnica donde el jugador desliza su mano de agarre (la de atrás) más arriba en la culata del taco. Esto acorta la palanca, ofreciendo más control y precisión en tiros delicados o cuando el espacio es reducido, a costa de potencia." },
+        "Rail Shot": { translation: "Tiro a lo largo de la Banda", definition: "Un tiro donde la bola objetivo está congelada (pegada) o muy cerca de la banda. Requiere un golpeo preciso para evitar que la banda afecte negativamente la trayectoria de la bola objetivo." },
+        "Break Shot": { translation: "Tiro de Saque / Rompimiento", definition: "El primer tiro de la partida, usado para dispersar el triángulo de bolas. El objetivo es entronerar una bola legalmente y/o dejar la bola blanca en una buena posición para continuar." },
+        "Universal Positioning": { translation: "Posicionamiento Universal", definition: "Un concepto avanzado de control de la bola blanca donde, para un mismo tiro, existen múltiples combinaciones de velocidad, efecto y puntería que pueden llevar la bola blanca a la misma zona de posición (Shape Zone)." },
+        "Scratch": { translation: "Falta / Rasguño", definition: "Una falta que ocurre cuando la bola blanca cae en una de las troneras. Resulta en la pérdida del turno y, dependiendo de las reglas, el oponente obtiene 'bola en mano'." },
+        "Off-Table Fitness": { translation: "Acondicionamiento Físico", definition: "Entrenamiento físico realizado fuera de la mesa de billar, enfocado en fortalecer músculos clave para la postura (core), la estabilidad y el control del taco (agarre, antebrazo)." }
+    };
+    const physicalTrainingData = [
+        { title: "Fortaleza del Core: Planchas", content: "<strong>¿Qué es?</strong> La plancha es un ejercicio isométrico (mantener una posición fija) que fortalece todo tu 'core': los músculos abdominales, la espalda baja y los glúteos. Es el pilar de una postura estable.<br><strong>¿Cómo se hace?</strong><br>1. <strong>Posición Inicial:</strong> Acuéstate boca abajo. Apoya tu peso sobre los antebrazos y las puntas de los pies.<br>2. <strong>Alineación:</strong> Levanta las caderas hasta que tu cuerpo forme una línea recta desde la cabeza hasta los talones. Evita que tus caderas se caigan o se levanten demasiado.<br>3. <strong>Activación:</strong> Contrae los músculos del abdomen y los glúteos para mantener la espalda recta.<br>4. <strong>Rutina de 10 minutos:</strong> Sostén la posición durante 45-60 segundos, descansa 30 segundos y repite el ciclo.<br><strong>¿Por qué es importante?</strong> Un core fuerte es la base de una postura inmóvil, previene el balanceo al tirar y aumenta la resistencia en partidas largas." },
+        { title: "Fuerza de Agarre y Antebrazo", content: "<strong>¿Qué es?</strong> Son ejercicios diseñados para fortalecer los músculos de tus manos, muñecas y antebrazos, permitiendo un control más fino y relajado del taco.<br><strong>¿Cómo se hace?</strong><br>1. <strong>Apretar Pelota Antiestrés:</strong> Apriétala con fuerza durante 5 segundos y relaja. Haz 3 series de 15 repeticiones con cada mano.<br>2. <strong>Curls de Muñeca:</strong> Sentado, apoya tu antebrazo en tu muslo con la palma hacia arriba. Sostén una botella de agua pequeña y, usando solo la muñeca, sube y baja la mano. Haz 3 series de 15 repeticiones.<br><strong>¿Por qué es importante?</strong> Un agarre más fuerte permite un toque más suave y sensible, ya que no necesitas apretar el taco con tensión. Esto mejora la precisión y el 'feel' del tiro." }
+    ];
+    const allTrainingDays = [
+        { id: 1, originalWeek: 1, title: 'Lunes: Velocidad y Stop Shot', focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos' } ], keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'} },
+        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
+        { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
+        { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
+        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos' } ] },
+        { id: 6, originalWeek: 2, title: 'Martes: Follow Shot y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos' } ] },
+        { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
+        { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
+        { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
+        { id: 10, originalWeek: 3, title: 'Martes: Draw Shot de Distancia y Velocidad Rápida', focus: 'Mantener la rectitud del [[stroke]] en [[Draw]] de larga distancia y alta velocidad.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Largo (#78, #80):</b> El [[Draw]] se vuelve más difícil con la distancia.', goal: '10 Intentos | Meta: 5-7 Aciertos'}, { id: 't2', text: '<b>Draw Fast Speed (#81-83):</b> Mantenga siempre una muñeca y un agarre sueltos.', goal: '10 Intentos | Meta: 5-7 Aciertos'}]},
+        { id: 11, originalWeek: 3, title: 'Jueves: Draw Crítico y Estrategia', focus: 'Usar [[Draw]] para posicionamiento fuera de la línea recta (tiros con rail).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Draw Crítico (#84):</b> Este tiro tiene demasiado ángulo para [[Draw]] recto; debe usar el rail.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>Game Shark Simple (15 min):</b> Juegue 5 tiros de un set, donde el objetivo es usar el <strong>mínimo [[Draw]]</strong> posible.'}]},
+        { id: 12, originalWeek: 3, title: 'Viernes: Test de Draw y Simplicidad', focus: 'Integrar [[Draw]] en la filosofía de <strong>simplicidad</strong> ([[Follow]]/[[Stun]] > [[Draw]]).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Draw Crítico (3x):</b> Repita Shot #84. Evalúe la inmovilidad de su cuerpo.', goal: '3 Intentos | Meta: 2-3 Aciertos'}, { id: 't2', text: '<b>Principios de Simplicidad:</b> Repase los principios de simplicidad (ej. prefiera tiros como el #22 [[Follow]] o #48 [[Stun]] antes que [[Draw]] o [[Sidespin]] complejos). Use menos efecto.'}], criteria: 'Lograr <strong>[[Draw]] Shot</strong> consistentemente (7/10 veces).'},
+        { id: 13, originalWeek: 4, title: 'Lunes: Sidespin Básico (Running vs. Hold-up)', focus: 'Entender el cambio de ángulo en el rebote causado por [[Sidespin]]. Usarlo solo cuando es <strong>necesario</strong>.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #87 (Running English):</b> [[Sidespin]] en la dirección del rebote &rarr; el ángulo se ensancha. <strong>Enfoque:</strong> Compensar [[Squirt]].', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Shot #91 (Hold-up English):</b> [[Sidespin]] opuesto al rebote &rarr; el ángulo se acorta.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
+        { id: 14, originalWeek: 4, title: 'Martes: Universal Positioning (Near Pocket)', focus: 'Controlar la bola blanca cuando la bola objetivo está cerca del bolsillo.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow/Stun Near Pocket (#114-116):</b> Usar Slow Speed para controlar la posición.', goal: '10 Intentos | Meta: 8-10 Aciertos'}, { id: 't2', text: '<b>Draw Near Pocket (#117):</b> Use Bottom spin para evitar que la bola blanca se "pegue" al rail.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't3', text: '<b>Sidespin Posicional (#127):</b> Use [[Sidespin]] para cambiar el ángulo off the rail. Compense [[Squirt]] (#128).', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
+        { id: 15, originalWeek: 4, title: 'Jueves: Sidespin y Draw Combinados', focus: 'Experimentar con [[Draw]] + [[Sidespin]] (que causa <strong>[[Swerve]]</strong>) y compensar el <strong>[[Squirt]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Sidespin Fast (#109-113):</b> [[Draw]] + [[Sidespin]] &rarr; [[Swerve]] (la bola blanca curva en la mesa). Evitar esto en juego real.', goal: '10 Intentos | Meta: 5-7 Aciertos'}, { id: 't2', text: '<b>Rutina Mental (15 min):</b> Practique la visualización de la curva de la bola blanca ([[Swerve]]) en 5 tiros imaginarios.'}]},
+        { id: 16, originalWeek: 4, title: 'Viernes: Test de Consistencia y Simplicidad', focus: 'Reconfirmar la filosofía: usar [[Sidespin]] solo cuando es esencial.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Sidespin Bank (#87):</b> Repita 5 veces. Evalúe si la bola blanca sigue el ángulo esperado.', goal: '5 Intentos | Meta: 3-4 Aciertos'}, { id: 't2', text: '<b>Simulación de Juego:</b> Juegue 5 sets de Shot Count. <strong>Regla:</strong> Si usa [[Sidespin]], pierda 1 punto de penalidad.'}], criteria: 'Lograr <strong>Sidespin [[Bank Shot]]</strong> y <strong>[[Universal Positioning]]</strong> (7/10 veces).'},
+        { id: 17, originalWeek: 5, title: 'Lunes: Universal Positioning II - Draw y Rail', focus: 'Tiros complejos con [[Draw]], velocidad y el uso de ángulos en lugar de spin.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Ángulos vs. Spin (#135):</b> Posicionar usando ángulos y velocidad es a menudo más fácil que usar mucho spin.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Draw Rápido (#131):</b> Fast Speed. Baje el punto de contacto para generar más spin con menos velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
+        { id: 18, originalWeek: 5, title: 'Martes: Universal Positioning III - Maestría', focus: 'Dominar los tiros de posicionamiento donde hay múltiples soluciones. <strong>Encontrar la más simple.</strong>', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros de Variedad (#138):</b> Cuando una bola está cerca de una tronera, puede usar una variedad de líneas, spins y velocidades.', goal: '10 Intentos | Meta: 8-10 Aciertos'}, { id: 't2', text: '<b>Tiro [[Carom]] (#139):</b> Requiere precisión. Use un agarre y una muñeca <strong>sueltos</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
+        { id: 19, originalWeek: 5, title: 'Jueves: Scratches (Follow y Stun)', focus: '<strong>Aprender a no raspar</strong> ([[Scratch]]) con [[Follow]] y [[Stun]], identificando las zonas de peligro.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Follow Scratches (#178, #181):</b> Practique tiros que lleven la bola blanca directamente a la tronera. <strong>Objetivo:</strong> Conocer los ángulos de peligro.', goal: '5 Intentos | Meta: 5 Aciertos'}, { id: 't2', text: '<b>Stun Scratches (#182, #184):</b> Tirar a una bola objetivo cerca del punto de cabeza o pie con [[stun]] causará un [[scratch]].', goal: '5 Intentos | Meta: 5 Aciertos'}]},
+        { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Scratches (#185-187):</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para el <strong>[[Scratch]]</strong>.'},
+        { id: 21, originalWeek: 6, title: 'Lunes: Rail Shots (Fundamentos y Bridge)', focus: 'Mantener el taco nivelado y el [[puente]] estable cuando la bola está cerca de la banda.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Básicos en Rail (#143-144):</b> Practique golpear la bola objetivo y rail al mismo tiempo.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Rail Posicional (#145-146):</b> Use [[Follow]]/[[Draw]] para posicionar. Asegure un [[puente]] estable.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
+        { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Running English en Rail (#155):</b> [[Sidespin]] en la dirección del rail &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>Técnica "[[Choking up]]" (#171):</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
+        { id: 23, originalWeek: 6, title: 'Jueves: Banks, Kicks y Combinaciones', focus: 'Tiros de riesgo: usarlos solo como <strong>último recurso</strong>. Los [[Bank Shot]] son inconsistentes.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>[[Bank Shot]] (#188-191):</b> Un [[stroke]] más rápido acorta el ángulo de rebote de la bola objetivo.', goal: '10 Intentos | Meta: 4-6 Aciertos'}, { id: 't2', text: '<b>[[Kick Shot]] (#192-194):</b> Vaya a dos bandas con la bola blanca para aterrizar lejos de la banda.', goal: '10 Intentos | Meta: 5-7 Aciertos'}]},
+        { id: 24, originalWeek: 6, title: 'Viernes: Test de Consistencia en el Rail', focus: 'Evaluar la consistencia en el uso de [[Follow]]/[[Stun]]/[[Sidespin]] en tiros complejos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de [[Bank Shot]] Posicional (#191):</b> Evalúe su capacidad para usar un [[Bank Shot]] para posicionar la bola blanca.', goal: '5 Intentos | Meta: 2-3 Aciertos'}, { id: 't2', text: '<b>Análisis de Simplicidad:</b> Por cada tiro, piense si un tiro de <strong>[[Follow]]/[[Stun]]</strong> habría funcionado mejor.'}], criteria: 'Lograr <strong>[[Rail Shot]]</strong> y <strong>[[Bank Shot]]</strong> con control (6/10 veces).'},
+        { id: 25, originalWeek: 7, title: 'Lunes: Tiros de Over Ball y Break', focus: 'Pruebas de fuego finales para los fundamentos ([[Break Shot]] y Elevación de taco).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Sobre Bolas (#198-199):</b> Requiere elevación del taco. Use <strong>[[choking up]]</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>[[Break Shot]] (#200):</b> Practique el power break. <strong>Enfoque:</strong> Controlar la bola blanca al centro.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
+        { id: 26, originalWeek: 7, title: 'Martes: Rutina y Adaptación Estratégica', focus: 'Aplicar la <strong>estrategia adaptativa</strong> (seleccionar tiros basados en el rendimiento actual).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Calentamiento Competitivo:</b> Inicie con tiros fáciles (#1-3) y progrese a difíciles.'}, { id: 't2', text: '<b>Estrategia Adaptativa:</b> Juegue 9-ball. Si está inconsistente, solo elija tiros de <strong>[[Stop Shot]] o [[Follow]]</strong>.'}, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de cardio para simular la fatiga de un torneo.'}]},
+        { id: 27, originalWeek: 7, title: 'Jueves: Juego Mental y Presión', focus: 'Practicar la ejecución perfecta bajo presión simulada. <strong>El rendimiento es mental.</strong>', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Visualización de Torneo:</b> Imagínese en la mesa, con público. Visualice su rutina.'}, { id: 't2', text: '<b>Reinicio Bajo Presión:</b> Faille un tiro a propósito. Use su mantra ("Siguiente tiro") y reinicie la rutina.'}]},
+        { id: 28, originalWeek: 7, title: 'Viernes: Competencia y Cierre del Ciclo', focus: 'Integrar todos los componentes de la "Torre de Entrenamiento".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Juego Competitivo:</b> Compita. <strong>Objetivo:</strong> No ganar, sino mantener el proceso.'}, { id: 't2', text: '<b>Análisis Post-Juego:</b> ¿En qué momento se rompió su rutina? Esos son los tiros que debe repetir.'}, { id: 't3', text: '<b>Cierre del Ciclo:</b> Vuelva a la Semana 1. La maestría requiere práctica continua.'}], criteria: 'Mantener un <strong>rendimiento constante</strong> bajo presión y aplicar la <strong>rutina completa</strong> en el 90% de los tiros.'}
+    ];
+
+    const weekThemes = {
+        1: "Fundamentos del Golpeo", 2: "Posicionamiento con Stun y Follow", 3: "Dominio del Tiro de Retroceso (Draw)", 4: "Introducción al Efecto Lateral (Sidespin)", 5: "Posicionamiento Avanzado y Control de Faltas", 6: "Juego de Bandas y Tiros Complejos", 7: "Estrategia y Mente Competitiva"
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const STORAGE_PREFIX = 'tiroMaestroProfiles_v1';
+        let currentProfile = null;
+        let isGuest = false;
+
+        const mainContainer = document.getElementById('main-container');
+        const welcomeModal = document.getElementById('welcome-modal');
+        const loadUserModal = document.getElementById('load-user-modal');
+        const newUserModal = document.getElementById('new-user-modal');
+        const setupForm = document.getElementById('setup-form');
+        
+        function showModal(modal) {
+            [welcomeModal, loadUserModal, newUserModal].forEach(m => m.style.display = 'none');
+            if(modal) modal.style.display = 'flex';
+        }
+        
+        // --- Welcome Modal Logic ---
+        document.getElementById('btn-new-user').addEventListener('click', () => {
+            setupForm.dataset.mode = 'new';
+            document.getElementById('new-user-title').textContent = 'Crear Nuevo Perfil';
+            const userNameInput = document.getElementById('user-name');
+            userNameInput.value = '';
+            userNameInput.disabled = false;
+            userNameInput.placeholder = `Ej: ${proPoolPlayers[Math.floor(Math.random() * proPoolPlayers.length)]}`;
+            setupForm.querySelector('button[type="submit"]').textContent = 'Crear Mi Plan';
+            document.getElementById('btn-cancel-edit').style.display = 'none';
+            document.getElementById('back-button-container').style.display = 'block';
+            isGuest = false;
+            showModal(newUserModal);
+        });
+        document.getElementById('btn-guest-user').addEventListener('click', () => {
+            setupForm.dataset.mode = 'guest';
+            document.getElementById('new-user-title').textContent = 'Iniciar como Invitado';
+            const userNameInput = document.getElementById('user-name');
+            userNameInput.value = 'Invitado';
+            userNameInput.placeholder = 'Invitado';
+            userNameInput.disabled = false;
+            setupForm.querySelector('button[type="submit"]').textContent = 'Iniciar Sesión';
+            document.getElementById('btn-cancel-edit').style.display = 'none';
+            document.getElementById('back-button-container').style.display = 'block';
+            isGuest = true;
+            showModal(newUserModal);
+        });
+        document.getElementById('btn-load-user').addEventListener('click', () => {
+            const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX)) || {};
+            const userList = document.getElementById('load-user-list');
+            userList.innerHTML = '';
+            const userNames = Object.keys(profiles);
+            if (userNames.length > 0) {
+                userNames.forEach(name => {
+                    const item = document.createElement('div');
+                    item.className = 'user-profile-item';
+                    const btn = document.createElement('button');
+                    btn.textContent = name;
+                    btn.onclick = () => startSession(name);
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = '✖';
+                    delBtn.className = 'delete-profile-btn';
+                    delBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`¿Estás seguro de que quieres eliminar el perfil "${name}"? Se perderá todo el progreso.`)) {
+                            delete profiles[name];
+                            localStorage.setItem(STORAGE_PREFIX, JSON.stringify(profiles));
+                            document.getElementById('btn-load-user').click(); // Refresh list
+                        }
+                    };
+                    item.appendChild(btn);
+                    item.appendChild(delBtn);
+                    userList.appendChild(item);
+                });
+            } else {
+                userList.innerHTML = '<p>No hay perfiles guardados.</p>';
+            }
+            showModal(loadUserModal);
+        });
+        document.querySelectorAll('.btn-back-to-welcome').forEach(btn => {
+            btn.addEventListener('click', () => showModal(welcomeModal));
+        });
+
+        // --- Session Start ---
+        function startSession(userName, config) {
+            currentProfile = userName;
+            isGuest = !!config; 
+            let userConfig;
+
+            if (isGuest) {
+                userConfig = config;
+            } else {
+                const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX));
+                userConfig = profiles[currentProfile].config;
+            }
+            
+            generatePlan(currentProfile, userConfig.selectedDays);
+        }
+        
+        function parseGlossaryTerms(text) {
+            return text.replace(/\[\[(.*?)\]\]/g, (match, term) => {
+                const cleanTerm = term.trim();
+                const key = Object.keys(glossaryData).find(k => k.toLowerCase() === cleanTerm.toLowerCase());
+                if (key) return `<span class="glossary-term" data-term="${key}">${cleanTerm}</span>`;
+                return cleanTerm;
+            });
+        }
+
+        function generatePlan(userName, selectedDays) {
+            document.getElementById('user-welcome-message').textContent = `Plan de Entrenamiento para: ${userName}`;
+            const tabsContainer = document.getElementById('tabs-container');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            tabsContainer.innerHTML = ''; mobileNav.innerHTML = '';
+            let htmlTabs = '', htmlContentWrapper = '', mobileNavOptions = '';
+            
+            const daysPerWeek = selectedDays.length;
+            const totalWeeks = Math.ceil(allTrainingDays.length / daysPerWeek);
+            let dayIndex = 0;
+
+            for (let i = 1; i <= totalWeeks; i++) {
+                htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input" ${i === 1 ? 'checked' : ''}><label for="tab${i}" class="tab-label">Semana ${i}</label>`;
+                mobileNavOptions += `<option value="tab${i}">Semana ${i}</option>`;
+                
+                let weekContent = `<div id="content${i}" class="tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
+                const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + daysPerWeek);
+                const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
+                weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
+
+                if(daysInThisWeek[daysInThisWeek.length-1].criteria) {
+                    weekContent += `<p><strong>Criterio de Avance:</strong> ${parseGlossaryTerms(daysInThisWeek[daysInThisWeek.length-1].criteria)}</p>`;
+                }
+                weekContent += `<div class="progress-container"><div class="task-counter"></div><div class="progress-bar"><div class="progress-bar-fill"></div></div></div>`;
+
+                daysInThisWeek.forEach((day, index) => {
+                    const dayName = selectedDays[index % selectedDays.length];
+                    let dayHTML = `<div class="day-section">
+                        <h4>${dayName}: ${day.title.split(': ')[1]}</h4>
+                        <p class="day-focus">Foco: ${parseGlossaryTerms(day.focus)}</p>
+                        <div class="activity-block"><h5>Tareas: <span class="time-estimate">(${day.estTime})</span></h5><ul>`;
+                    day.tasks.forEach(task => {
+                        const checkboxId = `w${i}-d${day.id}-${task.id}`;
+                        dayHTML += `<li class="task-item"><input type="checkbox" id="${checkboxId}"><label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label></li>`;
+                    });
+                    dayHTML += `</ul></div>`;
+                    if(day.keyShot) dayHTML += `<div class="shot-description"><h5>${parseGlossaryTerms(day.keyShot.title)}</h5><p>${parseGlossaryTerms(day.keyShot.desc)}</p></div>`;
+                    const diaryId = `w${i}-d${day.id}-notes`;
+                    dayHTML += `<div class="diary-section"><label for="${diaryId}">Diario de Práctica:</label><textarea id="${diaryId}" class="diary-textarea" placeholder="Notas del día..."></textarea></div>`;
+                    
+                    if(index === daysInThisWeek.length - 1){
+                        dayHTML += `<div class="assessment-section" style="display: none;">
+                            <h4>Autoevaluación Semanal</h4>
+                            <form id="assessment-form-w${i}">
+                                <div class="form-group">
+                                    <label>¿Sientes que cumpliste el Criterio de Avance de esta semana?</label>
+                                    <label><input type="radio" name="criteria-met" value="yes" required> Sí, consistentemente.</label>
+                                    <label><input type="radio" name="criteria-met" value="somewhat"> Parcialmente, aún fallo a veces.</label>
+                                    <label><input type="radio" name="criteria-met" value="no"> No, me costó mucho.</label>
+                                </div>
+                                 <div class="form-group">
+                                    <label>Califica tu confianza con las técnicas de esta semana (1=Baja, 5=Alta)</label>
+                                    <select name="confidence">
+                                        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn-get-recommendation" data-week="${i}" style="background-color: var(--accent-color); color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Ver Recomendación</button>
+                            </form>
+                        </div>`;
+                    }
+                    
+                    dayHTML += `</div>`;
+                    weekContent += dayHTML;
+                });
+                dayIndex += daysPerWeek;
+                weekContent += `</div>`;
+                htmlContentWrapper += weekContent;
+            }
+
+            // Add Fitness Tab
+            mobileNavOptions += `<option value="tab-fitness">Fitness</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-fitness" class="tab-input"><label for="tab-fitness" class="tab-label">Fitness</label>`;
+            let fitnessContent = `<div id="content-fitness" class="tab-content"><div id="fitness-content"><h2>Entrenamiento Físico Fuera de la Mesa</h2>`;
+            physicalTrainingData.forEach(item => {
+                fitnessContent += `<h3>${item.title}</h3><p>${item.content}</p>`;
+            });
+            fitnessContent += `</div></div>`;
+            htmlContentWrapper += fitnessContent;
+
+            tabsContainer.innerHTML = htmlTabs + `<div class="tab-content-wrapper">${htmlContentWrapper}</div>`;
+            mobileNav.innerHTML = mobileNavOptions;
+            
+            mainContainer.style.display = 'block';
+            [welcomeModal, loadUserModal, newUserModal].forEach(m => m.style.display = 'none');
+
+            initializePlanLogic(totalWeeks);
+        }
+
+        function initializePlanLogic(totalWeeks) {
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('change', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('tiroMaestroTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            });
+            if (localStorage.getItem('tiroMaestroTheme') === 'dark') { document.body.classList.add('dark-mode'); themeToggle.checked = true; }
+
+            const mobileNav = document.getElementById('mobile-nav');
+            const tabInputs = document.querySelectorAll('.tab-input');
+            const btnResetCurrent = document.getElementById('btn-reset-current-week');
+            function handleTabChange(e) {
+                if(e.target.checked) {
+                    const tabId = e.target.id;
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+                    document.getElementById(`content${tabId.replace('tab','')}`).style.display = 'block';
+                    mobileNav.value = tabId;
+                    
+                    if (tabId.includes('fitness')) {
+                        btnResetCurrent.style.display = 'none';
+                    } else {
+                        btnResetCurrent.style.display = 'inline-block';
+                        const weekNum = tabId.replace('tab', '');
+                        btnResetCurrent.dataset.week = weekNum;
+                        btnResetCurrent.textContent = `Reiniciar Semana ${weekNum}`;
+                    }
+                }
+            }
+            tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
+            mobileNav.addEventListener('change', (e) => {
+                const tabInput = document.getElementById(e.target.value);
+                if (tabInput) { tabInput.checked = true; tabInput.dispatchEvent(new Event('change')); }
+            });
+
+            function updateProgressForWeek(weekNumber) {
+                const weekContent = document.getElementById(`content${weekNumber}`);
+                if (!weekContent) return;
+                const checkboxes = weekContent.querySelectorAll('input[type="checkbox"]');
+                const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                const totalCount = checkboxes.length;
+                const percentage = (totalCount > 0) ? (checkedCount / totalCount) * 100 : 0;
+                const progressBarFill = weekContent.querySelector('.progress-bar-fill');
+                const taskCounter = weekContent.querySelector('.task-counter');
+                if(progressBarFill) { progressBarFill.style.width = `${percentage}%`; progressBarFill.textContent = `${Math.round(percentage)}%`; }
+                if(taskCounter) taskCounter.textContent = `Tareas: ${checkedCount} / ${totalCount}`;
+
+                const assessmentSection = weekContent.querySelector('.assessment-section');
+                if (assessmentSection) {
+                    assessmentSection.style.display = (checkedCount === totalCount && totalCount > 0) ? 'block' : 'none';
+                }
+            }
+
+            function getStorage() { return isGuest ? sessionStorage : localStorage; }
+            function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
+            function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
+
+            function saveState(e) {
+                if (!currentProfile) return;
+                const profiles = getProfiles();
+                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+                profiles[currentProfile].progress[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+                saveProfiles(profiles);
+            }
+
+            function loadState() {
+                if (!currentProfile) return;
+                const profiles = getProfiles();
+                const progress = profiles[currentProfile]?.progress || {};
+                document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
+                    if (progress[item.id] !== undefined) {
+                        if (item.type === 'checkbox') item.checked = progress[item.id];
+                        else item.value = progress[item.id];
+                    }
+                });
+            }
+
+            loadState();
+            for(let i=1; i<=totalWeeks; i++) updateProgressForWeek(i);
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(item => {
+                item.addEventListener('change', (e) => {
+                    saveState(e);
+                    const weekNumber = item.id.split('-')[0].replace('w','');
+                    updateProgressForWeek(parseInt(weekNumber, 10));
+                });
+            });
+             document.querySelectorAll('.diary-textarea').forEach(item => {
+                item.addEventListener('input', saveState);
+            });
+            
+            const resetModal = document.getElementById('reset-modal');
+            const modalText = resetModal.querySelector('p');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+            let weekToReset = null;
+            let resetScope = 'current';
+
+            btnResetCurrent.addEventListener('click', (e) => {
+                weekToReset = e.currentTarget.dataset.week; resetScope = 'current';
+                modalText.textContent = `¿Estás seguro de que quieres borrar el progreso de la Semana ${weekToReset}?`;
+                resetModal.style.display = 'flex';
+            });
+            document.getElementById('btn-reset-all').addEventListener('click', () => {
+                resetScope = 'all'; modalText.textContent = '¿Estás seguro de que quieres borrar el progreso de TODAS las semanas?';
+                resetModal.style.display = 'flex';
+            });
+            cancelBtn.addEventListener('click', () => resetModal.style.display = 'none');
+            
+            confirmBtn.addEventListener('click', () => {
+                if (resetScope === 'current' && weekToReset) resetWeek(weekToReset);
+                else if (resetScope === 'all') for (let i = 1; i <= totalWeeks; i++) resetWeek(i);
+                resetModal.style.display = 'none';
+            });
+
+            function resetWeek(weekNum) {
+                const weekContent = document.getElementById(`content${weekNum}`);
+                if(!weekContent) return;
+                const profiles = getProfiles();
+                if (!profiles[currentProfile]?.progress) return;
+                
+                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
+                    if (profiles[currentProfile].progress[item.id]) {
+                        delete profiles[currentProfile].progress[item.id];
+                    }
+                    if(item.type === 'checkbox') item.checked = false; else item.value = '';
+                });
+                saveProfiles(profiles);
+                updateProgressForWeek(weekNum);
+            }
+
+            const glossaryModal = document.getElementById('glossary-modal');
+            const termDefinitionModal = document.getElementById('term-definition-modal');
+            const tooltip = document.getElementById('tooltip');
+            
+            mainContainer.addEventListener('mouseover', (e) => {
+                if (glossaryModal.style.display === 'flex' || termDefinitionModal.style.display === 'flex') return;
+                if (e.target.classList.contains('glossary-term')) {
+                    const term = e.target.dataset.term;
+                    tooltip.innerHTML = `<strong>${term} / ${glossaryData[term].translation}</strong>: ${glossaryData[term].definition}`;
+                    tooltip.style.display = 'block';
+                    const rect = e.target.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + window.scrollX}px`;
+                    tooltip.style.top = `${rect.bottom + window.scrollY + 5}px`;
+                }
+            });
+             mainContainer.addEventListener('mouseout', (e) => {
+                if (e.target.classList.contains('glossary-term')) tooltip.style.display = 'none';
+            });
+             mainContainer.addEventListener('click', (e) => {
+                 if (e.target.classList.contains('glossary-term')) {
+                    tooltip.style.display = 'none';
+                    const term = e.target.dataset.term;
+                    const data = glossaryData[term];
+                    document.getElementById('term-modal-title').textContent = `${term} / ${data.translation}`;
+                    document.getElementById('term-modal-definition').textContent = data.definition;
+                    termDefinitionModal.style.display = 'flex';
+                 }
+             });
+            
+            document.querySelectorAll('.modal-close-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.target.closest('.modal-overlay').style.display = 'none';
+                });
+            });
+            document.querySelectorAll('.btn-get-recommendation').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const form = e.target.closest('form');
+                    const criteriaMet = form.querySelector('input[name="criteria-met"]:checked');
+                    const confidence = form.querySelector('select[name="confidence"]');
+                    if (!criteriaMet) {
+                        alert('Por favor, responde a todas las preguntas de la autoevaluación.');
+                        return;
+                    }
+                    const recommendationText = document.getElementById('recommendation-text');
+                    if (criteriaMet.value === 'no' || (criteriaMet.value === 'somewhat' && parseInt(confidence.value) < 3)) {
+                        recommendationText.innerHTML = "<strong>Recomendación: Repetir la semana.</strong><br>Parece que todavía hay conceptos clave que necesitan refuerzo. Repetir los ejercicios te ayudará a construir una base más sólida antes de avanzar. ¡La consistencia es la clave!";
+                    } else {
+                        recommendationText.innerHTML = "<strong>Recomendación: ¡Avanzar a la siguiente semana!</strong><br>¡Excelente trabajo! Has demostrado un buen dominio de los conceptos de esta semana. Estás listo para enfrentar nuevos desafíos.";
+                    }
+                    document.getElementById('recommendation-modal').style.display = 'flex';
+                });
+            });
+
+            document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
+            document.getElementById('btn-print').addEventListener('click', () => window.print());
+            
+            document.getElementById('btn-edit-plan').addEventListener('click', () => {
+                if (isGuest) { window.location.reload(); return; }
+                
+                const profiles = getProfiles();
+                const userConfig = profiles[currentProfile].config;
+                
+                setupForm.dataset.mode = 'edit';
+                setupForm.dataset.originalName = currentProfile;
+                document.getElementById('new-user-title').textContent = `Editar Perfil de ${currentProfile}`;
+                document.getElementById('user-name').value = currentProfile;
+                document.getElementById('user-name').disabled = false;
+                setupForm.querySelector('button[type="submit"]').textContent = 'Actualizar Mi Plan';
+                
+                document.querySelectorAll('#training-days-group input').forEach(cb => {
+                    cb.checked = userConfig.selectedDays.includes(cb.value);
+                });
+
+                document.getElementById('btn-cancel-edit').style.display = 'inline-block';
+                document.getElementById('back-button-container').style.display = 'none';
+                showModal(newUserModal);
+            });
+            document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+                 showModal(null); // Hides all modals
+                 mainContainer.style.display = 'block';
+            });
+            
+             const firstTab = document.querySelector('.tab-input');
+             if(firstTab) firstTab.dispatchEvent(new Event('change'));
+        }
+        
+        const glossaryContent = document.getElementById('glossary-content');
+        const sortedGlossary = Object.keys(glossaryData).sort((a, b) => a.localeCompare(b));
+        let glossaryHTML = '<dl>';
+        sortedGlossary.forEach(term => glossaryHTML += `<dt>${term} / ${glossaryData[term].translation}</dt><dd>${glossaryData[term].definition}</dd>`);
+        glossaryHTML += '</dl>';
+        glossaryContent.innerHTML = glossaryHTML;
+
+        // --- INITIALIZATION LOGIC ---
+        showModal(welcomeModal);
+
+        setupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const isEditMode = setupForm.dataset.mode === 'edit';
+            const userNameInput = document.getElementById('user-name');
+            const nameError = document.getElementById('name-error');
+            const daysError = document.getElementById('days-error');
+            const selectedCheckboxes = document.querySelectorAll('#training-days-group input:checked');
+            const selectedDays = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+            let isValid = true;
+            nameError.style.display = 'none'; daysError.style.display = 'none';
+            if (userNameInput.value.trim() === '') { nameError.style.display = 'block'; isValid = false; }
+            if (selectedDays.length < 2) { daysError.style.display = 'block'; isValid = false; }
+            if (!isValid) return;
+
+            const userName = userNameInput.value.trim();
+            const userConfig = { selectedDays };
+
+            if (isEditMode) {
+                const originalName = setupForm.dataset.originalName;
+                const profiles = getProfiles();
+                
+                if (originalName !== userName && profiles[userName]) {
+                    nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
+                    nameError.style.display = 'block';
+                    return;
+                }
+                
+                const currentProgress = profiles[originalName] ? profiles[originalName].progress : {};
+                if (originalName !== userName) {
+                    delete profiles[originalName];
+                }
+                
+                profiles[userName] = { config: userConfig, progress: currentProgress };
+                saveProfiles(profiles);
+                startSession(userName);
+
+            } else {
+                if(isGuest){
+                    sessionStorage.setItem(STORAGE_PREFIX, JSON.stringify({ [userName]: { config: userConfig, progress: {} } }));
+                    startSession(userName, userConfig);
+                } else {
+                    const profiles = getProfiles();
+                    if (profiles[userName]) {
+                        nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
+                        nameError.style.display = 'block';
+                        return;
+                    }
+                    profiles[userName] = { config: userConfig, progress: {} };
+                    saveProfiles(profiles);
+                    startSession(userName);
+                }
+            }
+            
+            const submitButton = setupForm.querySelector('button[type="submit"]');
+            submitButton.textContent = 'Crear Mi Plan';
+            userNameInput.disabled = false;
+            setupForm.removeAttribute('data-mode');
+            setupForm.removeAttribute('data-original-name');
+            setupForm.reset();
+        });
+    });
+    </script>
+</body>
+</html>
+
