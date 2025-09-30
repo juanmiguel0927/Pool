@@ -102,6 +102,7 @@
         .btn-reset-current { background-color: var(--secondary-color); }
         .btn-reset-all { background-color: var(--danger-color); }
         .btn-edit { background-color: var(--warning-color); }
+        .btn-change-user { background-color: var(--secondary-color); }
         
         h1 { text-align: center; color: var(--header-color); margin-bottom: 5px; }
         .credits, .user-welcome { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
@@ -378,6 +379,7 @@
                 <span style="margin-left: 8px;">Modo Oscuro</span>
             </div>
             <div class="action-buttons">
+                <button id="btn-change-user" class="btn-change-user">Cambiar Usuario</button>
                 <button id="btn-glossary" class="btn-glossary">Glosario</button>
                 <button id="btn-edit-plan" class="btn-edit">Editar Plan</button>
                 <button id="btn-print" class="btn-print">Imprimir / PDF</button>
@@ -541,7 +543,7 @@
             btn.addEventListener('click', () => showModal(welcomeModal));
         });
 
-        // --- CORRECTED Session Start ---
+        // --- Session Start ---
         function startSession(userName, config) {
             currentProfile = userName;
             isGuest = !!config; 
@@ -805,6 +807,7 @@
             function saveState(e) {
                 if (!currentProfile) return;
                 const profiles = getProfiles();
+                if (!profiles[currentProfile]) profiles[currentProfile] = { progress: {} }; // Ensure profile exists
                 if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
                 profiles[currentProfile].progress[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
                 saveProfiles(profiles);
@@ -938,6 +941,14 @@
             document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
             document.getElementById('btn-print').addEventListener('click', () => window.print());
             
+            // --- NEW: Change User Button Logic ---
+            document.getElementById('btn-change-user').addEventListener('click', () => {
+                mainContainer.style.display = 'none';
+                currentProfile = null;
+                isGuest = false;
+                showModal(welcomeModal);
+            });
+            
             document.getElementById('btn-edit-plan').addEventListener('click', () => {
                 if (isGuest) { window.location.reload(); return; }
                 
@@ -1044,5 +1055,4 @@
     </script>
 </body>
 </html>
-
 
