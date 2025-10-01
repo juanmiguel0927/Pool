@@ -410,6 +410,50 @@
         .reinforce-item { background-color: var(--day-section-bg); border-left: 4px solid var(--warning-color); padding: 15px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .reinforce-item-text { flex-grow: 1; }
         .reinforce-item-source { font-size: 0.85em; color: var(--secondary-color); font-style: italic; display: block; }
+        
+        /* New Style for My Notes List */
+        #all-notes-list { list-style: none; padding: 0; }
+        .note-item { 
+            background-color: var(--day-section-bg); 
+            border: 1px solid var(--border-color);
+            padding: 15px; 
+            margin-bottom: 15px; 
+            border-radius: 4px; 
+        }
+        .note-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .note-item-header strong {
+            color: var(--accent-color);
+        }
+        .note-content {
+            white-space: pre-wrap; /* Preserves new lines */
+            font-size: 0.9em;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .note-date {
+            font-size: 0.75em;
+            color: var(--secondary-color);
+            font-style: italic;
+            text-align: right;
+        }
+        .jump-to-note-btn { 
+            background-color: var(--success-color); 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 0.8em; 
+            font-weight: bold; 
+        }
+
 
         #streak-container { text-align: center; padding: 20px; background-color: var(--day-section-bg); border-radius: 8px; margin-bottom: 20px; }
         #streak-counter { font-size: 3rem; font-weight: bold; color: var(--accent-color); }
@@ -689,6 +733,8 @@
                 <button class="modal-close-btn">&times;</button>
             </div>
             <p id="task-notes-title" style="font-weight: bold;"></p>
+            <!-- Mostrar la fecha de última modificación -->
+            <p id="task-notes-last-modified" class="note-date" style="margin-top:-10px;"></p> 
             <textarea id="task-notes-textarea" class="diary-textarea" placeholder="Escribe aquí tus notas, sensaciones o recordatorios para este tiro..."></textarea>
             <div class="modal-buttons">
                 <button id="save-task-note-btn" style="background-color: var(--success-color); color: white;">Guardar Nota</button>
@@ -803,7 +849,7 @@
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
         { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
-        { id: 6, originalWeek: 2, title: 'Martes: Follow Shot y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' } ] },
+        { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' } ] },
         { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
         { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
         { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
@@ -819,7 +865,7 @@
         { id: 19, originalWeek: 5, title: 'Jueves: Scratches (Follow y Stun)', focus: '<strong>Aprender a no raspar</strong> ([[Scratch]]) con [[Follow]] y [[Stun]], identificando las zonas de peligro.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Follow Scratches (#178, #181):</b> Practique tiros que lleven la bola blanca directamente a la tronera. <strong>Objetivo:</strong> Conocer los ángulos de peligro.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Stun Scratches (#182, #184):</b> Tirar a una bola objetivo cerca del punto de cabeza o pie con [[stun]] causará un [[scratch]].', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}]},
         { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Scratches (#185-187):</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para el <strong>[[Scratch]]</strong>.'},
         { id: 21, originalWeek: 6, title: 'Lunes: Rail Shots (Fundamentos y Bridge)', focus: 'Mantener el taco nivelado y el [[puente]] estable cuando la bola está cerca de la banda.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Básicos en Rail (#143-144):</b> Practique golpear la bola objetivo y rail al mismo tiempo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>Rail Posicional (#145-146):</b> Use [[Follow]]/[[Draw]] para posicionar. Asegure un [[puente]] estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}]},
-        { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Running English en Rail (#155):</b> [[Sidespin]] en la dirección del rail &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>Técnica "[[Choking up]]" (#171):</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}]},
+        { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Running English en Rail (#155):</b> [[Sidespin]] en la dirección del rebote &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>Técnica "[[Choking up]]" (#171):</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}]},
         { id: 23, originalWeek: 6, title: 'Jueves: Banks, Kicks y Combinaciones', focus: 'Tiros de riesgo: usarlos solo como <strong>último recurso</strong>. Los [[Bank Shot]] son inconsistentes.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>[[Bank Shot]] (#188-191):</b> Un [[stroke]] más rápido acorta el ángulo de rebote de la bola objetivo.', goal: '10 Intentos | Meta: 4-6 Aciertos', type: 'Bank Shot'}, { id: 't2', text: '<b>[[Kick Shot]] (#192-194):</b> Vaya a dos bandas con la bola blanca para aterrizar lejos de la banda.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Kick Shot'}]},
         { id: 24, originalWeek: 6, title: 'Viernes: Test de Consistencia en el Rail', focus: 'Evaluar la consistencia en el uso de [[Follow]]/[[Stun]]/[[Sidespin]] en tiros complejos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de [[Bank Shot]] Posicional (#191):</b> Evalúe su capacidad para usar un [[Bank Shot]] para posicionar la bola blanca.', goal: '5 Intentos | Meta: 2-3 Aciertos', type: 'Bank Shot'}, { id: 't2', text: '<b>Análisis de Simplicidad:</b> Por cada tiro, piense si un tiro de <strong>[[Follow]]/[[Stun]]</strong> habría funcionado mejor.'}], criteria: 'Lograr <strong>[[Rail Shot]]</strong> y <strong>[[Bank Shot]]</strong> con control (6/10 veces).'},
         { id: 25, originalWeek: 7, title: 'Lunes: Tiros de Over Ball y Break', focus: 'Pruebas de fuego finales para los fundamentos ([[Break Shot]] y Elevación de taco).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Sobre Bolas (#198-199):</b> Requiere elevación del taco. Use <strong>[[choking up]]</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Especial'}, { id: 't2', text: '<b>[[Break Shot]] (#200):</b> Practique el power break. <strong>Enfoque:</strong> Controlar la bola blanca al centro.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Break Shot'}]},
@@ -899,6 +945,100 @@
             document.getElementById('alert-modal-title').textContent = title;
             document.getElementById('alert-modal-text').textContent = message;
             document.getElementById('alert-modal').style.display = 'flex';
+        }
+        
+        // NEW GLOBAL FUNCTION: findTaskById (moved from initializePlanLogic)
+        function findTaskById(taskId) {
+             if (!taskId) return null;
+             // taskId format is w[weekNum]-d[dayId]-[taskIdNum]
+             const [weekPart, dayPart, taskPart] = taskId.split('-');
+             const weekNum = parseInt(weekPart.replace('w', ''), 10);
+             // dayId corresponds to the 'id' in allTrainingDays
+             const dayId = parseInt(dayPart.replace('d', ''), 10);
+             const taskIdNum = taskPart;
+
+             const dayData = allTrainingDays.find(d => d.id === dayId);
+             const taskData = dayData?.tasks.find(t => t.id === taskIdNum);
+             
+             if (dayData && taskData) {
+                 return { dayData, taskData, weekNum };
+             }
+             return null;
+        }
+
+        // NEW GLOBAL FUNCTION: saveState (moved from initializePlanLogic)
+        function saveState(id, value, stateKey = null) {
+            if (!currentProfile) return;
+            const profiles = getProfiles();
+            if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
+            if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+
+            if (stateKey === 'taskNotes') {
+                if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
+                
+                if (value.trim() === '') {
+                     // Delete the note if it's empty
+                    delete profiles[currentProfile].progress[stateKey][id];
+                } else {
+                    // Keep existing timestamp if editing or create a new note structure
+                    const existingNote = profiles[currentProfile].progress[stateKey][id] || {};
+                    
+                    profiles[currentProfile].progress[stateKey][id] = {
+                        content: value,
+                        // Keep previous modified date if it exists and we're just updating content
+                        lastModified: new Date().toISOString()
+                    };
+                }
+            } else if (stateKey) {
+                if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
+                profiles[currentProfile].progress[stateKey][id] = value;
+            } else {
+                profiles[currentProfile].progress[id] = value;
+            }
+            saveProfiles(profiles);
+        }
+
+        // NEW GLOBAL FUNCTION: populateAllNotesList (moved from initializePlanLogic)
+        function populateAllNotesList(totalWeeks) {
+            const list = document.getElementById('all-notes-list');
+            const profiles = getProfiles();
+            if (!currentProfile || !profiles[currentProfile]) return;
+            // Notes are stored as an object where the key is the taskId and the value is {content, lastModified}
+            const taskNotes = profiles[currentProfile].progress?.taskNotes || {}; 
+            
+            list.innerHTML = ''; // Clear list
+            const hasNotes = Object.values(taskNotes).some(note => note.content && note.content.trim().length > 0);
+
+            if (!hasNotes) {
+                list.innerHTML = '<p>Aún no has guardado ninguna nota de ejercicio. Usa el icono 📝 junto a un ejercicio para crear tu primer apunte.</p>';
+                return;
+            }
+
+            // Get notes that actually have content and sort them by date (newest first)
+            const sortedNotes = Object.entries(taskNotes)
+                .filter(([, note]) => note.content && note.content.trim().length > 0)
+                .sort(([, a], [, b]) => new Date(b.lastModified) - new Date(a.lastModified));
+            
+            sortedNotes.forEach(([taskId, noteEntry]) => {
+                const taskInfo = findTaskById(taskId);
+                if (taskInfo) {
+                    const { dayData, taskData, weekNum } = taskInfo;
+                    const date = new Date(noteEntry.lastModified);
+                    
+                    const li = document.createElement('li');
+                    li.className = 'note-item';
+                    li.innerHTML = `
+                        <div class="note-item-header">
+                            <strong>${parseGlossaryTerms(taskData.text)}</strong>
+                            <button class="jump-to-note-btn" data-week="${weekNum}" data-day-section-id="day-section-${dayData.id}" data-task-id="${taskId}">Ir al Ejercicio</button>
+                        </div>
+                        <p class="note-content">${noteEntry.content}</p>
+                        <p class="note-date">Guardada: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}</p>
+                        <span class="reinforce-item-source">Fuente: Semana ${weekNum}, ${dayData.title}</span>
+                    `;
+                    list.appendChild(li);
+                }
+            });
         }
         
         // --- Welcome Modal Logic ---
@@ -1146,6 +1286,17 @@
                 <div id="achievements-grid"></div>
             </div>`;
             htmlContentWrapper += achievementsContent;
+            
+            // NEW TAB: Mis Notas
+            mobileNavOptions += `<option value="tab-notes">Mis Notas</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-notes" class="tab-input"><label for="tab-notes" class="tab-label">Mis Notas</label>`;
+            let notesContent = `<div id="content-notes" class="tab-content">
+                <h2>Mis Notas de Ejercicio</h2>
+                <p>Historial de todos los apuntes clave que has tomado durante tus sesiones de práctica, con enlaces directos al ejercicio.</p>
+                <ul id="all-notes-list"></ul>
+            </div>`;
+            htmlContentWrapper += notesContent;
+            // END NEW TAB
 
             mobileNavOptions += `<option value="tab-mental-game">Juego Mental</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-mental-game" class="tab-input"><label for="tab-mental-game" class="tab-label">Juego Mental</label>`;
@@ -1461,7 +1612,7 @@
                     document.getElementById(contentId).style.display = 'block';
                     mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis') || tabId.includes('mental-game')) {
+                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis') || tabId.includes('mental-game') || tabId.includes('notes')) {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
@@ -1474,6 +1625,7 @@
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
                     if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
                     if (tabId === 'tab-analysis') generatePerformanceChart(totalWeeks);
+                    if (tabId === 'tab-notes') populateAllNotesList(totalWeeks); // NEW: Populate notes list
                 }
             }
             tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
@@ -1500,20 +1652,6 @@
                 }
             }
             
-            function saveState(id, value, stateKey = null) {
-                if (!currentProfile) return;
-                const profiles = getProfiles();
-                if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
-                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
-
-                if (stateKey) {
-                    if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
-                    profiles[currentProfile].progress[stateKey][id] = value;
-                } else {
-                    profiles[currentProfile].progress[id] = value;
-                }
-                saveProfiles(profiles);
-            }
             
             function toggleMarkedShot(taskId) {
                 if (!currentProfile) return;
@@ -1558,7 +1696,10 @@
 
                 const notes = progress.taskNotes || {};
                  document.querySelectorAll('.btn-task-note').forEach(btn => {
-                    btn.classList.toggle('has-note', !!notes[btn.dataset.taskId]);
+                    // Check if the note has content (not just an empty object)
+                    const noteEntry = notes[btn.dataset.taskId];
+                    const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
+                    btn.classList.toggle('has-note', hasNote);
                 });
             }
 
@@ -1602,9 +1743,42 @@
                         if (daySection) {
                             daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             daySection.style.backgroundColor = 'var(--current-day-bg)';
-                            setTimeout(() => { daySection.style.backgroundColor = ''; }, 2000);
+                            setTimeout(() => {
+                                daySection.style.backgroundColor = '';
+                            }, 2000);
                         }
                     }, 100);
+                } else if (e.target.classList.contains('jump-to-note-btn')) { // NEW: Handle direct jump from Mis Notas
+                     const week = e.target.dataset.week;
+                     const daySectionId = e.target.dataset.daySectionId;
+                     showModal(null);
+ 
+                     const tabInput = document.getElementById(`tab${week}`);
+                     if (tabInput) {
+                         tabInput.checked = true;
+                         tabInput.dispatchEvent(new Event('change'));
+                     }
+                     
+                     setTimeout(() => {
+                         const daySection = document.getElementById(daySectionId);
+                         if (daySection) {
+                             daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                             // Highlight the button of the corresponding note
+                             const taskId = e.target.dataset.taskId;
+                             const noteButton = daySection.querySelector(`.btn-task-note[data-task-id="${taskId}"]`);
+                             if (noteButton) {
+                                 noteButton.style.border = '2px solid var(--focus-color)';
+                                 noteButton.style.borderRadius = '5px';
+                                 setTimeout(() => {
+                                     noteButton.style.border = 'none';
+                                 }, 3000);
+                             }
+                             daySection.style.backgroundColor = 'var(--current-day-bg)';
+                             setTimeout(() => {
+                                 daySection.style.backgroundColor = '';
+                             }, 2000);
+                         }
+                     }, 100);
                 } else if (e.target.classList.contains('btn-start-session')) {
                     const time = e.target.dataset.time;
                     startTimerSession(time);
@@ -1617,11 +1791,25 @@
                     const taskId = e.target.dataset.taskId;
                     const taskText = e.target.dataset.taskText;
                     const profiles = getProfiles();
-                    const note = profiles[currentProfile]?.progress?.taskNotes?.[taskId] || '';
+                    
+                    // MODIFIED: Fetch note object, not just content string
+                    const noteEntry = profiles[currentProfile]?.progress?.taskNotes?.[taskId] || { content: '', lastModified: null };
+                    
                     const notesModal = document.getElementById('task-notes-modal');
                     notesModal.dataset.taskId = taskId;
+                    
                     document.getElementById('task-notes-title').textContent = taskText;
-                    document.getElementById('task-notes-textarea').value = note;
+                    document.getElementById('task-notes-textarea').value = noteEntry.content || '';
+
+                    const lastModifiedElement = document.getElementById('task-notes-last-modified');
+                    if (noteEntry.lastModified) {
+                        const date = new Date(noteEntry.lastModified);
+                        lastModifiedElement.textContent = `Última modificación: ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                        lastModifiedElement.style.display = 'block';
+                    } else {
+                        lastModifiedElement.style.display = 'none';
+                    }
+
                     showModal(notesModal);
                 }
             });
@@ -2173,22 +2361,6 @@
             showModal(document.getElementById('rating-suggestion-modal'));
         }
 
-        function findTaskById(taskId) {
-             if (!taskId) return null;
-             const [weekPart, dayPart, taskPart] = taskId.split('-');
-             const weekNum = parseInt(weekPart.replace('w', ''), 10);
-             const dayId = parseInt(dayPart.replace('d', ''), 10);
-             const taskIdNum = taskPart;
-
-             const dayData = allTrainingDays.find(d => d.id === dayId);
-             const taskData = dayData?.tasks.find(t => t.id === taskIdNum);
-             
-             if (dayData && taskData) {
-                 return { dayData, taskData, weekNum };
-             }
-             return null;
-        }
-
         function initializeNewFeatures(totalWeeks) {
             document.getElementById('btn-hit').addEventListener('click', () => handleShotLoggerClick(true));
             document.getElementById('btn-miss').addEventListener('click', () => handleShotLoggerClick(false));
@@ -2201,12 +2373,28 @@
                 }
             });
 
+            // MODIFIED: Correct call to saveState for notes
             document.getElementById('save-task-note-btn').addEventListener('click', () => {
                 const notesModal = document.getElementById('task-notes-modal');
                 const taskId = notesModal.dataset.taskId;
                 const noteText = document.getElementById('task-notes-textarea').value;
-                saveState(taskId, noteText, 'taskNotes');
-                document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.length > 0);
+                
+                // Key fix: Ensure we use the 'taskNotes' key
+                saveState(taskId, noteText, 'taskNotes'); 
+                
+                // Update the UI button status
+                document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.trim().length > 0);
+                
+                // Ensure the 'Mis Notas' tab refreshes if it is open
+                if (document.getElementById('tab-notes').checked) {
+                    // Check if totalWeeks is defined before calling
+                    const profiles = getProfiles();
+                    const userConfig = profiles[currentProfile]?.config;
+                    const daysPerWeek = userConfig?.selectedDays.length || 1;
+                    const actualTotalWeeks = Math.ceil(allTrainingDays.length / daysPerWeek);
+                    populateAllNotesList(actualTotalWeeks);
+                }
+                
                 showModal(null);
             });
 
@@ -2433,4 +2621,3 @@
     </script>
 </body>
 </html>
-
