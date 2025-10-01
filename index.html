@@ -29,7 +29,7 @@
             --focus-color: #c0392b;
             --danger-color: #dc3545;
             --secondary-color: #6c757d;
-            --warning-color: #ff9800; /* Color for Edit button */
+            --warning-color: #ff9800; /* Color for Edit button & Stars */
         }
 
         body.dark-mode {
@@ -105,6 +105,7 @@
             transition: background-color 0.2s;
         }
         .btn-print, .btn-glossary { background-color: var(--accent-color); }
+        .btn-shot-of-the-day { background-color: var(--accent-color); }
         .btn-reset-current { background-color: var(--secondary-color); }
         .btn-reset-all { background-color: var(--danger-color); }
         .btn-edit { background-color: var(--warning-color); }
@@ -118,11 +119,26 @@
         h4 { color: var(--accent-color); margin-top: 20px; }
         h5 { margin-top: 0; color: var(--header-color); }
         ul { list-style-type: none; padding-left: 0; }
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 8px; }
-        .task-item input[type="checkbox"] { margin-right: 10px; margin-top: 4px; flex-shrink: 0; width: 18px; height: 18px; }
+        .task-item { display: flex; align-items: center; margin-bottom: 8px; }
+        .task-item input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; width: 18px; height: 18px; }
         .task-item label { flex-grow: 1; cursor: pointer; }
         .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
         
+        .star-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ccc;
+            margin-right: 10px;
+            transition: color 0.2s, transform 0.2s;
+            line-height: 1;
+        }
+        .star-icon:hover {
+            transform: scale(1.2);
+        }
+        .star-icon.marked {
+            color: var(--warning-color);
+        }
+
         .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: background-color 0.5s; }
         .day-focus { font-weight: bold; color: var(--focus-color); }
         
@@ -236,7 +252,7 @@
             font-size: 0.9em;
         }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content {
             max-width: 700px;
             text-align: left;
             height: auto;
@@ -261,6 +277,31 @@
         #glossary-content dl dd { margin-left: 20px; }
         .highlight-term { background-color: var(--important-note-bg); transition: background-color 0.5s; }
 
+        #reinforce-list {
+            list-style: none;
+            padding: 0;
+        }
+        .reinforce-item {
+            background-color: var(--day-section-bg);
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .reinforce-item-text {
+            flex-grow: 1;
+        }
+        .reinforce-item-source {
+            font-size: 0.85em;
+            color: var(--secondary-color);
+            font-style: italic;
+            display: block;
+        }
 
         @media (max-width: 768px) {
             .tabs-container .tab-label { display: none; }
@@ -381,6 +422,16 @@
         </div>
     </div>
 
+    <div id="shot-of-the-day-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2>🎲 Tiro del Día</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div id="shot-of-the-day-content"></div>
+        </div>
+    </div>
+
 
     <div id="tooltip"></div>
 
@@ -394,6 +445,7 @@
                 <span style="margin-left: 8px;">Modo Oscuro</span>
             </div>
             <div class="action-buttons">
+                <button id="btn-shot-of-the-day" class="btn-shot-of-the-day">Tiro del Día</button>
                 <button id="btn-change-user" class="btn-change-user">Cambiar Usuario</button>
                 <button id="btn-glossary" class="btn-glossary">Glosario</button>
                 <button id="btn-edit-plan" class="btn-edit">Editar Plan</button>
@@ -642,7 +694,11 @@
                         <div class="activity-block"><h5>Tareas: <span class="time-estimate">(${day.estTime})</span></h5><ul>`;
                     day.tasks.forEach(task => {
                         const checkboxId = `w${i}-d${day.id}-${task.id}`;
-                        dayHTML += `<li class="task-item"><input type="checkbox" id="${checkboxId}"><label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label></li>`;
+                        dayHTML += `<li class="task-item">
+                                        <span class="star-icon" data-task-id="${checkboxId}" title="Marcar como tiro problemático">&#9734;</span>
+                                        <input type="checkbox" id="${checkboxId}">
+                                        <label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label>
+                                    </li>`;
                     });
                     dayHTML += `</ul></div>`;
                     
@@ -697,6 +753,16 @@
             });
             fitnessContent += `</div></div>`;
             htmlContentWrapper += fitnessContent;
+
+            // NEW: Add Reinforce Tab
+            mobileNavOptions += `<option value="tab-reinforce">Tiros a Reforzar</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-reinforce" class="tab-input"><label for="tab-reinforce" class="tab-label">Tiros a Reforzar</label>`;
+            let reinforceContent = `<div id="content-reinforce" class="tab-content">
+                <h2>Mis Tiros a Reforzar (&#9733;)</h2>
+                <p>Aquí encontrarás una lista de todos los ejercicios que has marcado como problemáticos para un fácil acceso y repaso.</p>
+                <ul id="reinforce-list"></ul>
+            </div>`;
+            htmlContentWrapper += reinforceContent;
 
             // NEW: Add Progress Tab
             mobileNavOptions += `<option value="tab-progress">Mi Progreso</option>`;
@@ -796,7 +862,6 @@
             });
         }
         
-        // NEW: Function to generate the progress chart
         function generateProgressChart(totalWeeks) {
             const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
             if (!currentProfile || !profiles[currentProfile]) return;
@@ -887,13 +952,11 @@
             });
         }
 
-
         function initializePlanLogic(totalWeeks) {
             const themeToggle = document.getElementById('theme-toggle');
             themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('tiroMaestroTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-                // Redraw chart with new colors if it exists
                 if(document.getElementById('tab-progress').checked) {
                     generateProgressChart(totalWeeks);
                 }
@@ -912,7 +975,7 @@
                     document.getElementById(contentId).style.display = 'block';
                     mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness') || tabId.includes('progress')) {
+                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce')) {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
@@ -923,6 +986,9 @@
 
                     if (tabId === 'tab-progress') {
                         generateProgressChart(totalWeeks);
+                    }
+                    if (tabId === 'tab-reinforce') {
+                        populateReinforceList(totalWeeks);
                     }
                 }
             }
@@ -957,9 +1023,24 @@
             function saveState(e) {
                 if (!currentProfile) return;
                 const profiles = getProfiles();
-                if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} }; // Safety check
+                if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
                 if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
                 profiles[currentProfile].progress[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+                saveProfiles(profiles);
+            }
+
+            function toggleMarkedShot(taskId) {
+                if (!currentProfile) return;
+                const profiles = getProfiles();
+                if (!profiles[currentProfile]) return;
+                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+                if (!profiles[currentProfile].progress.markedShots) profiles[currentProfile].progress.markedShots = {};
+                
+                if (profiles[currentProfile].progress.markedShots[taskId]) {
+                    delete profiles[currentProfile].progress.markedShots[taskId];
+                } else {
+                    profiles[currentProfile].progress.markedShots[taskId] = true;
+                }
                 saveProfiles(profiles);
             }
 
@@ -967,6 +1048,8 @@
                 if (!currentProfile) return;
                 const profiles = getProfiles();
                 const progress = profiles[currentProfile]?.progress || {};
+                
+                // Load checkboxes and textareas
                 document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
                     if (progress[item.id] !== undefined) {
                         if (item.type === 'checkbox') item.checked = progress[item.id];
@@ -976,10 +1059,50 @@
                         else item.value = '';
                     }
                 });
+
+                // Load marked shots
+                const markedShots = progress.markedShots || {};
+                document.querySelectorAll('.star-icon').forEach(star => star.classList.remove('marked'));
+                for (const taskId in markedShots) {
+                    const star = document.querySelector(`.star-icon[data-task-id="${taskId}"]`);
+                    if (star) {
+                        star.classList.add('marked');
+                        star.innerHTML = '&#9733;';
+                    }
+                }
             }
 
             loadState();
             for(let i=1; i<=totalWeeks; i++) updateProgressForWeek(i);
+
+            mainContainer.addEventListener('click', e => {
+                if (e.target.classList.contains('star-icon')) {
+                    const star = e.target;
+                    star.classList.toggle('marked');
+                    star.innerHTML = star.classList.contains('marked') ? '&#9733;' : '&#9734;';
+                    toggleMarkedShot(star.dataset.taskId);
+                } else if (e.target.classList.contains('jump-to-task-btn')) {
+                    const week = e.target.dataset.week;
+                    const daySectionId = e.target.dataset.daySectionId;
+
+                    const tabInput = document.getElementById(`tab${week}`);
+                    if (tabInput) {
+                        tabInput.checked = true;
+                        tabInput.dispatchEvent(new Event('change'));
+                    }
+                    
+                    setTimeout(() => {
+                        const daySection = document.getElementById(daySectionId);
+                        if (daySection) {
+                            daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            daySection.style.backgroundColor = 'var(--current-day-bg)';
+                            setTimeout(() => {
+                                daySection.style.backgroundColor = '';
+                            }, 2000);
+                        }
+                    }, 100);
+                }
+            });
 
             document.querySelectorAll('input[type="checkbox"]').forEach(item => {
                 item.addEventListener('change', (e) => {
@@ -1005,14 +1128,22 @@
                 resetModal.style.display = 'flex';
             });
             document.getElementById('btn-reset-all').addEventListener('click', () => {
-                resetScope = 'all'; modalText.textContent = '¿Estás seguro de que quieres borrar el progreso de TODAS las semanas?';
+                resetScope = 'all'; modalText.textContent = '¿Estás seguro de que quieres borrar el progreso de TODAS las semanas? Esta acción también eliminará tus tiros marcados.';
                 resetModal.style.display = 'flex';
             });
             cancelBtn.addEventListener('click', () => resetModal.style.display = 'none');
             
             confirmBtn.addEventListener('click', () => {
                 if (resetScope === 'current' && weekToReset) resetWeek(weekToReset);
-                else if (resetScope === 'all') for (let i = 1; i <= totalWeeks; i++) resetWeek(i);
+                else if (resetScope === 'all') {
+                    const profiles = getProfiles();
+                    if (profiles[currentProfile]) {
+                        profiles[currentProfile].progress = {};
+                        saveProfiles(profiles);
+                    }
+                    // Full reload to clear state and UI
+                    window.location.reload();
+                }
                 resetModal.style.display = 'none';
             });
 
@@ -1022,11 +1153,19 @@
                 const profiles = getProfiles();
                 if (!profiles[currentProfile]?.progress) return;
                 
-                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
-                    if (profiles[currentProfile].progress[item.id]) {
-                        delete profiles[currentProfile].progress[item.id];
+                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea, .star-icon').forEach(item => {
+                    if(item.classList.contains('star-icon')) {
+                         if (profiles[currentProfile].progress.markedShots && profiles[currentProfile].progress.markedShots[item.dataset.taskId]) {
+                            delete profiles[currentProfile].progress.markedShots[item.dataset.taskId];
+                        }
+                        item.classList.remove('marked');
+                        item.innerHTML = '&#9734;';
+                    } else {
+                        if (profiles[currentProfile].progress[item.id]) {
+                            delete profiles[currentProfile].progress[item.id];
+                        }
+                        if(item.type === 'checkbox') item.checked = false; else item.value = '';
                     }
-                    if(item.type === 'checkbox') item.checked = false; else item.value = '';
                 });
                 saveProfiles(profiles);
                 updateProgressForWeek(weekNum);
@@ -1037,7 +1176,6 @@
             const tooltip = document.getElementById('tooltip');
             
             mainContainer.addEventListener('mouseover', (e) => {
-                if (glossaryModal.style.display === 'flex' || termDefinitionModal.style.display === 'flex') return;
                 if (e.target.classList.contains('glossary-term')) {
                     const term = e.target.dataset.term;
                     tooltip.innerHTML = `<strong>${term} / ${glossaryData[term].translation}</strong>: ${glossaryData[term].definition}`;
@@ -1152,6 +1290,7 @@
              if(firstTab) firstTab.dispatchEvent(new Event('change'));
 
              displayTodaysFocus(totalWeeks);
+             initializeNewFeatures(totalWeeks);
         }
         
         const glossaryContent = document.getElementById('glossary-content');
@@ -1224,6 +1363,91 @@
             setupForm.removeAttribute('data-original-name');
             setupForm.reset();
         });
+
+        function populateReinforceList(totalWeeks) {
+            const list = document.getElementById('reinforce-list');
+            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            if (!currentProfile || !profiles[currentProfile]) return;
+            const markedShots = profiles[currentProfile].progress?.markedShots || {};
+            
+            list.innerHTML = ''; // Clear list
+
+            if (Object.keys(markedShots).length === 0) {
+                list.innerHTML = '<p>Aún no has marcado ningún tiro como problemático. Haz clic en la estrella (&#9734;) junto a un ejercicio para añadirlo aquí.</p>';
+                return;
+            }
+
+            for (const taskId in markedShots) {
+                const [weekPart, dayPart, taskPart] = taskId.split('-');
+                const weekNum = parseInt(weekPart.replace('w', ''), 10);
+                const dayId = parseInt(dayPart.replace('d', ''), 10);
+                const taskIdNum = taskPart;
+
+                // Find the correct day and task
+                const dayData = allTrainingDays.find(d => d.id === dayId);
+                const taskData = dayData?.tasks.find(t => t.id === taskIdNum);
+
+                if(dayData && taskData) {
+                    const li = document.createElement('li');
+                    li.className = 'reinforce-item';
+                    li.innerHTML = `
+                        <div class="reinforce-item-text">
+                            ${parseGlossaryTerms(taskData.text)}
+                            <span class="reinforce-item-source">De: Semana ${weekNum}, ${dayData.title}</span>
+                        </div>
+                        <button class="jump-to-task-btn" data-week="${weekNum}" data-day-section-id="day-section-${dayId}" style="background-color: var(--accent-color); color: white; border:none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Ir al Ejercicio</button>
+                    `;
+                    list.appendChild(li);
+                }
+            }
+        }
+
+        function initializeNewFeatures(totalWeeks) {
+            const shotOfTheDayModal = document.getElementById('shot-of-the-day-modal');
+            const shotOfTheDayContent = document.getElementById('shot-of-the-day-content');
+
+            document.getElementById('btn-shot-of-the-day').addEventListener('click', () => {
+                const profiles = getProfiles();
+                const progress = profiles[currentProfile]?.progress || {};
+                const userConfig = profiles[currentProfile]?.config;
+                const daysPerWeek = userConfig.selectedDays.length;
+
+                let completedWeeksTasks = [];
+                let dayIndexOffset = 0;
+
+                for (let i = 1; i <= totalWeeks; i++) {
+                    const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
+                    if (daysInThisWeek.length === 0) break;
+                    
+                    const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => ({ taskId: `w${i}-d${d.id}-${t.id}`, day: d, task: t, week: i })));
+                    const totalTasks = tasksInWeek.length;
+                    const completedTasksCount = tasksInWeek.filter(t => progress[t.taskId]).length;
+
+                    if (totalTasks > 0 && completedTasksCount === totalTasks) {
+                        completedWeeksTasks.push(...tasksInWeek);
+                    }
+                    dayIndexOffset += daysPerWeek;
+                }
+
+                if (completedWeeksTasks.length === 0) {
+                     shotOfTheDayContent.innerHTML = `<p style="text-align: center;">Completa al menos una semana al 100% para desbloquear el "Tiro del Día". ¡Sigue practicando!</p>`;
+                } else {
+                    const randomTask = completedWeeksTasks[Math.floor(Math.random() * completedWeeksTasks.length)];
+                    shotOfTheDayContent.innerHTML = `
+                        <p>Para tu repaso de hoy, te sugerimos practicar:</p>
+                        <div class="reinforce-item">
+                           <div class="reinforce-item-text">
+                                ${parseGlossaryTerms(randomTask.task.text)}
+                                <span class="reinforce-item-source">De: Semana ${randomTask.week}, ${randomTask.day.title}</span>
+                           </div>
+                           <button class="jump-to-task-btn" data-week="${randomTask.week}" data-day-section-id="day-section-${randomTask.day.id}" style="background-color: var(--accent-color); color: white; border:none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Ir al Ejercicio</button>
+                        </div>
+                    `;
+                }
+                shotOfTheDayModal.style.display = 'flex';
+            });
+        }
+
     });
     </script>
 </body>
