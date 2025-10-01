@@ -552,13 +552,30 @@
 
             .billiard-ball { width: 80px; height: 80px; }
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
+            /* FIX: Asegurar que los botones no se solapen */
+            #welcome-modal .modal-buttons {
+                /* Usar grid para un control de espacio más preciso */
+                display: grid;
+                grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+                gap: 10px; /* Reduce el gap para que quepan */
+                padding: 0 10px;
+            }
+            #btn-guest-user {
+                grid-column: span 3; /* Hace que el botón Invitado ocupe todo el ancho */
+                margin-top: 20px; /* Espacio extra para que no se pegue */
+                margin-bottom: 40px; /* Espacio para su propia etiqueta */
+            }
             .ball-label {
                 font-size: 0.7rem; 
-                bottom: -35px; /* Más espacio abajo */
-                line-height: 1.2; /* Permite dos líneas de texto */
-                max-width: 100%; /* Asegura que no se desborde */
+                bottom: -35px; 
+                line-height: 1.2; 
+                max-width: 100%; 
             }
-            #welcome-modal .modal-buttons { gap: 15px; }
+            
+            /* Ajuste de botones individuales para el layout grid */
+            #btn-new-user, #btn-load-user, #btn-import-profile {
+                margin: 0;
+            }
 
             /* Asegurar que las listas y elementos de tarea se vean bien */
             .task-item {
@@ -940,6 +957,8 @@
             content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuando perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros tener éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
         }
     ];
+    // NOTA IMPORTANTE: Se han rellenado las URLs de los diagramas con la URL proporcionada 
+    // en el archivo ejercicios_url.md.
     const allTrainingDays = [
         { 
             id: 1, 
@@ -952,18 +971,21 @@
                 { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stop Shot' } 
             ], 
             keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'},
-            // ASOCIACIÓN DE PDF DE EJEMPLO
-            diagrama: 'https://www.wpa-pool.com/web/modules/docs/wpapoolrules.pdf' 
+            diagrama: 'https://www.aquicalmex.com/' 
         },
         { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ],
-        // ASOCIACIÓN DE PDF DE EJEMPLO
-        diagrama: 'https://static1.squarespace.com/static/555e5114e4b0c1c87cc9c3ff/t/5a73e51d41920251789c676d/1517489437293/Billiard+Shot+Layouts.pdf' },
-        { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
+        diagrama: 'https://www.aquicalmex.com/' },
+        { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ],
+        diagrama: 'https://www.aquicalmex.com/' },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
-        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
-        { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
-        { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
-        { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
+        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] ,
+        diagrama: 'https://www.aquicalmex.com/' },
+        { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ],
+        diagrama: 'https://www.aquicalmex.com/' },
+        { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ],
+        diagrama: 'https://www.aquicalmex.com/' },
+        { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).',
+        diagrama: 'https://www.aquicalmex.com/' },
         { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
         { id: 10, originalWeek: 3, title: 'Martes: Draw Shot de Distancia y Velocidad Rápida', focus: 'Mantener la rectitud del [[stroke]] en [[Draw]] de larga distancia y alta velocidad.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Largo (#78, #80):</b> El [[Draw]] se vuelve más difícil con la distancia.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Fast Speed (#81-83):</b> Mantenga siempre una muñeca y un agarre sueltos.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Draw'}]},
         { id: 11, originalWeek: 3, title: 'Jueves: Draw Crítico y Estrategia', focus: 'Usar [[Draw]] para posicionamiento fuera de la línea recta (tiros con rail).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Draw Crítico (#84):</b> Este tiro tiene demasiado ángulo para [[Draw]] recto; debe usar el rail.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Game Shark Simple (15 min):</b> Juegue 5 tiros de un set, donde el objetivo es usar el <strong>mínimo [[Draw]]</strong> posible.'}]},
