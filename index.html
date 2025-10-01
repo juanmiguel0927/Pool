@@ -119,7 +119,7 @@
         h4 { color: var(--accent-color); margin-top: 20px; }
         h5 { margin-top: 0; color: var(--header-color); }
         ul { list-style-type: none; padding-left: 0; }
-        .task-item { display: flex; align-items: center; margin-bottom: 8px; }
+        .task-item { display: flex; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
         .task-item input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; width: 18px; height: 18px; }
         .task-item label { flex-grow: 1; cursor: pointer; }
         .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
@@ -134,6 +134,28 @@
         }
         .star-icon:hover { transform: scale(1.2); }
         .star-icon.marked { color: var(--warning-color); }
+        
+        .rating-stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            margin-left: auto;
+            padding-left: 15px;
+        }
+        .rating-stars span {
+            font-size: 1.5rem;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .rating-stars:hover span,
+        .rating-stars span:hover,
+        .rating-stars span:hover ~ span {
+            color: var(--warning-color);
+        }
+        .rating-stars span.filled {
+             color: var(--warning-color);
+        }
 
         .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: background-color 0.5s; }
         .day-focus { font-weight: bold; color: var(--focus-color); }
@@ -257,6 +279,16 @@
             flex-direction: column;
         }
         
+        #session-modal .modal-content {
+            max-width: 500px;
+        }
+        #timer-display {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 20px 0;
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -510,6 +542,17 @@
         </div>
     </div>
 
+    <div id="session-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Sesión de Práctica</h3>
+            <p>¡Concéntrate! Cuando el tiempo termine, podrás registrar tus notas.</p>
+            <div id="timer-display">00:00</div>
+            <div class="modal-buttons">
+                <button id="session-stop-btn" style="background-color: var(--danger-color); color: white;">Terminar Sesión</button>
+            </div>
+        </div>
+    </div>
+
 
     <div id="tooltip"></div>
 
@@ -585,36 +628,36 @@
             focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].', 
             estTime: '45 min', 
             tasks: [ 
-                { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, 
-                { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos' } 
+                { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Control' }, 
+                { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stop Shot' } 
             ], 
             keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'},
             diagrama: '' 
         },
-        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
-        { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
+        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
+        { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
-        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos' } ] },
-        { id: 6, originalWeek: 2, title: 'Martes: Follow Shot y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos' } ] },
-        { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
-        { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
-        { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
-        { id: 10, originalWeek: 3, title: 'Martes: Draw Shot de Distancia y Velocidad Rápida', focus: 'Mantener la rectitud del [[stroke]] en [[Draw]] de larga distancia y alta velocidad.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Largo (#78, #80):</b> El [[Draw]] se vuelve más difícil con la distancia.', goal: '10 Intentos | Meta: 5-7 Aciertos'}, { id: 't2', text: '<b>Draw Fast Speed (#81-83):</b> Mantenga siempre una muñeca y un agarre sueltos.', goal: '10 Intentos | Meta: 5-7 Aciertos'}]},
-        { id: 11, originalWeek: 3, title: 'Jueves: Draw Crítico y Estrategia', focus: 'Usar [[Draw]] para posicionamiento fuera de la línea recta (tiros con rail).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Draw Crítico (#84):</b> Este tiro tiene demasiado ángulo para [[Draw]] recto; debe usar el rail.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>Game Shark Simple (15 min):</b> Juegue 5 tiros de un set, donde el objetivo es usar el <strong>mínimo [[Draw]]</strong> posible.'}]},
-        { id: 12, originalWeek: 3, title: 'Viernes: Test de Draw y Simplicidad', focus: 'Integrar [[Draw]] en la filosofía de <strong>simplicidad</strong> ([[Follow]]/[[Stun]] > [[Draw]]).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Draw Crítico (3x):</b> Repita Shot #84. Evalúe la inmovilidad de su cuerpo.', goal: '3 Intentos | Meta: 2-3 Aciertos'}, { id: 't2', text: '<b>Principios de Simplicidad:</b> Repase los principios de simplicidad (ej. prefiera tiros como el #22 [[Follow]] o #48 [[Stun]] antes que [[Draw]] o [[Sidespin]] complejos). Use menos efecto.'}], criteria: 'Lograr <strong>[[Draw]] Shot</strong> consistentemente (7/10 veces).'},
-        { id: 13, originalWeek: 4, title: 'Lunes: Sidespin Básico (Running vs. Hold-up)', focus: 'Entender el cambio de ángulo en el rebote causado por [[Sidespin]]. Usarlo solo cuando es <strong>necesario</strong>.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #87 (Running English):</b> [[Sidespin]] en la dirección del rebote &rarr; el ángulo se ensancha. <strong>Enfoque:</strong> Compensar [[Squirt]].', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Shot #91 (Hold-up English):</b> [[Sidespin]] opuesto al rebote &rarr; el ángulo se acorta.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
-        { id: 14, originalWeek: 4, title: 'Martes: Universal Positioning (Near Pocket)', focus: 'Controlar la bola blanca cuando la bola objetivo está cerca del bolsillo.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow/Stun Near Pocket (#114-116):</b> Usar Slow Speed para controlar la posición.', goal: '10 Intentos | Meta: 8-10 Aciertos'}, { id: 't2', text: '<b>Draw Near Pocket (#117):</b> Use Bottom spin para evitar que la bola blanca se "pegue" al rail.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't3', text: '<b>Sidespin Posicional (#127):</b> Use [[Sidespin]] para cambiar el ángulo off the rail. Compense [[Squirt]] (#128).', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
-        { id: 15, originalWeek: 4, title: 'Jueves: Sidespin y Draw Combinados', focus: 'Experimentar con [[Draw]] + [[Sidespin]] (que causa <strong>[[Swerve]]</strong>) y compensar el <strong>[[Squirt]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Sidespin Fast (#109-113):</b> [[Draw]] + [[Sidespin]] &rarr; [[Swerve]] (la bola blanca curva en la mesa). Evitar esto en juego real.', goal: '10 Intentos | Meta: 5-7 Aciertos'}, { id: 't2', text: '<b>Rutina Mental (15 min):</b> Practique la visualización de la curva de la bola blanca ([[Swerve]]) en 5 tiros imaginarios.'}]},
-        { id: 16, originalWeek: 4, title: 'Viernes: Test de Consistencia y Simplicidad', focus: 'Reconfirmar la filosofía: usar [[Sidespin]] solo cuando es esencial.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Sidespin Bank (#87):</b> Repita 5 veces. Evalúe si la bola blanca sigue el ángulo esperado.', goal: '5 Intentos | Meta: 3-4 Aciertos'}, { id: 't2', text: '<b>Simulación de Juego:</b> Juegue 5 sets de Shot Count. <strong>Regla:</strong> Si usa [[Sidespin]], pierda 1 punto de penalidad.'}], criteria: 'Lograr <strong>Sidespin [[Bank Shot]]</strong> y <strong>[[Universal Positioning]]</strong> (7/10 veces).'},
-        { id: 17, originalWeek: 5, title: 'Lunes: Universal Positioning II - Draw y Rail', focus: 'Tiros complejos con [[Draw]], velocidad y el uso de ángulos en lugar de spin.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Ángulos vs. Spin (#135):</b> Posicionar usando ángulos y velocidad es a menudo más fácil que usar mucho spin.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Draw Rápido (#131):</b> Fast Speed. Baje el punto de contacto para generar más spin con menos velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
-        { id: 18, originalWeek: 5, title: 'Martes: Universal Positioning III - Maestría', focus: 'Dominar los tiros de posicionamiento donde hay múltiples soluciones. <strong>Encontrar la más simple.</strong>', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros de Variedad (#138):</b> Cuando una bola está cerca de una tronera, puede usar una variedad de líneas, spins y velocidades.', goal: '10 Intentos | Meta: 8-10 Aciertos'}, { id: 't2', text: '<b>Tiro [[Carom]] (#139):</b> Requiere precisión. Use un agarre y una muñeca <strong>sueltos</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
-        { id: 19, originalWeek: 5, title: 'Jueves: Scratches (Follow y Stun)', focus: '<strong>Aprender a no raspar</strong> ([[Scratch]]) con [[Follow]] y [[Stun]], identificando las zonas de peligro.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Follow Scratches (#178, #181):</b> Practique tiros que lleven la bola blanca directamente a la tronera. <strong>Objetivo:</strong> Conocer los ángulos de peligro.', goal: '5 Intentos | Meta: 5 Aciertos'}, { id: 't2', text: '<b>Stun Scratches (#182, #184):</b> Tirar a una bola objetivo cerca del punto de cabeza o pie con [[stun]] causará un [[scratch]].', goal: '5 Intentos | Meta: 5 Aciertos'}]},
-        { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Scratches (#185-187):</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para el <strong>[[Scratch]]</strong>.'},
-        { id: 21, originalWeek: 6, title: 'Lunes: Rail Shots (Fundamentos y Bridge)', focus: 'Mantener el taco nivelado y el [[puente]] estable cuando la bola está cerca de la banda.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Básicos en Rail (#143-144):</b> Practique golpear la bola objetivo y rail al mismo tiempo.', goal: '10 Intentos | Meta: 7-9 Aciertos'}, { id: 't2', text: '<b>Rail Posicional (#145-146):</b> Use [[Follow]]/[[Draw]] para posicionar. Asegure un [[puente]] estable.', goal: '10 Intentos | Meta: 6-8 Aciertos'}]},
-        { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Running English en Rail (#155):</b> [[Sidespin]] en la dirección del rail &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>Técnica "[[Choking up]]" (#171):</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
-        { id: 23, originalWeek: 6, title: 'Jueves: Banks, Kicks y Combinaciones', focus: 'Tiros de riesgo: usarlos solo como <strong>último recurso</strong>. Los [[Bank Shot]] son inconsistentes.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>[[Bank Shot]] (#188-191):</b> Un [[stroke]] más rápido acorta el ángulo de rebote de la bola objetivo.', goal: '10 Intentos | Meta: 4-6 Aciertos'}, { id: 't2', text: '<b>[[Kick Shot]] (#192-194):</b> Vaya a dos bandas con la bola blanca para aterrizar lejos de la banda.', goal: '10 Intentos | Meta: 5-7 Aciertos'}]},
-        { id: 24, originalWeek: 6, title: 'Viernes: Test de Consistencia en el Rail', focus: 'Evaluar la consistencia en el uso de [[Follow]]/[[Stun]]/[[Sidespin]] en tiros complejos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de [[Bank Shot]] Posicional (#191):</b> Evalúe su capacidad para usar un [[Bank Shot]] para posicionar la bola blanca.', goal: '5 Intentos | Meta: 2-3 Aciertos'}, { id: 't2', text: '<b>Análisis de Simplicidad:</b> Por cada tiro, piense si un tiro de <strong>[[Follow]]/[[Stun]]</strong> habría funcionado mejor.'}], criteria: 'Lograr <strong>[[Rail Shot]]</strong> y <strong>[[Bank Shot]]</strong> con control (6/10 veces).'},
-        { id: 25, originalWeek: 7, title: 'Lunes: Tiros de Over Ball y Break', focus: 'Pruebas de fuego finales para los fundamentos ([[Break Shot]] y Elevación de taco).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Sobre Bolas (#198-199):</b> Requiere elevación del taco. Use <strong>[[choking up]]</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos'}, { id: 't2', text: '<b>[[Break Shot]] (#200):</b> Practique el power break. <strong>Enfoque:</strong> Controlar la bola blanca al centro.', goal: '10 Intentos | Meta: 7-9 Aciertos'}]},
+        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
+        { id: 6, originalWeek: 2, title: 'Martes: Follow Shot y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' } ] },
+        { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
+        { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
+        { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
+        { id: 10, originalWeek: 3, title: 'Martes: Draw Shot de Distancia y Velocidad Rápida', focus: 'Mantener la rectitud del [[stroke]] en [[Draw]] de larga distancia y alta velocidad.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Largo (#78, #80):</b> El [[Draw]] se vuelve más difícil con la distancia.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Fast Speed (#81-83):</b> Mantenga siempre una muñeca y un agarre sueltos.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Draw'}]},
+        { id: 11, originalWeek: 3, title: 'Jueves: Draw Crítico y Estrategia', focus: 'Usar [[Draw]] para posicionamiento fuera de la línea recta (tiros con rail).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Draw Crítico (#84):</b> Este tiro tiene demasiado ángulo para [[Draw]] recto; debe usar el rail.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Game Shark Simple (15 min):</b> Juegue 5 tiros de un set, donde el objetivo es usar el <strong>mínimo [[Draw]]</strong> posible.'}]},
+        { id: 12, originalWeek: 3, title: 'Viernes: Test de Draw y Simplicidad', focus: 'Integrar [[Draw]] en la filosofía de <strong>simplicidad</strong> ([[Follow]]/[[Stun]] > [[Draw]]).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Draw Crítico (3x):</b> Repita Shot #84. Evalúe la inmovilidad de su cuerpo.', goal: '3 Intentos | Meta: 2-3 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Principios de Simplicidad:</b> Repase los principios de simplicidad (ej. prefiera tiros como el #22 [[Follow]] o #48 [[Stun]] antes que [[Draw]] o [[Sidespin]] complejos). Use menos efecto.'}], criteria: 'Lograr <strong>[[Draw]] Shot</strong> consistentemente (7/10 veces).'},
+        { id: 13, originalWeek: 4, title: 'Lunes: Sidespin Básico (Running vs. Hold-up)', focus: 'Entender el cambio de ángulo en el rebote causado por [[Sidespin]]. Usarlo solo cuando es <strong>necesario</strong>.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #87 (Running English):</b> [[Sidespin]] en la dirección del rebote &rarr; el ángulo se ensancha. <strong>Enfoque:</strong> Compensar [[Squirt]].', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>Shot #91 (Hold-up English):</b> [[Sidespin]] opuesto al rebote &rarr; el ángulo se acorta.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Sidespin'}]},
+        { id: 14, originalWeek: 4, title: 'Martes: Universal Positioning (Near Pocket)', focus: 'Controlar la bola blanca cuando la bola objetivo está cerca del bolsillo.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow/Stun Near Pocket (#114-116):</b> Usar Slow Speed para controlar la posición.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>Draw Near Pocket (#117):</b> Use Bottom spin para evitar que la bola blanca se "pegue" al rail.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't3', text: '<b>Sidespin Posicional (#127):</b> Use [[Sidespin]] para cambiar el ángulo off the rail. Compense [[Squirt]] (#128).', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Posicionamiento'}]},
+        { id: 15, originalWeek: 4, title: 'Jueves: Sidespin y Draw Combinados', focus: 'Experimentar con [[Draw]] + [[Sidespin]] (que causa <strong>[[Swerve]]</strong>) y compensar el <strong>[[Squirt]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Sidespin Fast (#109-113):</b> [[Draw]] + [[Sidespin]] &rarr; [[Swerve]] (la bola blanca curva en la mesa). Evitar esto en juego real.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>Rutina Mental (15 min):</b> Practique la visualización de la curva de la bola blanca ([[Swerve]]) en 5 tiros imaginarios.'}]},
+        { id: 16, originalWeek: 4, title: 'Viernes: Test de Consistencia y Simplicidad', focus: 'Reconfirmar la filosofía: usar [[Sidespin]] solo cuando es esencial.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de Sidespin Bank (#87):</b> Repita 5 veces. Evalúe si la bola blanca sigue el ángulo esperado.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>Simulación de Juego:</b> Juegue 5 sets de Shot Count. <strong>Regla:</strong> Si usa [[Sidespin]], pierda 1 punto de penalidad.'}], criteria: 'Lograr <strong>Sidespin [[Bank Shot]]</strong> y <strong>[[Universal Positioning]]</strong> (7/10 veces).'},
+        { id: 17, originalWeek: 5, title: 'Lunes: Universal Positioning II - Draw y Rail', focus: 'Tiros complejos con [[Draw]], velocidad y el uso de ángulos en lugar de spin.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Ángulos vs. Spin (#135):</b> Posicionar usando ángulos y velocidad es a menudo más fácil que usar mucho spin.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>Draw Rápido (#131):</b> Fast Speed. Baje el punto de contacto para generar más spin con menos velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}]},
+        { id: 18, originalWeek: 5, title: 'Martes: Universal Positioning III - Maestría', focus: 'Dominar los tiros de posicionamiento donde hay múltiples soluciones. <strong>Encontrar la más simple.</strong>', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros de Variedad (#138):</b> Cuando una bola está cerca de una tronera, puede usar una variedad de líneas, spins y velocidades.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>Tiro [[Carom]] (#139):</b> Requiere precisión. Use un agarre y una muñeca <strong>sueltos</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Carom'}]},
+        { id: 19, originalWeek: 5, title: 'Jueves: Scratches (Follow y Stun)', focus: '<strong>Aprender a no raspar</strong> ([[Scratch]]) con [[Follow]] y [[Stun]], identificando las zonas de peligro.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Follow Scratches (#178, #181):</b> Practique tiros que lleven la bola blanca directamente a la tronera. <strong>Objetivo:</strong> Conocer los ángulos de peligro.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Stun Scratches (#182, #184):</b> Tirar a una bola objetivo cerca del punto de cabeza o pie con [[stun]] causará un [[scratch]].', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}]},
+        { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Scratches (#185-187):</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para el <strong>[[Scratch]]</strong>.'},
+        { id: 21, originalWeek: 6, title: 'Lunes: Rail Shots (Fundamentos y Bridge)', focus: 'Mantener el taco nivelado y el [[puente]] estable cuando la bola está cerca de la banda.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Básicos en Rail (#143-144):</b> Practique golpear la bola objetivo y rail al mismo tiempo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>Rail Posicional (#145-146):</b> Use [[Follow]]/[[Draw]] para posicionar. Asegure un [[puente]] estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}]},
+        { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Running English en Rail (#155):</b> [[Sidespin]] en la dirección del rail &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>Técnica "[[Choking up]]" (#171):</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}]},
+        { id: 23, originalWeek: 6, title: 'Jueves: Banks, Kicks y Combinaciones', focus: 'Tiros de riesgo: usarlos solo como <strong>último recurso</strong>. Los [[Bank Shot]] son inconsistentes.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>[[Bank Shot]] (#188-191):</b> Un [[stroke]] más rápido acorta el ángulo de rebote de la bola objetivo.', goal: '10 Intentos | Meta: 4-6 Aciertos', type: 'Bank Shot'}, { id: 't2', text: '<b>[[Kick Shot]] (#192-194):</b> Vaya a dos bandas con la bola blanca para aterrizar lejos de la banda.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Kick Shot'}]},
+        { id: 24, originalWeek: 6, title: 'Viernes: Test de Consistencia en el Rail', focus: 'Evaluar la consistencia en el uso de [[Follow]]/[[Stun]]/[[Sidespin]] en tiros complejos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test de [[Bank Shot]] Posicional (#191):</b> Evalúe su capacidad para usar un [[Bank Shot]] para posicionar la bola blanca.', goal: '5 Intentos | Meta: 2-3 Aciertos', type: 'Bank Shot'}, { id: 't2', text: '<b>Análisis de Simplicidad:</b> Por cada tiro, piense si un tiro de <strong>[[Follow]]/[[Stun]]</strong> habría funcionado mejor.'}], criteria: 'Lograr <strong>[[Rail Shot]]</strong> y <strong>[[Bank Shot]]</strong> con control (6/10 veces).'},
+        { id: 25, originalWeek: 7, title: 'Lunes: Tiros de Over Ball y Break', focus: 'Pruebas de fuego finales para los fundamentos ([[Break Shot]] y Elevación de taco).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Tiros Sobre Bolas (#198-199):</b> Requiere elevación del taco. Use <strong>[[choking up]]</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Especial'}, { id: 't2', text: '<b>[[Break Shot]] (#200):</b> Practique el power break. <strong>Enfoque:</strong> Controlar la bola blanca al centro.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Break Shot'}]},
         { id: 26, originalWeek: 7, title: 'Martes: Rutina y Adaptación Estratégica', focus: 'Aplicar la <strong>estrategia adaptativa</strong> (seleccionar tiros basados en el rendimiento actual).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Calentamiento Competitivo:</b> Inicie con tiros fáciles (#1-3) y progrese a difíciles.'}, { id: 't2', text: '<b>Estrategia Adaptativa:</b> Juegue 9-ball. Si está inconsistente, solo elija tiros de <strong>[[Stop Shot]] o [[Follow]]</strong>.'}, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de cardio para simular la fatiga de un torneo.'}]},
         { id: 27, originalWeek: 7, title: 'Jueves: Juego Mental y Presión', focus: 'Practicar la ejecución perfecta bajo presión simulada. <strong>El rendimiento es mental.</strong>', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Visualización de Torneo:</b> Imagínese en la mesa, con público. Visualice su rutina.'}, { id: 't2', text: '<b>Reinicio Bajo Presión:</b> Faille un tiro a propósito. Use su mantra ("Siguiente tiro") y reinicie la rutina.'}]},
         { id: 28, originalWeek: 7, title: 'Viernes: Competencia y Cierre del Ciclo', focus: 'Integrar todos los componentes de la "Torre de Entrenamiento".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Juego Competitivo:</b> Compita. <strong>Objetivo:</strong> No ganar, sino mantener el proceso.'}, { id: 't2', text: '<b>Análisis Post-Juego:</b> ¿En qué momento se rompió su rutina? Esos son los tiros que debe repetir.'}, { id: 't3', text: '<b>Cierre del Ciclo:</b> Vuelva a la Semana 1. La maestría requiere práctica continua.'}], criteria: 'Mantener un <strong>rendimiento constante</strong> bajo presión y aplicar la <strong>rutina completa</strong> en el 90% de los tiros.'}
@@ -666,6 +709,8 @@
         let currentProfile = null;
         let isGuest = false;
         let myProgressChart = null;
+        let myPerformanceChart = null;
+        let sessionTimerInterval = null;
 
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
@@ -821,7 +866,10 @@
                 daysInThisWeek.forEach((day, index) => {
                     const dayName = selectedDays[index % selectedDays.length];
                     let dayHTML = `<div class="day-section" id="day-section-${day.id}">
-                        <h4>${dayName}: ${day.title.split(': ')[1]}</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h4>${dayName}: ${day.title.split(': ')[1]}</h4>
+                            <button class="btn-start-session" data-time="${day.estTime}" data-day-id="${day.id}" style="background-color: var(--current-day-border); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; white-space: nowrap;">Iniciar Sesión</button>
+                        </div>
                         <p class="day-focus">Foco: ${parseGlossaryTerms(day.focus)}</p>
                         <div class="activity-block"><h5>Tareas: <span class="time-estimate">(${day.estTime})</span></h5><ul>`;
                     day.tasks.forEach(task => {
@@ -829,9 +877,14 @@
                         dayHTML += `<li class="task-item">
                                         <span class="star-icon" data-task-id="${checkboxId}" title="Marcar como tiro problemático">&#9734;</span>
                                         <input type="checkbox" id="${checkboxId}">
-                                        <label for="${checkboxId}">${parseGlossaryTerms(task.text)}</label>
-                                        ${task.videoUrl ? `<span class="video-icon" data-video-url="${task.videoUrl}" title="Ver vídeo de demostración">&#9654;</span>` : ''}
-                                        ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}
+                                        <label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label>
+                                        <div class="rating-stars" data-task-id="${checkboxId}">
+                                            <span data-value="5" title="5 Estrellas">&#9734;</span>
+                                            <span data-value="4" title="4 Estrellas">&#9734;</span>
+                                            <span data-value="3" title="3 Estrellas">&#9734;</span>
+                                            <span data-value="2" title="2 Estrellas">&#9734;</span>
+                                            <span data-value="1" title="1 Estrella">&#9734;</span>
+                                        </div>
                                     </li>`;
                     });
                     dayHTML += `</ul></div>`;
@@ -877,7 +930,7 @@
                 weekContent += `</div>`;
                 htmlContentWrapper += weekContent;
             }
-
+            
             // Add Achievements Tab
             mobileNavOptions += `<option value="tab-achievements">Logros</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-achievements" class="tab-input"><label for="tab-achievements" class="tab-label">Logros</label>`;
@@ -910,6 +963,18 @@
                 <ul id="reinforce-list"></ul>
             </div>`;
             htmlContentWrapper += reinforceContent;
+            
+            // Add Analysis Tab
+            mobileNavOptions += `<option value="tab-analysis">Análisis</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-analysis" class="tab-input"><label for="tab-analysis" class="tab-label">Análisis</label>`;
+            let analysisContent = `<div id="content-analysis" class="tab-content">
+                <h2>Análisis de Rendimiento</h2>
+                <p>Este gráfico muestra tu calificación promedio por tipo de tiro. Te ayuda a identificar visualmente tus fortalezas y áreas a mejorar.</p>
+                <div style="width: 100%; max-width: 600px; margin: 20px auto; padding: 20px; background: var(--day-section-bg); border-radius: 5px;">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>`;
+            htmlContentWrapper += analysisContent;
 
             // Add Progress Tab
             mobileNavOptions += `<option value="tab-progress">Mi Progreso</option>`;
@@ -1098,6 +1163,86 @@
                 }
             });
         }
+        
+        function generatePerformanceChart(totalWeeks) {
+            const profiles = getProfiles();
+            if (!currentProfile || !profiles[currentProfile]) return;
+            const progress = profiles[currentProfile].progress || {};
+            const ratings = progress.ratings || {};
+            
+            const performanceData = {};
+            
+            allTrainingDays.forEach(day => {
+                day.tasks.forEach(task => {
+                    if (task.type) {
+                        if (!performanceData[task.type]) {
+                            performanceData[task.type] = { total: 0, count: 0 };
+                        }
+                        const weekNum = Math.floor(allTrainingDays.findIndex(d => d.id === day.id) / profiles[currentProfile].config.selectedDays.length) + 1;
+                        const taskId = `w${weekNum}-d${day.id}-${task.id}`;
+                        if (ratings[taskId]) {
+                            performanceData[task.type].total += ratings[taskId];
+                            performanceData[task.type].count++;
+                        }
+                    }
+                });
+            });
+
+            const labels = Object.keys(performanceData);
+            const data = labels.map(label => {
+                const item = performanceData[label];
+                return item.count > 0 ? (item.total / item.count) : 0;
+            });
+
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            if (myPerformanceChart) {
+                myPerformanceChart.destroy();
+            }
+            
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
+            const fontColor = isDarkMode ? '#e0e0e0' : '#333';
+            const angleColor = isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)';
+
+            myPerformanceChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rendimiento Promedio',
+                        data: data,
+                        fill: true,
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        borderColor: 'rgb(52, 152, 219)',
+                        pointBackgroundColor: 'rgb(52, 152, 219)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(52, 152, 219)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: { color: angleColor },
+                            grid: { color: gridColor },
+                            pointLabels: { color: fontColor, font: { size: 14 } },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                color: fontColor,
+                                stepSize: 1,
+                                max: 5,
+                                min: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
 
         function initializePlanLogic(totalWeeks) {
             const themeToggle = document.getElementById('theme-toggle');
@@ -1106,6 +1251,9 @@
                 localStorage.setItem('tiroMaestroTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
                 if(document.getElementById('tab-progress').checked) {
                     generateProgressChart(totalWeeks);
+                }
+                 if(document.getElementById('tab-analysis').checked) {
+                    generatePerformanceChart(totalWeeks);
                 }
             });
             if (localStorage.getItem('tiroMaestroTheme') === 'dark') { document.body.classList.add('dark-mode'); themeToggle.checked = true; }
@@ -1122,7 +1270,7 @@
                     document.getElementById(contentId).style.display = 'block';
                     mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements')) {
+                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis')) {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
@@ -1131,15 +1279,10 @@
                         btnResetCurrent.textContent = `Reiniciar Semana ${weekNum}`;
                     }
 
-                    if (tabId === 'tab-progress') {
-                        generateProgressChart(totalWeeks);
-                    }
-                    if (tabId === 'tab-reinforce') {
-                        populateReinforceList(totalWeeks);
-                    }
-                    if (tabId === 'tab-achievements') {
-                        populateAchievementsTab(totalWeeks);
-                    }
+                    if (tabId === 'tab-progress') generateProgressChart(totalWeeks);
+                    if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
+                    if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
+                    if (tabId === 'tab-analysis') generatePerformanceChart(totalWeeks);
                 }
             }
             tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
@@ -1165,15 +1308,31 @@
                     assessmentSection.style.display = (checkedCount === totalCount && totalCount > 0) ? 'block' : 'none';
                 }
             }
-
-            function saveState(e) {
-                if (!currentProfile) return;
+            
+            function saveState(id, value) {
+                 if (!currentProfile) return;
                 const profiles = getProfiles();
                 if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
                 if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
-                profiles[currentProfile].progress[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+                profiles[currentProfile].progress[id] = value;
                 saveProfiles(profiles);
             }
+            
+            function saveRating(taskId, rating) {
+                if (!currentProfile) return;
+                const profiles = getProfiles();
+                if (!profiles[currentProfile]) return;
+                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+                if (!profiles[currentProfile].progress.ratings) profiles[currentProfile].progress.ratings = {};
+                
+                if (rating === 0) {
+                    delete profiles[currentProfile].progress.ratings[taskId];
+                } else {
+                    profiles[currentProfile].progress.ratings[taskId] = rating;
+                }
+                saveProfiles(profiles);
+            }
+
 
             function toggleMarkedShot(taskId) {
                 if (!currentProfile) return;
@@ -1195,7 +1354,6 @@
                 const profiles = getProfiles();
                 const progress = profiles[currentProfile]?.progress || {};
                 
-                // Load checkboxes and textareas
                 document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
                     if (progress[item.id] !== undefined) {
                         if (item.type === 'checkbox') item.checked = progress[item.id];
@@ -1206,7 +1364,6 @@
                     }
                 });
 
-                // Load marked shots
                 const markedShots = progress.markedShots || {};
                 document.querySelectorAll('.star-icon').forEach(star => {
                     star.classList.remove('marked');
@@ -1219,6 +1376,24 @@
                         star.innerHTML = '&#9733;';
                     }
                 }
+                
+                const ratings = progress.ratings || {};
+                document.querySelectorAll('.rating-stars').forEach(container => {
+                    const taskId = container.dataset.taskId;
+                    const rating = ratings[taskId];
+                    if (rating) {
+                        const stars = container.querySelectorAll('span');
+                        stars.forEach(star => {
+                            if (star.dataset.value <= rating) {
+                                star.classList.add('filled');
+                                star.innerHTML = '&#9733;';
+                            } else {
+                                star.classList.remove('filled');
+                                star.innerHTML = '&#9734;';
+                            }
+                        });
+                    }
+                });
             }
 
             loadState();
@@ -1230,6 +1405,39 @@
                     star.classList.toggle('marked');
                     star.innerHTML = star.classList.contains('marked') ? '&#9733;' : '&#9734;';
                     toggleMarkedShot(star.dataset.taskId);
+                } else if (e.target.closest('.rating-stars')) {
+                    const star = e.target;
+                    const container = e.target.closest('.rating-stars');
+                    if (star.tagName !== 'SPAN') return;
+                    
+                    const newRating = parseInt(star.dataset.value, 10);
+                    const taskId = container.dataset.taskId;
+
+                    const profiles = getProfiles();
+                    const currentRating = profiles[currentProfile]?.progress?.ratings?.[taskId];
+
+                    let finalRating;
+
+                    if (currentRating === newRating) {
+                        finalRating = 0; // Clicked the same star, so reset
+                    } else {
+                        finalRating = newRating;
+                    }
+
+                    saveRating(taskId, finalRating);
+                    
+                    const allStars = container.querySelectorAll('span');
+                    allStars.forEach(s => {
+                        s.classList.remove('filled');
+                        s.innerHTML = '&#9734;';
+                    });
+
+                    if (finalRating > 0) {
+                        for (let i = 0; i < finalRating; i++) {
+                            allStars[4-i].classList.add('filled');
+                            allStars[4-i].innerHTML = '&#9733;';
+                        }
+                    }
                 } else if (e.target.classList.contains('jump-to-task-btn')) {
                     const week = e.target.dataset.week;
                     const daySectionId = e.target.dataset.daySectionId;
@@ -1253,17 +1461,16 @@
                             }, 2000);
                         }
                     }, 100);
-                } else if (e.target.classList.contains('video-icon')) {
-                    const videoModal = document.getElementById('video-modal');
-                    const videoIframe = document.getElementById('video-iframe');
-                    videoIframe.src = e.target.dataset.videoUrl;
-                    videoModal.style.display = 'flex';
+                } else if (e.target.classList.contains('btn-start-session')) {
+                    const timeStr = e.target.dataset.time;
+                    const dayId = e.target.dataset.dayId;
+                    startSessionMode(timeStr, dayId);
                 }
             });
 
             document.querySelectorAll('input[type="checkbox"]').forEach(item => {
                 item.addEventListener('change', (e) => {
-                    saveState(e);
+                    saveState(e.target.id, e.target.checked);
                     const weekNumber = item.id.split('-')[0].replace('w','');
                     updateProgressForWeek(parseInt(weekNumber, 10));
                     updatePracticeStreak(totalWeeks);
@@ -1271,7 +1478,7 @@
                 });
             });
              document.querySelectorAll('.diary-textarea').forEach(item => {
-                item.addEventListener('input', saveState);
+                item.addEventListener('input', e => saveState(e.target.id, e.target.value));
             });
             
             const resetModal = document.getElementById('reset-modal');
@@ -1312,16 +1519,26 @@
                 const profiles = getProfiles();
                 if (!profiles[currentProfile]?.progress) return;
                 
-                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea, .star-icon').forEach(item => {
+                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea, .star-icon, .rating-stars').forEach(item => {
+                    const progress = profiles[currentProfile].progress;
                     if(item.classList.contains('star-icon')) {
-                         if (profiles[currentProfile].progress.markedShots && profiles[currentProfile].progress.markedShots[item.dataset.taskId]) {
-                            delete profiles[currentProfile].progress.markedShots[item.dataset.taskId];
+                         if (progress.markedShots && progress.markedShots[item.dataset.taskId]) {
+                            delete progress.markedShots[item.dataset.taskId];
                         }
                         item.classList.remove('marked');
                         item.innerHTML = '&#9734;';
-                    } else {
-                        if (profiles[currentProfile].progress[item.id]) {
-                            delete profiles[currentProfile].progress[item.id];
+                    } else if (item.classList.contains('rating-stars')) {
+                        if(progress.ratings && progress.ratings[item.dataset.taskId]) {
+                            delete progress.ratings[item.dataset.taskId];
+                        }
+                        item.querySelectorAll('span').forEach(star => {
+                            star.classList.remove('filled');
+                            star.innerHTML = '&#9734;';
+                        });
+                    }
+                    else {
+                        if (progress[item.id]) {
+                            delete progress[item.id];
                         }
                         if(item.type === 'checkbox') item.checked = false; else item.value = '';
                     }
@@ -1360,11 +1577,7 @@
             
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const modal = e.target.closest('.modal-overlay');
-                    if (modal.id === 'video-modal') {
-                        document.getElementById('video-iframe').src = '';
-                    }
-                    modal.style.display = 'none';
+                    e.target.closest('.modal-overlay').style.display = 'none';
                 });
             });
             
@@ -1416,10 +1629,10 @@
                 mainContainer.style.display = 'none';
                 currentProfile = null;
                 isGuest = false;
-                if(myProgressChart) {
-                    myProgressChart.destroy();
-                    myProgressChart = null;
-                }
+                if(myProgressChart) myProgressChart.destroy();
+                if(myPerformanceChart) myPerformanceChart.destroy();
+                myProgressChart = null;
+                myPerformanceChart = null;
                 showModal(welcomeModal);
             });
 
@@ -1661,9 +1874,20 @@
                 const userConfig = profiles[currentProfile]?.config;
                 const daysPerWeek = userConfig.selectedDays.length;
 
+                const markedShots = progress.markedShots || {};
+                const ratings = progress.ratings || {};
+
+                // 1. Prioritize marked shots
+                const markedShotIds = Object.keys(markedShots);
+                if (markedShotIds.length > 0) {
+                    const randomMarkedId = markedShotIds[Math.floor(Math.random() * markedShotIds.length)];
+                    displayIntelligentShot(randomMarkedId, "Reforzar un tiro problemático:");
+                    return;
+                }
+
+                // 2. Find lowest rated shot from completed weeks
                 let completedWeeksTasks = [];
                 let dayIndexOffset = 0;
-
                 for (let i = 1; i <= totalWeeks; i++) {
                     const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
                     if (daysInThisWeek.length === 0) break;
@@ -1678,23 +1902,46 @@
                     dayIndexOffset += daysPerWeek;
                 }
 
-                if (completedWeeksTasks.length === 0) {
-                     shotOfTheDayContent.innerHTML = `<p style="text-align: center;">Completa al menos una semana al 100% para desbloquear el "Tiro del Día". ¡Sigue practicando!</p>`;
-                } else {
+                const lowRatedTasks = completedWeeksTasks.filter(t => ratings[t.taskId] && ratings[t.taskId] < 3);
+                 if (lowRatedTasks.length > 0) {
+                    const randomLowRated = lowRatedTasks[Math.floor(Math.random() * lowRatedTasks.length)];
+                    displayIntelligentShot(randomLowRated.taskId, "Reforzar un tiro con bajo rendimiento:");
+                    return;
+                }
+
+                // 3. Fallback to random shot from completed weeks
+                if (completedWeeksTasks.length > 0) {
                     const randomTask = completedWeeksTasks[Math.floor(Math.random() * completedWeeksTasks.length)];
-                    shotOfTheDayContent.innerHTML = `
-                        <p>Para tu repaso de hoy, te sugerimos practicar:</p>
-                        <div class="reinforce-item">
-                           <div class="reinforce-item-text">
-                                ${parseGlossaryTerms(randomTask.task.text)}
-                                <span class="reinforce-item-source">De: Semana ${randomTask.week}, ${randomTask.day.title}</span>
-                           </div>
-                           <button class="jump-to-task-btn" data-week="${randomTask.week}" data-day-section-id="day-section-${randomTask.day.id}" style="background-color: var(--accent-color); color: white; border:none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Ir al Ejercicio</button>
-                        </div>
-                    `;
+                    displayIntelligentShot(randomTask.taskId, "Para repasar, te sugerimos practicar:");
+                } else {
+                     shotOfTheDayContent.innerHTML = `<p style="text-align: center;">Completa al menos una semana al 100% para desbloquear el "Tiro del Día". ¡Sigue practicando!</p>`;
                 }
                 shotOfTheDayModal.style.display = 'flex';
             });
+
+            function displayIntelligentShot(taskId, reasonText) {
+                 const [weekPart, dayPart, taskPart] = taskId.split('-');
+                const weekNum = parseInt(weekPart.replace('w', ''), 10);
+                const dayId = parseInt(dayPart.replace('d', ''), 10);
+                const taskIdNum = taskPart;
+
+                const dayData = allTrainingDays.find(d => d.id === dayId);
+                const taskData = dayData?.tasks.find(t => t.id === taskIdNum);
+
+                if (dayData && taskData) {
+                    shotOfTheDayContent.innerHTML = `
+                        <p>${reasonText}</p>
+                        <div class="reinforce-item">
+                           <div class="reinforce-item-text">
+                                ${parseGlossaryTerms(taskData.text)}
+                                <span class="reinforce-item-source">De: Semana ${weekNum}, ${dayData.title}</span>
+                           </div>
+                           <button class="jump-to-task-btn" data-week="${weekNum}" data-day-section-id="day-section-${dayId}" style="background-color: var(--accent-color); color: white; border:none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Ir al Ejercicio</button>
+                        </div>
+                    `;
+                    shotOfTheDayModal.style.display = 'flex';
+                }
+            }
         }
         
         function populateAchievementsTab(totalWeeks) {
