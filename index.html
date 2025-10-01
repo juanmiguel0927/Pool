@@ -124,7 +124,7 @@
         .task-item label { flex-grow: 1; cursor: pointer; }
         .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
         
-        .star-icon, .video-icon {
+        .star-icon {
             cursor: pointer;
             font-size: 1.5rem;
             color: #ccc;
@@ -132,9 +132,8 @@
             transition: color 0.2s, transform 0.2s;
             line-height: 1;
         }
-        .star-icon:hover, .video-icon:hover { transform: scale(1.2); }
+        .star-icon:hover { transform: scale(1.2); }
         .star-icon.marked { color: var(--warning-color); }
-        .video-icon { color: var(--accent-color); font-size: 1.3rem; }
 
         .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: background-color 0.5s; }
         .day-focus { font-weight: bold; color: var(--focus-color); }
@@ -249,7 +248,7 @@
             font-size: 0.9em;
         }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #video-modal .modal-content, #achievement-unlocked-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content {
             max-width: 700px;
             text-align: left;
             height: auto;
@@ -258,20 +257,6 @@
             flex-direction: column;
         }
         
-        #video-modal .modal-content {
-            padding: 10px;
-            aspect-ratio: 16/9;
-            height: auto;
-            width: 90%;
-            max-width: 800px;
-        }
-
-        #video-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -279,11 +264,6 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 15px;
-        }
-        #video-modal .modal-header {
-            padding: 10px 15px;
-            margin: 0;
-            border: none;
         }
         .modal-header h2 { margin: 0; border: none; }
         .modal-close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; color: var(--text-color); }
@@ -520,15 +500,6 @@
         </div>
     </div>
 
-    <div id="video-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button class="modal-close-btn" style="color: white; text-shadow: 1px 1px 2px black;">&times;</button>
-            </div>
-            <iframe id="video-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-    </div>
-
     <div id="achievement-unlocked-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="text-align: center;">
             <h2 style="color: var(--warning-color);">¡Logro Desbloqueado!</h2>
@@ -615,12 +586,12 @@
             estTime: '45 min', 
             tasks: [ 
                 { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, 
-                { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', videoUrl: 'https://www.youtube.com/embed/2a5i301jt0g' } 
+                { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos' } 
             ], 
             keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'},
             diagrama: '' 
         },
-        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', videoUrl: 'https://www.youtube.com/embed/U389_f2oM_g' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
+        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
         { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos' } ] },
