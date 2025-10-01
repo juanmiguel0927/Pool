@@ -938,6 +938,41 @@
                 return cleanTerm;
             });
         }
+        
+        // --- Core Application Logic Functions ---
+
+        function saveRating(taskId, rating) {
+            if (!currentProfile) return;
+            const profiles = getProfiles();
+            if (!profiles[currentProfile]) return;
+            if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+            if (!profiles[currentProfile].progress.ratings) profiles[currentProfile].progress.ratings = {};
+            
+            if (rating === 0) {
+                delete profiles[currentProfile].progress.ratings[taskId];
+            } else {
+                profiles[currentProfile].progress.ratings[taskId] = rating;
+            }
+            saveProfiles(profiles);
+        }
+
+        function updateStarsUI(taskId, rating) {
+            const container = document.querySelector(`.rating-stars[data-task-id="${taskId}"]`);
+            if (!container) return;
+            
+            const allStars = container.querySelectorAll('span');
+            allStars.forEach(s => {
+                s.classList.remove('filled');
+                s.innerHTML = '&#9734;';
+            });
+
+            if (rating > 0) {
+                for (let i = 0; i < rating; i++) {
+                    allStars[4-i].classList.add('filled');
+                    allStars[4-i].innerHTML = '&#9733;';
+                }
+            }
+        }
 
         function generatePlan(userName, selectedDays) {
             document.getElementById('user-welcome-message').textContent = `Plan de Entrenamiento para: ${userName}`;
@@ -1422,22 +1457,6 @@
                 saveProfiles(profiles);
             }
             
-            function saveRating(taskId, rating) {
-                if (!currentProfile) return;
-                const profiles = getProfiles();
-                if (!profiles[currentProfile]) return;
-                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
-                if (!profiles[currentProfile].progress.ratings) profiles[currentProfile].progress.ratings = {};
-                
-                if (rating === 0) {
-                    delete profiles[currentProfile].progress.ratings[taskId];
-                } else {
-                    profiles[currentProfile].progress.ratings[taskId] = rating;
-                }
-                saveProfiles(profiles);
-            }
-
-
             function toggleMarkedShot(taskId) {
                 if (!currentProfile) return;
                 const profiles = getProfiles();
@@ -1661,6 +1680,7 @@
                     }
                 });
             });
+
             
             document.querySelectorAll('.btn-get-recommendation').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -1783,6 +1803,14 @@
         
         document.getElementById('alert-ok').addEventListener('click', () => {
             document.getElementById('alert-modal').style.display = 'none';
+        });
+
+        document.getElementById('session-stop-btn').addEventListener('click', () => {
+            showModal(null);
+            if (sessionTimerInterval) {
+                clearInterval(sessionTimerInterval);
+                sessionTimerInterval = null;
+            }
         });
 
         document.getElementById('achievement-ok-btn').addEventListener('click', () => {
@@ -1939,24 +1967,6 @@
         }
         
         // --- NEW/MODIFIED FUNCTIONS for AI Features ---
-        
-        function updateStarsUI(taskId, rating) {
-            const container = document.querySelector(`.rating-stars[data-task-id="${taskId}"]`);
-            if (!container) return;
-            
-            const allStars = container.querySelectorAll('span');
-            allStars.forEach(s => {
-                s.classList.remove('filled');
-                s.innerHTML = '&#9734;';
-            });
-
-            if (rating > 0) {
-                for (let i = 0; i < rating; i++) {
-                    allStars[4-i].classList.add('filled');
-                    allStars[4-i].innerHTML = '&#9733;';
-                }
-            }
-        }
 
         function startTimerSession(minutes) {
             const sessionModal = document.getElementById('session-modal');
@@ -2049,20 +2059,18 @@
             document.getElementById('rating-suggestion-text').innerHTML = text;
             
             const acceptBtn = document.getElementById('accept-rating-btn');
-            // Clone and replace to remove old event listeners
-            const newAcceptBtn = acceptBtn.cloneNode(true);
-            acceptBtn.parentNode.replaceChild(newAcceptBtn, acceptBtn);
-
-            newAcceptBtn.addEventListener('click', () => {
+            
+            acceptBtn.onclick = () => {
                 saveRating(taskId, suggestedStars);
                 updateStarsUI(taskId, suggestedStars);
                 showModal(null);
-            });
+            };
 
             showModal(document.getElementById('rating-suggestion-modal'));
         }
 
         function findTaskById(taskId) {
+             if (!taskId) return null;
              const [weekPart, dayPart, taskPart] = taskId.split('-');
              const weekNum = parseInt(weekPart.replace('w', ''), 10);
              const dayId = parseInt(dayPart.replace('d', ''), 10);
@@ -2106,6 +2114,7 @@
                  for(const day of allTrainingDays) {
                     for(const task of day.tasks) {
                         const taskInfo = findTaskById(`w1-d${day.id}-${task.id}`); // week is placeholder
+                        if (!taskInfo) continue;
                         const taskId = `w${taskInfo.weekNum}-d${day.id}-${task.id}`;
                         if (!progress[taskId] && task.type) { // Ensure it's a practiceable task
                              p2_task = taskInfo;
@@ -2313,3 +2322,4 @@
     </script>
 </body>
 </html>
+
