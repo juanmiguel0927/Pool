@@ -391,10 +391,24 @@
 
         #tooltip { position: absolute; display: none; background-color: var(--container-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1001; max-width: 300px; font-size: 0.9em; }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content, #pdf-viewer-modal .modal-content {
             max-width: 700px; text-align: left; height: auto; max-height: 85vh; display: flex; flex-direction: column;
         }
         
+        /* Specific PDF Modal size for better viewing */
+        #pdf-viewer-modal .modal-content {
+            max-width: 90vw;
+            width: 90vw;
+            max-height: 90vh;
+        }
+        #pdf-iframe {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+
         #session-modal .modal-content { max-width: 500px; }
         #timer-display { font-size: 5rem; font-weight: bold; color: var(--accent-color); margin: 20px 0; }
 
@@ -479,7 +493,7 @@
         .achievement-item { background-color: var(--day-section-bg); border: 1px solid var(--border-color); border-left-width: 5px; border-left-color: #ccc; padding: 20px; border-radius: 5px; opacity: 0.5; display: flex; gap: 15px; align-items: center; }
         .achievement-item.unlocked { opacity: 1; border-left-color: var(--current-day-border); }
         .achievement-icon { font-size: 3rem; line-height: 1; }
-        .achievement-details h4 { margin: 0 0 5px 0; color: var(--header-color); border: none; padding: 0; }
+        .achievement-details h4 { margin: 0 0 5px 0; border: none; padding: 0; }
         .achievement-details p { margin: 0; font-size: 0.9em; color: var(--secondary-color); }
         
         .btn-practice-task { background-color: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; font-weight: bold; }
@@ -538,7 +552,12 @@
 
             .billiard-ball { width: 80px; height: 80px; }
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
-            .ball-label { font-size: 0.7rem; bottom: -25px; }
+            .ball-label {
+                font-size: 0.7rem; 
+                bottom: -35px; /* Más espacio abajo */
+                line-height: 1.2; /* Permite dos líneas de texto */
+                max-width: 100%; /* Asegura que no se desborde */
+            }
             #welcome-modal .modal-buttons { gap: 15px; }
 
             /* Asegurar que las listas y elementos de tarea se vean bien */
@@ -717,6 +736,21 @@
             </div>
         </div>
     </div>
+    
+    <!-- NEW PDF VIEWER MODAL -->
+    <div id="pdf-viewer-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2 id="pdf-modal-title">Diagrama del Tiro</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div style="flex-grow: 1; display: flex; flex-direction: column;">
+                <!-- Google Docs Viewer para incrustar PDF sin descarga directa -->
+                <iframe id="pdf-iframe" src="" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <!-- END NEW MODAL -->
 
     <div id="shot-of-the-day-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
@@ -903,7 +937,7 @@
         },
         { 
             title: "Post-Partido y Actitud de Campeón", 
-            content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuándo perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros tener éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
+            content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuando perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros tener éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
         }
     ];
     const allTrainingDays = [
@@ -918,9 +952,12 @@
                 { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stop Shot' } 
             ], 
             keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'},
-            diagrama: '' 
+            // ASOCIACIÓN DE PDF DE EJEMPLO
+            diagrama: 'https://www.wpa-pool.com/web/modules/docs/wpapoolrules.pdf' 
         },
-        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
+        { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ],
+        // ASOCIACIÓN DE PDF DE EJEMPLO
+        diagrama: 'https://static1.squarespace.com/static/555e5114e4b0c1c87cc9c3ff/t/5a73e51d41920251789c676d/1517489437293/Billiard+Shot+Layouts.pdf' },
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
         { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
@@ -1310,8 +1347,15 @@
                     
                     if (day.diagrama) {
                         dayHTML += `
-                            <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
+                            <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" data-pdf-url="${day.diagrama}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
                                 Ver Diagrama del Tiro Clave
+                            </button>
+                        `;
+                    } else {
+                         // Mostrar un botón inactivo si no hay diagrama para no romper el layout
+                        dayHTML += `
+                            <button class="btn-view-diagram" style="background-color: var(--secondary-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: not-allowed; margin-top: -5px; margin-bottom: 10px; opacity: 0.7;">
+                                Diagrama No Disponible
                             </button>
                         `;
                     }
@@ -1886,6 +1930,22 @@
                     }
 
                     showModal(notesModal);
+                } else if (e.target.classList.contains('btn-view-diagram')) {
+                    const pdfUrl = e.target.dataset.pdfUrl;
+                    const title = e.target.dataset.diagramTitle;
+                    
+                    if (pdfUrl && pdfUrl.length > 0) {
+                        // Usar Google Docs Viewer para incrustar el PDF, dificultando la descarga
+                        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+                        
+                        document.getElementById('pdf-modal-title').textContent = title;
+                        document.getElementById('pdf-iframe').src = viewerUrl;
+                        
+                        // Asegurar que el modal se muestre
+                        showModal(document.getElementById('pdf-viewer-modal'));
+                    } else {
+                        showCustomAlert('Diagrama', 'No hay un diagrama asociado a este ejercicio.');
+                    }
                 }
             });
 
@@ -1994,6 +2054,10 @@
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.target.closest('.modal-overlay').style.display = 'none';
+                    // Al cerrar el modal del PDF, limpiamos la fuente del iframe
+                    if (e.target.closest('#pdf-viewer-modal')) {
+                        document.getElementById('pdf-iframe').src = '';
+                    }
                     if (sessionTimerInterval) {
                         clearInterval(sessionTimerInterval);
                         sessionTimerInterval = null;
@@ -2025,21 +2089,22 @@
                 });
             });
 
-            const diagramModal = document.getElementById('diagram-modal');
-            const diagramImage = document.getElementById('diagram-modal-image');
-            const diagramTitle = document.getElementById('diagram-modal-title');
+            // REMOVED old diagram modal logic and replaced with general logic above
+            // const diagramModal = document.getElementById('diagram-modal');
+            // const diagramImage = document.getElementById('diagram-modal-image');
+            // const diagramTitle = document.getElementById('diagram-modal-title');
 
-            document.querySelectorAll('.btn-view-diagram').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const dayId = e.target.dataset.dayId;
-                    const dayData = allTrainingDays.find(d => d.id == dayId);
-                    if (dayData && dayData.diagrama) {
-                        diagramImage.src = dayData.diagrama;
-                        diagramTitle.textContent = `Diagrama: ${e.target.dataset.diagramTitle}`;
-                        diagramModal.style.display = 'flex';
-                    }
-                });
-            });
+            // document.querySelectorAll('.btn-view-diagram').forEach(btn => {
+            //     btn.addEventListener('click', (e) => {
+            //         const dayId = e.target.dataset.dayId;
+            //         const dayData = allTrainingDays.find(d => d.id == dayId);
+            //         if (dayData && dayData.diagrama) {
+            //             diagramImage.src = dayData.diagrama;
+            //             diagramTitle.textContent = `Diagrama: ${e.target.dataset.diagramTitle}`;
+            //             diagramModal.style.display = 'flex';
+            //         }
+            //     });
+            // });
 
 
             document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
