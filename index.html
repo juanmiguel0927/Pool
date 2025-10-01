@@ -320,6 +320,7 @@
         }
         
         .ball-number {
+            position: absolute;
             background: white;
             color: black;
             width: 35px;
@@ -330,7 +331,6 @@
             justify-content: center;
             font-weight: 700;
             font-size: 1.2rem;
-            position: absolute;
         }
 
         .ball-label {
@@ -557,13 +557,13 @@
                 /* Usar grid para un control de espacio más preciso */
                 display: grid;
                 grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-                gap: 10px; /* Reduce el gap para que quepan */
-                padding: 0 10px;
+                gap: 5px; /* Reducir el gap horizontalmente */
+                padding: 0 5px; /* Reducir el padding lateral */
             }
             #btn-guest-user {
                 grid-column: span 3; /* Hace que el botón Invitado ocupe todo el ancho */
-                margin-top: 20px; /* Espacio extra para que no se pegue */
-                margin-bottom: 40px; /* Espacio para su propia etiqueta */
+                margin-top: 25px; /* Aumentar espacio superior para evitar solapamiento */
+                margin-bottom: 50px; /* Asegurar espacio para su propia etiqueta */
             }
             .ball-label {
                 font-size: 0.7rem; 
