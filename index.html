@@ -204,10 +204,22 @@
         #modal-confirm { background-color: var(--danger-color); color: white; }
         #modal-cancel { background-color: var(--secondary-color); color: white; }
         
+        /* MODAL DE BIENVENIDA CON PAÑOS DINÁMICOS */
         #welcome-modal {
-            background: #0d2a1f;
-            animation: fadeIn 0.4s ease-in-out;
+            /* Fondo con animación de colores de paño */
+            background: #2a3a2f; /* Valor inicial (Verde oscuro) */
+            animation: clothColorChange 30s ease-in-out infinite alternate;
+            animation-delay: 2s; /* Start the animation a bit after load */
             overflow: hidden;
+        }
+
+        /* Keyframes para la transición de colores de paño */
+        @keyframes clothColorChange {
+            0% { background-color: #2a3a2f; } /* Verde oscuro (Classic Green) */
+            25% { background-color: #274c77; } /* Azul marino (Tournament Blue) */
+            50% { background-color: #4b0082; } /* Morado oscuro (Purple) */
+            75% { background-color: #8B0000; } /* Rojo oscuro (Burgundy) */
+            100% { background-color: #2a3a2f; }
         }
 
         #welcome-modal .pool-table {
@@ -216,11 +228,14 @@
             height: 150%;
             top: 50%;
             left: 50%;
-            background-color: #006A4E;
+            /* Color inicial de la mesa, que será superpuesto por el color de fondo del modal */
+            background-color: transparent; 
             border: 20px solid #5d3a1a;
             border-radius: 20px;
             transform: translate(-50%, -50%) rotate(-30deg);
             box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+            /* Animación para darle más vida al fondo */
+            transition: background-color 30s ease-in-out;
         }
         
         @keyframes fadeIn {
@@ -229,15 +244,16 @@
         }
 
         #welcome-modal .modal-content {
-            background: transparent;
-            border: none;
-            backdrop-filter: none;
+            background: rgba(0, 0, 0, 0.7); /* Contenido semi-transparente para ver el fondo */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
             max-width: 600px;
             animation: slideInUp 0.5s ease-out;
             padding: 2rem;
             position: relative;
             z-index: 2;
-            box-shadow: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            border-radius: 12px;
         }
         
         @keyframes slideInUp {
@@ -252,14 +268,14 @@
             color: #fff;
             border: none;
             margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.9);
         }
 
         #welcome-modal p {
-            color: #e0e0e0;
+            color: #f0f0f0;
             font-size: 1.1rem;
             margin-bottom: 2.5rem;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 5px #000;
         }
         
         #welcome-modal .modal-buttons {
@@ -282,6 +298,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            transform: rotate(0deg); /* Asegurar que no giren en el menú */
         }
 
         .billiard-ball:hover {
@@ -327,10 +344,10 @@
             letter-spacing: 0.5px;
         }
 
-        .ball-1 { background-color: #f7b32b; } /* Yellow */
-        .ball-2 { background-color: #274c77; } /* Blue */
-        .ball-3 { background-color: #c0392b; } /* Red */
-        .ball-8 { background-color: #1e1e1e; } /* Black */
+        .ball-1 { background-color: #f7b32b; } /* Yellow (Nuevo Perfil) */
+        .ball-2 { background-color: #274c77; } /* Blue (Cargar Perfil) */
+        .ball-3 { background-color: #c0392b; } /* Red (Importar) */
+        .ball-8 { background-color: #1e1e1e; } /* Black (Invitado) */
 
         #load-user-modal .modal-content button { width: 100%; margin-bottom: 10px; font-size: 1.1em; }
         .user-profile-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -484,17 +501,75 @@
 
         #mental-game-content blockquote { border-left: 3px solid var(--accent-color); padding-left: 15px; margin-left: 0; font-style: italic; color: var(--secondary-color); }
 
+        /* Media Query para optimización móvil */
         @media (max-width: 768px) {
+            .container { 
+                padding: 15px; 
+                margin: 10px auto; /* Ajuste para móvil */
+                max-width: 100%; /* Asegura que el contenedor use todo el ancho */
+            }
             .tabs-container .tab-label { display: none; }
             .mobile-nav { display: block; }
-            .container { padding: 15px; }
-            .header-controls { flex-direction: column; align-items: flex-start; }
-            .action-buttons button { margin-left: 0; margin-right: 5px; }
+            .header-controls { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 10px;
+            }
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap; /* Permite que los botones se envuelvan */
+            }
+            .action-buttons button {
+                flex-grow: 1;
+                min-width: 120px;
+            }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
+            
+            /* Ajuste Modal de Bienvenida para centrar mejor en móvil */
+            #welcome-modal .modal-content {
+                width: 90%;
+                max-width: 95%; 
+                padding: 1.5rem;
+            }
+            #welcome-modal h2 {
+                font-size: 2.5rem;
+            }
+
             .billiard-ball { width: 80px; height: 80px; }
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
             .ball-label { font-size: 0.7rem; bottom: -25px; }
             #welcome-modal .modal-buttons { gap: 15px; }
+
+            /* Asegurar que las listas y elementos de tarea se vean bien */
+            .task-item {
+                flex-wrap: wrap;
+                align-items: flex-start;
+                padding: 5px 0;
+            }
+            .task-item label {
+                width: calc(100% - 30px); /* Deja espacio para el checkbox/star */
+                order: 2;
+                margin-left: 0;
+            }
+            .star-icon {
+                order: 1;
+                margin-right: 5px;
+            }
+            .btn-task-note, .btn-practice-task {
+                order: 3;
+                margin-top: 5px;
+            }
+            .rating-stars {
+                order: 4;
+                margin-left: 0;
+                padding-left: 0;
+                justify-content: flex-start;
+                width: 100%;
+            }
+            .rating-stars span {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -545,7 +620,7 @@
                     <input type="text" id="user-name" required>
                     <p class="error-message" id="name-error">Por favor, introduce un nombre.</p>
                 </div>
-                <div class="form-group">
+                <div class="form-user-name">
                     <label>Días de Entrenamiento:</label>
                     <div class="days-checkbox-group" id="training-days-group">
                         <label><input type="checkbox" value="Lunes">Lunes</label>
@@ -848,8 +923,8 @@
         { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
-        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistentes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
-        { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Follow Básico (#20-24):</b> Para el half-ball aim (#22), la bola blanca se desviará unos 30 grados.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Follow con Rail (#25-27):</b> Ajuste la fuerza. La bola blanca perderá velocidad al rebotar.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' } ] },
+        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Stun Básico (#45-48):</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Stun con Ajuste (#49-51):</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] },
+        { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
         { id: 7, originalWeek: 2, title: 'Jueves: Stun y Follow a Velocidad Media', focus: 'Controlar la bola blanca en tiros de más distancia y velocidad. Aplicar la estrategia de la <strong>[[Shape Zone]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Medium Speed (#52-57):</b> <strong>Enfoque:</strong> Mantener el shooting arm vertical.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Medium Speed (#28-34):</b> Acelere su [[stroke]] a través de la bola blanca.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Off-Table (15 min):</b> Visualización de [[Shape Zone]] y 10 min de planchas.' } ] },
         { id: 8, originalWeek: 2, title: 'Viernes: Test de Stun y Follow Avanzado', focus: 'Evaluar la aplicación de [[Stun]] y [[Follow]] en tiros que requieren control de velocidad y carril.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Stun Avanzado (#58-67):</b> Use menos spin y velocidad para aumentar consistencia.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>Follow Fast Speed (#38-44):</b> Golpee más arriba para generar más topspin.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Follow' }, { id: 't3', text: '<b>Análisis Posicional:</b> ¿El error fue de velocidad, spin o lineamiento?' } ], criteria: 'Lograr <b>[[Stun]] Shot</b> y <b>[[Follow]] Shot</b> con ángulo consistentemente (8/10 veces).'},
         { id: 9, originalWeek: 3, title: 'Lunes: Draw Básico y Velocidad Media', focus: 'Generar [[Draw]] suficiente con velocidad Slow/Medium y practicar la inmovilidad post-[[stroke]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Draw Básico (#68-72):</b> El [[Draw]] requiere un mejor [[stroke]]. <strong>Enfoque:</strong> Inmovilidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Draw Medium Speed (#73-77):</b> Use un punto de contacto más bajo para generar más spin sin más velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't3', text: '<b>[[Off-Table Fitness]] (15 min):</b> Manipulación de monedas y pelotas antiestrés.'}]},
