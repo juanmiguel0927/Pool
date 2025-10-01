@@ -10,6 +10,9 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #f4f4f4;
@@ -63,7 +66,7 @@
         }
 
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             line-height: 1.6; 
             color: var(--text-color); 
             margin: 0; 
@@ -196,12 +199,140 @@
         
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: var(--container-bg); padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-width: 450px; width: 90%; }
-        .modal-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .modal-buttons { display: flex; flex-direction: column; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 0; }
         #modal-confirm { background-color: var(--danger-color); color: white; }
         #modal-cancel { background-color: var(--secondary-color); color: white; }
         
-        #welcome-modal .modal-content button, #load-user-modal .modal-content button { width: 100%; margin-bottom: 10px; font-size: 1.1em; }
+        #welcome-modal {
+            background: #0d2a1f;
+            animation: fadeIn 0.4s ease-in-out;
+            overflow: hidden;
+        }
+
+        #welcome-modal .pool-table {
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: 50%;
+            left: 50%;
+            background-color: #006A4E;
+            border: 20px solid #5d3a1a;
+            border-radius: 20px;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #welcome-modal .modal-content {
+            background: transparent;
+            border: none;
+            backdrop-filter: none;
+            max-width: 600px;
+            animation: slideInUp 0.5s ease-out;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: none;
+        }
+        
+        @keyframes slideInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #welcome-modal h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 3.5rem;
+            color: #fff;
+            border: none;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 15px rgba(0,0,0,0.7);
+        }
+
+        #welcome-modal p {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+        }
+        
+        #welcome-modal .modal-buttons {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .billiard-ball {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 -5px 10px rgba(0,0,0,0.4);
+            border: 2px solid rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .billiard-ball:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.4), inset 0 -5px 10px rgba(0,0,0,0.4);
+        }
+
+        .billiard-ball::before { /* Shine effect */
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 50px;
+            height: 25px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            filter: blur(5px);
+        }
+        
+        .ball-number {
+            background: white;
+            color: black;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            position: absolute;
+        }
+
+        .ball-label {
+            position: absolute;
+            bottom: -30px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px #000;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .ball-1 { background-color: #f7b32b; } /* Yellow */
+        .ball-2 { background-color: #274c77; } /* Blue */
+        .ball-3 { background-color: #c0392b; } /* Red */
+        .ball-8 { background-color: #1e1e1e; } /* Black */
+
+        #load-user-modal .modal-content button { width: 100%; margin-bottom: 10px; font-size: 1.1em; }
         .user-profile-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .user-profile-item button { flex-grow: 1; }
         .delete-profile-btn { background-color: var(--danger-color); color: white; border: none; border-radius: 5px; cursor: pointer; padding: 8px; margin-left: 10px; }
@@ -316,19 +447,36 @@
             .header-controls { flex-direction: column; align-items: flex-start; }
             .action-buttons button { margin-left: 0; margin-right: 5px; }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
+            .billiard-ball { width: 80px; height: 80px; }
+            .ball-number { width: 30px; height: 30px; font-size: 1rem; }
+            .ball-label { font-size: 0.7rem; bottom: -25px; }
+            #welcome-modal .modal-buttons { gap: 15px; }
         }
     </style>
 </head>
 <body>
     <div id="welcome-modal" class="modal-overlay">
+        <div class="pool-table"></div>
         <div class="modal-content">
-            <h2>Bienvenido a Tiro Maestro</h2>
-            <p>Selecciona una opción para comenzar.</p>
+            <h2>Tiro Maestro</h2>
+            <p>Tu viaje hacia la maestría comienza aquí. ¿Cómo quieres empezar?</p>
             <div class="modal-buttons">
-                <button id="btn-load-user">Cargar Perfil</button>
-                <button id="btn-import-profile">Importar Perfil</button>
-                <button id="btn-new-user">Nuevo Perfil</button>
-                <button id="btn-guest-user">Modo Invitado</button>
+                <button id="btn-new-user" class="billiard-ball ball-1">
+                    <span class="ball-number">1</span>
+                    <span class="ball-label">Nuevo Perfil</span>
+                </button>
+                <button id="btn-load-user" class="billiard-ball ball-2">
+                    <span class="ball-number">2</span>
+                    <span class="ball-label">Cargar Perfil</span>
+                </button>
+                <button id="btn-import-profile" class="billiard-ball ball-3">
+                     <span class="ball-number">3</span>
+                    <span class="ball-label">Importar</span>
+                </button>
+                <button id="btn-guest-user" class="billiard-ball ball-8">
+                     <span class="ball-number">8</span>
+                    <span class="ball-label">Invitado</span>
+                </button>
             </div>
         </div>
     </div>
