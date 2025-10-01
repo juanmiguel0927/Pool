@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tiro Maestro: Plan de Entrenamiento de Billar</title>
+    <!-- NEW: Chart.js library for progress visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #f4f4f4;
@@ -89,13 +91,17 @@
         input:checked + .slider { background-color: var(--accent-color); }
         input:checked + .slider:before { transform: translateX(24px); }
         
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
         .action-buttons button {
             color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
-            margin-left: 10px;
             transition: background-color 0.2s;
         }
         .btn-print, .btn-glossary { background-color: var(--accent-color); }
@@ -230,18 +236,15 @@
             font-size: 0.9em;
         }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content {
             max-width: 700px;
             text-align: left;
-            height: 80vh;
+            height: auto;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
         }
-        #term-definition-modal .modal-content, #recommendation-modal .modal-content {
-            height: auto;
-            max-height: 80vh;
-        }
-
+        
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -264,8 +267,7 @@
             .mobile-nav { display: block; }
             .container { padding: 15px; }
             .header-controls { flex-direction: column; align-items: flex-start; }
-            .action-buttons { margin-top: 15px; }
-            .action-buttons button { margin-left: 0; margin-right: 10px; }
+            .action-buttons button { margin-left: 0; margin-right: 5px; }
         }
     </style>
 </head>
@@ -367,6 +369,19 @@
         </div>
     </div>
 
+    <div id="diagram-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2 id="diagram-modal-title">Diagrama del Tiro</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div style="padding: 10px; text-align: center;">
+                <img id="diagram-modal-image" src="" alt="Diagrama del tiro" style="max-width: 100%; height: auto; border-radius: 5px; border: 1px solid var(--border-color);">
+            </div>
+        </div>
+    </div>
+
+
     <div id="tooltip"></div>
 
     <div class="container" id="main-container">
@@ -430,7 +445,19 @@
         { title: "Fuerza de Agarre y Antebrazo", content: "<strong>¿Qué es?</strong> Son ejercicios diseñados para fortalecer los músculos de tus manos, muñecas y antebrazos, permitiendo un control más fino y relajado del taco.<br><strong>¿Cómo se hace?</strong><br>1. <strong>Apretar Pelota Antiestrés:</strong> Apriétala con fuerza durante 5 segundos y relaja. Haz 3 series de 15 repeticiones con cada mano.<br>2. <strong>Curls de Muñeca:</strong> Sentado, apoya tu antebrazo en tu muslo con la palma hacia arriba. Sostén una botella de agua pequeña y, usando solo la muñeca, sube y baja la mano. Haz 3 series de 15 repeticiones.<br><strong>¿Por qué es importante?</strong> Un agarre más fuerte permite un toque más suave y sensible, ya que no necesitas apretar el taco con tensión. Esto mejora la precisión y el 'feel' del tiro." }
     ];
     const allTrainingDays = [
-        { id: 1, originalWeek: 1, title: 'Lunes: Velocidad y Stop Shot', focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos' } ], keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'} },
+        { 
+            id: 1, 
+            originalWeek: 1, 
+            title: 'Lunes: Velocidad y Stop Shot', 
+            focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].', 
+            estTime: '45 min', 
+            tasks: [ 
+                { id: 't1', text: '<b>Shots #1-8 (Control de Velocidad):</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos' }, 
+                { id: 't2', text: '<b>Shot #9 ([[Stop Shot]]):</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos' } 
+            ], 
+            keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'},
+            diagrama: '' 
+        },
         { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Shot #12 ([[Follow]] Slow):</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't2', text: '<b>Shot #14 ([[Draw]] Slow):</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ] },
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Shots #16-17 (Near Rail):</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos' }, { id: 't2', text: '<b>Shot #19 (Elevated Cue):</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ] },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
@@ -468,6 +495,7 @@
         const STORAGE_PREFIX = 'tiroMaestroProfiles_v1';
         let currentProfile = null;
         let isGuest = false;
+        let myProgressChart = null;
 
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
@@ -617,6 +645,15 @@
                         dayHTML += `<li class="task-item"><input type="checkbox" id="${checkboxId}"><label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label></li>`;
                     });
                     dayHTML += `</ul></div>`;
+                    
+                    if (day.diagrama) {
+                        dayHTML += `
+                            <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
+                                Ver Diagrama del Tiro Clave
+                            </button>
+                        `;
+                    }
+                    
                     if(day.keyShot) dayHTML += `<div class="shot-description"><h5>${parseGlossaryTerms(day.keyShot.title)}</h5><p>${parseGlossaryTerms(day.keyShot.desc)}</p></div>`;
                     const diaryId = `w${i}-d${day.id}-notes`;
                     dayHTML += `<div class="diary-section"><label for="${diaryId}">Diario de Práctica:</label><textarea id="${diaryId}" class="diary-textarea" placeholder="Notas del día..."></textarea></div>`;
@@ -660,6 +697,18 @@
             });
             fitnessContent += `</div></div>`;
             htmlContentWrapper += fitnessContent;
+
+            // NEW: Add Progress Tab
+            mobileNavOptions += `<option value="tab-progress">Mi Progreso</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-progress" class="tab-input"><label for="tab-progress" class="tab-label">Mi Progreso</label>`;
+            let progressContent = `<div id="content-progress" class="tab-content">
+                <h2>Mi Progreso Histórico</h2>
+                <p>Este gráfico muestra el porcentaje de tareas que has completado en cada semana del plan. ¡Es una excelente forma de visualizar tu consistencia y dedicación!</p>
+                <div style="width: 100%; max-width: 800px; margin: 20px auto; padding: 20px; background: var(--day-section-bg); border-radius: 5px;">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>`;
+            htmlContentWrapper += progressContent;
 
             tabsContainer.innerHTML = htmlTabs + `<div class="tab-content-wrapper">${htmlContentWrapper}</div>`;
             mobileNav.innerHTML = mobileNavOptions;
@@ -746,6 +795,97 @@
                 }, 100);
             });
         }
+        
+        // NEW: Function to generate the progress chart
+        function generateProgressChart(totalWeeks) {
+            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            if (!currentProfile || !profiles[currentProfile]) return;
+            
+            const progress = profiles[currentProfile].progress || {};
+            const userConfig = profiles[currentProfile].config;
+            const daysPerWeek = userConfig.selectedDays.length;
+
+            const labels = [];
+            const data = [];
+            let dayIndexOffset = 0;
+
+            for (let i = 1; i <= totalWeeks; i++) {
+                const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
+                if (daysInThisWeek.length === 0) break;
+                
+                const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
+                const totalTasks = tasksInWeek.length;
+                if (totalTasks === 0) continue;
+
+                const completedTasks = tasksInWeek.filter(taskId => progress[taskId] === true).length;
+                const percentage = Math.round((completedTasks / totalTasks) * 100);
+
+                labels.push(`Semana ${i}`);
+                data.push(percentage);
+
+                dayIndexOffset += daysPerWeek;
+            }
+
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            if (myProgressChart) {
+                myProgressChart.destroy();
+            }
+
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            const fontColor = isDarkMode ? '#e0e0e0' : '#333';
+            
+            myProgressChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% Completado',
+                        data: data,
+                        backgroundColor: 'rgba(52, 152, 219, 0.6)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: fontColor,
+                                callback: function(value) { return value + '%' }
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: fontColor
+                            },
+                             grid: {
+                                color: 'transparent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    return `Completado: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
 
         function initializePlanLogic(totalWeeks) {
@@ -753,26 +893,36 @@
             themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('tiroMaestroTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+                // Redraw chart with new colors if it exists
+                if(document.getElementById('tab-progress').checked) {
+                    generateProgressChart(totalWeeks);
+                }
             });
             if (localStorage.getItem('tiroMaestroTheme') === 'dark') { document.body.classList.add('dark-mode'); themeToggle.checked = true; }
 
             const mobileNav = document.getElementById('mobile-nav');
             const tabInputs = document.querySelectorAll('.tab-input');
             const btnResetCurrent = document.getElementById('btn-reset-current-week');
+            
             function handleTabChange(e) {
                 if(e.target.checked) {
                     const tabId = e.target.id;
                     document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-                    document.getElementById(`content${tabId.replace('tab','')}`).style.display = 'block';
+                    const contentId = `content${tabId.replace('tab','')}`;
+                    document.getElementById(contentId).style.display = 'block';
                     mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness')) {
+                    if (tabId.includes('fitness') || tabId.includes('progress')) {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
                         const weekNum = tabId.replace('tab', '');
                         btnResetCurrent.dataset.week = weekNum;
                         btnResetCurrent.textContent = `Reiniciar Semana ${weekNum}`;
+                    }
+
+                    if (tabId === 'tab-progress') {
+                        generateProgressChart(totalWeeks);
                     }
                 }
             }
@@ -807,7 +957,7 @@
             function saveState(e) {
                 if (!currentProfile) return;
                 const profiles = getProfiles();
-                if (!profiles[currentProfile]) profiles[currentProfile] = { progress: {} }; // Ensure profile exists
+                if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} }; // Safety check
                 if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
                 profiles[currentProfile].progress[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
                 saveProfiles(profiles);
@@ -821,6 +971,9 @@
                     if (progress[item.id] !== undefined) {
                         if (item.type === 'checkbox') item.checked = progress[item.id];
                         else item.value = progress[item.id];
+                    } else {
+                        if (item.type === 'checkbox') item.checked = false;
+                        else item.value = '';
                     }
                 });
             }
@@ -938,14 +1091,34 @@
                 });
             });
 
+            const diagramModal = document.getElementById('diagram-modal');
+            const diagramImage = document.getElementById('diagram-modal-image');
+            const diagramTitle = document.getElementById('diagram-modal-title');
+
+            document.querySelectorAll('.btn-view-diagram').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const dayId = e.target.dataset.dayId;
+                    const dayData = allTrainingDays.find(d => d.id == dayId);
+                    if (dayData && dayData.diagrama) {
+                        diagramImage.src = dayData.diagrama;
+                        diagramTitle.textContent = `Diagrama: ${e.target.dataset.diagramTitle}`;
+                        diagramModal.style.display = 'flex';
+                    }
+                });
+            });
+
+
             document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
             document.getElementById('btn-print').addEventListener('click', () => window.print());
             
-            // --- NEW: Change User Button Logic ---
             document.getElementById('btn-change-user').addEventListener('click', () => {
                 mainContainer.style.display = 'none';
                 currentProfile = null;
                 isGuest = false;
+                if(myProgressChart) {
+                    myProgressChart.destroy();
+                    myProgressChart = null;
+                }
                 showModal(welcomeModal);
             });
             
