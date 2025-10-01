@@ -319,6 +319,7 @@
             <p>Selecciona una opción para comenzar.</p>
             <div class="modal-buttons">
                 <button id="btn-load-user">Cargar Perfil</button>
+                <button id="btn-import-profile">Importar Perfil</button>
                 <button id="btn-new-user">Nuevo Perfil</button>
                 <button id="btn-guest-user">Modo Invitado</button>
             </div>
@@ -376,6 +377,27 @@
             <div class="modal-buttons">
                 <button id="modal-cancel">Cancelar</button>
                 <button id="modal-confirm">Sí, Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+     <div id="overwrite-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Sobrescribir Perfil</h3>
+            <p id="overwrite-modal-text"></p>
+            <div class="modal-buttons">
+                <button id="overwrite-cancel">Cancelar</button>
+                <button id="overwrite-confirm" style="background-color: var(--danger-color); color: white;">Sí, Sobrescribir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alert-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 id="alert-modal-title"></h3>
+            <p id="alert-modal-text"></p>
+            <div class="modal-buttons">
+                <button id="alert-ok" style="background-color: var(--accent-color); color: white;">Aceptar</button>
             </div>
         </div>
     </div>
@@ -446,6 +468,7 @@
             </div>
             <div class="action-buttons">
                 <button id="btn-shot-of-the-day" class="btn-shot-of-the-day">Tiro del Día</button>
+                <button id="btn-export-profile" class="btn-change-user">Exportar Perfil</button>
                 <button id="btn-change-user" class="btn-change-user">Cambiar Usuario</button>
                 <button id="btn-glossary" class="btn-glossary">Glosario</button>
                 <button id="btn-edit-plan" class="btn-edit">Editar Plan</button>
@@ -465,6 +488,8 @@
         <select id="mobile-nav" class="mobile-nav"></select>
         <div class="tabs-container" id="tabs-container"></div>
     </div>
+
+    <input type="file" id="import-file-input" accept=".json" style="display: none;">
 
     <script>
     // --- DATA SOURCE ---
@@ -555,9 +580,20 @@
         const newUserModal = document.getElementById('new-user-modal');
         const setupForm = document.getElementById('setup-form');
         
+        // --- Utility Functions ---
+        function getStorage() { return isGuest ? sessionStorage : localStorage; }
+        function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
+        function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
+
         function showModal(modal) {
             [welcomeModal, loadUserModal, newUserModal].forEach(m => m.style.display = 'none');
             if(modal) modal.style.display = 'flex';
+        }
+
+        function showCustomAlert(title, message) {
+            document.getElementById('alert-modal-title').textContent = title;
+            document.getElementById('alert-modal-text').textContent = message;
+            document.getElementById('alert-modal').style.display = 'flex';
         }
         
         // --- Welcome Modal Logic ---
@@ -632,7 +668,7 @@
             if (isGuest) {
                 userConfig = config;
             } else {
-                const profiles = JSON.parse(localStorage.getItem(STORAGE_PREFIX)) || {};
+                const profiles = getProfiles();
                 
                 if (profiles[currentProfile] && profiles[currentProfile].config) {
                     userConfig = profiles[currentProfile].config;
@@ -794,7 +830,7 @@
             };
 
             const todayName = getSpanishDayName();
-            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            const profiles = getProfiles();
             const user = profiles[currentProfile];
             if (!user || !user.config.selectedDays.includes(todayName)) {
                 document.getElementById('todays-focus-container').style.display = 'none';
@@ -863,7 +899,7 @@
         }
         
         function generateProgressChart(totalWeeks) {
-            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
             
             const progress = profiles[currentProfile].progress || {};
@@ -1016,10 +1052,6 @@
                 }
             }
 
-            function getStorage() { return isGuest ? sessionStorage : localStorage; }
-            function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
-            function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
-
             function saveState(e) {
                 if (!currentProfile) return;
                 const profiles = getProfiles();
@@ -1062,7 +1094,10 @@
 
                 // Load marked shots
                 const markedShots = progress.markedShots || {};
-                document.querySelectorAll('.star-icon').forEach(star => star.classList.remove('marked'));
+                document.querySelectorAll('.star-icon').forEach(star => {
+                    star.classList.remove('marked');
+                    star.innerHTML = '&#9734;';
+                });
                 for (const taskId in markedShots) {
                     const star = document.querySelector(`.star-icon[data-task-id="${taskId}"]`);
                     if (star) {
@@ -1084,6 +1119,10 @@
                 } else if (e.target.classList.contains('jump-to-task-btn')) {
                     const week = e.target.dataset.week;
                     const daySectionId = e.target.dataset.daySectionId;
+
+                    // Close any open modal
+                    const openModal = document.querySelector('.modal-overlay[style*="display: flex"]');
+                    if(openModal) openModal.style.display = 'none';
 
                     const tabInput = document.getElementById(`tab${week}`);
                     if (tabInput) {
@@ -1259,6 +1298,28 @@
                 }
                 showModal(welcomeModal);
             });
+
+            document.getElementById('btn-export-profile').addEventListener('click', () => {
+                if (!currentProfile || isGuest) {
+                    showCustomAlert('Error', 'Solo los perfiles guardados pueden ser exportados.');
+                    return;
+                }
+                const profiles = getProfiles();
+                const profileData = profiles[currentProfile];
+                if (!profileData) {
+                    showCustomAlert('Error', 'No se encontraron datos para el perfil actual.');
+                    return;
+                }
+
+                const exportObj = { profileName: currentProfile, profileData: profileData };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `tiro_maestro_perfil_${currentProfile}.json`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            });
             
             document.getElementById('btn-edit-plan').addEventListener('click', () => {
                 if (isGuest) { window.location.reload(); return; }
@@ -1300,7 +1361,71 @@
         glossaryHTML += '</dl>';
         glossaryContent.innerHTML = glossaryHTML;
 
-        // --- INITIALIZATION LOGIC ---
+        // --- GLOBAL INITIALIZATION LOGIC ---
+        
+        document.getElementById('alert-ok').addEventListener('click', () => {
+            document.getElementById('alert-modal').style.display = 'none';
+        });
+
+        const importFileInput = document.getElementById('import-file-input');
+        const overwriteModal = document.getElementById('overwrite-modal');
+        let pendingImport = null;
+
+        document.getElementById('btn-import-profile').addEventListener('click', () => {
+            importFileInput.click();
+        });
+
+        importFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (!imported.profileName || !imported.profileData || !imported.profileData.config || !imported.profileData.progress) {
+                        showCustomAlert('Error de Importación', 'El archivo de perfil no tiene el formato correcto.');
+                        return;
+                    }
+
+                    const { profileName, profileData } = imported;
+                    const profiles = getProfiles();
+
+                    if (profiles[profileName]) {
+                        document.getElementById('overwrite-modal-text').textContent = `Ya existe un perfil llamado "${profileName}". ¿Deseas sobrescribirlo con los datos del archivo? Se perderá el progreso actual de ese perfil.`;
+                        pendingImport = { profileName, profileData };
+                        overwriteModal.style.display = 'flex';
+                    } else {
+                        profiles[profileName] = profileData;
+                        saveProfiles(profiles);
+                        showCustomAlert('Éxito', `El perfil "${profileName}" se ha importado correctamente.`);
+                    }
+                } catch (err) {
+                    showCustomAlert('Error de Importación', 'El archivo seleccionado no es un JSON válido.');
+                } finally {
+                    importFileInput.value = '';
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('overwrite-confirm').addEventListener('click', () => {
+            if (pendingImport) {
+                const { profileName, profileData } = pendingImport;
+                const profiles = getProfiles();
+                profiles[profileName] = profileData;
+                saveProfiles(profiles);
+                showCustomAlert('Éxito', `El perfil "${profileName}" se ha sobrescrito e importado correctamente.`);
+                pendingImport = null;
+            }
+            overwriteModal.style.display = 'none';
+        });
+
+        document.getElementById('overwrite-cancel').addEventListener('click', () => {
+            pendingImport = null;
+            overwriteModal.style.display = 'none';
+        });
+
         showModal(welcomeModal);
 
         setupForm.addEventListener('submit', (e) => {
@@ -1320,10 +1445,6 @@
 
             const userName = userNameInput.value.trim();
             const userConfig = { selectedDays };
-
-            function getStorage() { return isGuest ? sessionStorage : localStorage; }
-            function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
-            function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
 
             if (isEditMode) {
                 const originalName = setupForm.dataset.originalName;
@@ -1366,7 +1487,7 @@
 
         function populateReinforceList(totalWeeks) {
             const list = document.getElementById('reinforce-list');
-            const profiles = JSON.parse((isGuest ? sessionStorage : localStorage).getItem(STORAGE_PREFIX)) || {};
+            const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
             const markedShots = profiles[currentProfile].progress?.markedShots || {};
             
