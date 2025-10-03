@@ -116,7 +116,7 @@
             transition: background-color 0.2s;
             font-weight: bold;
         }
-        .btn-print, .btn-glossary { background-color: var(--accent-color); }
+        .btn-print, .btn-glossary, .btn-my-sessions { background-color: var(--accent-color); }
         .btn-shot-of-the-day { background-color: var(--accent-color); }
         .btn-generate-session { background-color: var(--success-color); }
         .btn-reset-current { background-color: var(--secondary-color); }
@@ -125,8 +125,13 @@
         .btn-change-user { background-color: var(--secondary-color); }
         
         h1 { text-align: center; color: var(--header-color); margin-bottom: 5px; }
-        .credits, .user-welcome { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
+        .credits { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
+        .user-welcome-container { text-align: center; margin-bottom: 20px; }
         .user-welcome { font-weight: bold; font-size: 1.1em; color: var(--text-color); }
+        #player-level-info { font-size: 0.9em; color: var(--secondary-color); font-weight: bold;}
+        #xp-bar-container { background-color: var(--tab-bg); border-radius: 10px; margin: 5px auto 0; max-width: 200px; overflow: hidden; height: 10px; border: 1px solid var(--border-color);}
+        #xp-bar { background-color: var(--warning-color); height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s; }
+        
         h2, h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-top: 20px; color: var(--header-color); }
         h3 { border-bottom-width: 1px; }
         h4 { color: var(--accent-color); margin-top: 20px; }
@@ -400,7 +405,7 @@
 
         #tooltip { position: absolute; display: none; background-color: var(--container-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1001; max-width: 300px; font-size: 0.9em; }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content, #my-sessions-modal .modal-content, #level-up-modal .modal-content {
             max-width: 700px; text-align: left; height: auto; max-height: 85vh; display: flex; flex-direction: column;
         }
         
@@ -461,26 +466,30 @@
         #timer-display { font-size: 5rem; font-weight: bold; color: var(--accent-color); margin: 20px 0; }
 
         #shot-logger-ui { text-align: center; }
-        #shot-logger-task-text { font-weight: bold; margin-bottom: 20px; }
+        #shot-logger-task-text { font-weight: bold; margin-bottom: 10px; }
+        #shot-logger-shot-selector { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--day-section-bg); color: var(--text-color); }
+        #shot-logger-best-score { font-size: 0.9em; color: var(--secondary-color); margin-bottom: 20px; }
         #shot-logger-counter { font-size: 2.5rem; font-weight: bold; color: var(--accent-color); margin-bottom: 20px; }
         .shot-logger-buttons { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
         .shot-logger-buttons button { padding: 20px; font-size: 1.5rem; border-radius: 10px; width: 150px; color: white; border: none; cursor: pointer; font-weight: bold; transition: transform 0.1s; }
         .shot-logger-buttons button:active { transform: scale(0.95); }
         #btn-hit { background-color: var(--success-color); }
         #btn-miss { background-color: var(--danger-color); }
+        #shot-logger-next-prompt button { margin: 0 5px; }
 
-        #generated-session-modal .session-part { padding: 15px; margin-bottom: 15px; border-radius: 5px; border-left: 5px solid; }
+
+        #generated-session-modal .session-part, .custom-session-item { padding: 15px; margin-bottom: 15px; border-radius: 5px; border-left: 5px solid; }
         #generated-session-modal .priority-1 { border-color: var(--warning-color); background-color: var(--important-note-bg); }
         #generated-session-modal .priority-2 { border-color: var(--accent-color); background-color: var(--activity-block-bg); }
         #generated-session-modal .priority-3 { border-color: var(--success-color); background-color: var(--current-day-bg); }
         #generated-session-modal h4 { margin: 0 0 10px 0; border: none; padding: 0; }
-        #generated-session-modal .task-source { font-size: 0.8em; color: var(--secondary-color); margin-top: 8px; }
+        #generated-session-modal .task-source, .custom-session-item .task-source { font-size: 0.8em; color: var(--secondary-color); margin-top: 8px; }
 
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
         .modal-header h2 { margin: 0; border: none; }
         .modal-close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; color: var(--text-color); }
         
-        #glossary-content-wrapper { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
+        #glossary-content-wrapper, #create-session-shot-list { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
         #glossary-search {
             width: 100%;
             padding: 10px;
@@ -496,10 +505,13 @@
         #fitness-content, #mental-game-content { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
         .highlight-term { background-color: var(--important-note-bg); transition: background-color 0.5s; }
 
-        #reinforce-list { list-style: none; padding: 0; }
-        .reinforce-item { background-color: var(--day-section-bg); border-left: 4px solid var(--warning-color); padding: 15px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .reinforce-item-text { flex-grow: 1; }
+        #reinforce-list, #my-sessions-list { list-style: none; padding: 0; }
+        .reinforce-item, .my-session-item { background-color: var(--day-section-bg); border-left: 4px solid var(--warning-color); padding: 15px; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .my-session-item { border-left-color: var(--accent-color); }
+        .reinforce-item-text, .my-session-item-text { flex-grow: 1; }
+        .my-session-item-text small { color: var(--secondary-color); }
         .reinforce-item-source { font-size: 0.85em; color: var(--secondary-color); font-style: italic; display: block; }
+        .my-session-item-actions button { margin-left: 5px; }
         
         #all-notes-list { list-style: none; padding: 0; }
         .note-item { 
@@ -553,12 +565,13 @@
         .achievement-details h4 { margin: 0 0 5px 0; border: none; padding: 0; }
         .achievement-details p { margin: 0; font-size: 0.9em; color: var(--secondary-color); }
         
-        .btn-practice-task { background-color: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; font-weight: bold; }
+        .btn-practice-task, .btn-ghost-mode { background-color: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; font-weight: bold; }
+        .btn-ghost-mode { background-color: var(--secondary-color); display: none; }
         .btn-task-note { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 5px; opacity: 0.6; }
         .btn-task-note:hover { opacity: 1; }
         .btn-task-note.has-note { opacity: 1; color: var(--accent-color); }
 
-        #heatmap-calendar { margin-top: 20px; }
+        #heatmap-calendar, #weekly-rating-chart-container { margin-top: 20px; }
         .cal-heatmap .graph-label { fill: var(--text-color) !important; font-size: 12px; }
         .cal-heatmap .fill-none { fill: var(--day-section-bg) !important; }
         .cal-heatmap .fill-color-1 { fill: #9be9a8 !important; }
@@ -654,7 +667,7 @@
                 order: 1;
                 margin-right: 5px;
             }
-            .btn-task-note, .btn-practice-task {
+            .btn-task-note, .btn-practice-task, .btn-ghost-mode {
                 order: 3;
                 margin-top: 5px;
             }
@@ -668,6 +681,9 @@
             .rating-stars span {
                 font-size: 1.2rem;
             }
+
+            #achievements-grid { grid-template-columns: 1fr; }
+            .note-item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
         }
     </style>
 </head>
@@ -806,18 +822,6 @@
             <p id="recommendation-text"></p>
         </div>
     </div>
-
-    <div id="diagram-modal" class="modal-overlay">
-        <div class="modal-content">
-             <div class="modal-header">
-                <h2 id="diagram-modal-title">Diagrama del Tiro</h2>
-                <button class="modal-close-btn">&times;</button>
-            </div>
-            <div style="padding: 10px; text-align: center;">
-                <img id="diagram-modal-image" src="" alt="Diagrama del tiro" style="max-width: 100%; height: auto; border-radius: 5px; border: 1px solid var(--border-color);">
-            </div>
-        </div>
-    </div>
     
     <div id="pdf-viewer-modal" class="modal-overlay">
         <div class="modal-content">
@@ -861,6 +865,15 @@
         </div>
     </div>
 
+    <div id="level-up-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <h2 style="color: var(--warning-color);">🎉 ¡Subiste de Nivel! 🎉</h2>
+            <div id="level-up-icon" style="font-size: 4rem; margin: 15px 0;"></div>
+            <h3 id="level-up-name"></h3>
+            <button id="level-up-ok-btn" style="background-color: var(--accent-color); color: white; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;">¡Continuar!</button>
+        </div>
+    </div>
+
     <div id="generated-session-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -868,6 +881,16 @@
                 <button class="modal-close-btn">&times;</button>
             </div>
             <div id="generated-session-content"></div>
+        </div>
+    </div>
+
+     <div id="my-sessions-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Mis Sesiones Guardadas</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div id="my-sessions-list"></div>
         </div>
     </div>
 
@@ -897,10 +920,17 @@
             </div>
             <div id="shot-logger-ui" style="display: none;">
                 <p id="shot-logger-task-text"></p>
+                <select id="shot-logger-shot-selector" style="display: none;"></select>
+                <p id="shot-logger-best-score"></p>
                 <div id="shot-logger-counter">0 / 10</div>
                 <div class="shot-logger-buttons">
                     <button id="btn-miss">Fallo</button>
                     <button id="btn-hit">Acierto</button>
+                </div>
+                <div id="shot-logger-next-prompt" style="display: none;">
+                    <p>¡Ejercicio completado!</p>
+                    <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
+                    <button id="btn-finish-session" class="btn-change-user">Terminar</button>
                 </div>
             </div>
             <div class="modal-buttons">
@@ -931,7 +961,6 @@
                 <button class="modal-close-btn">&times;</button>
             </div>
             <p id="task-notes-title" style="font-weight: bold;"></p>
-            <!-- Mostrar la fecha de última modificación -->
             <p id="task-notes-last-modified" class="note-date" style="margin-top:-10px;"></p> 
             <textarea id="task-notes-textarea" class="diary-textarea" placeholder="Escribe aquí tus notas, sensaciones o recordatorios para este tiro..."></textarea>
             <div class="modal-buttons">
@@ -953,6 +982,7 @@
                 <span style="margin-left: 8px;">Modo Oscuro</span>
             </div>
             <div class="action-buttons">
+                <button id="btn-my-sessions" class="btn-my-sessions">Mis Sesiones</button>
                 <button id="btn-generate-session" class="btn-generate-session">Generar Sesión de Hoy</button>
                 <button id="btn-shot-of-the-day" class="btn-shot-of-the-day">Tiro del Día</button>
                 <button id="btn-export-profile" class="btn-change-user">Exportar Perfil</button>
@@ -966,7 +996,11 @@
         </div>
         
         <h1>Tiro Maestro</h1>
-        <p id="user-welcome-message" class="user-welcome"></p>
+        <div class="user-welcome-container">
+            <p id="user-welcome-message" class="user-welcome"></p>
+            <div id="player-level-info"></div>
+            <div id="xp-bar-container"><div id="xp-bar"></div></div>
+        </div>
         <p class="credits">Adaptado por: Juan Miguel Rios Redondo</p>
         <p class="important-note">Este plan progresa a través de la "Torre de Entrenamiento". Avance a la siguiente semana solo cuando cumpla el <strong>Criterio de Avance</strong>.</p>
         
@@ -1129,6 +1163,7 @@
         let isGuest = false;
         let myProgressChart = null;
         let myPerformanceChart = null;
+        let weeklyRatingChart = null;
         let sessionTimerInterval = null;
         let shotLoggerState = { hits: 0, attempts: 0, totalAttempts: 10, taskId: null };
         let cal = new CalHeatmap();
@@ -1272,16 +1307,13 @@
             if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
             if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
 
-            if (stateKey === 'taskNotes') {
+            if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores') {
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
                 
-                if (value.trim() === '') {
+                if (value === null || (typeof value === 'string' && value.trim() === '')) {
                     delete profiles[currentProfile].progress[stateKey][id];
                 } else {
-                    profiles[currentProfile].progress[stateKey][id] = {
-                        content: value,
-                        lastModified: new Date().toISOString()
-                    };
+                    profiles[currentProfile].progress[stateKey][id] = value;
                 }
             } else if (stateKey) {
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
@@ -1508,6 +1540,7 @@
                                         <label for="${checkboxId}">${parseGlossaryTerms(task.text)} ${task.goal ? `<span class="task-goal">(${task.goal})</span>` : ''}</label>
                                         <button class="btn-task-note" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}">📝</button>
                                         <button class="btn-practice-task" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}" data-task-goal="${task.goal || ''}">Practicar</button>
+                                        <button class="btn-ghost-mode" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}" data-task-goal="${task.goal || ''}">👻</button>
                                         <div class="rating-stars" data-task-id="${checkboxId}">
                                             <span data-value="5" title="5 Estrellas">&#9734;</span>
                                             <span data-value="4" title="4 Estrellas">&#9734;</span>
@@ -1558,6 +1591,19 @@
                 weekContent += `</div>`;
                 htmlContentWrapper += weekContent;
             }
+
+            mobileNavOptions += `<option value="tab-create-session">Crear Sesión</option>`;
+            htmlTabs += `<input type="radio" name="tabs" id="tab-create-session" class="tab-input"><label for="tab-create-session" class="tab-label">Crear Sesión</label>`;
+            let createSessionContent = `<div id="content-create-session" class="tab-content">
+                <h2>Crear Sesión Personalizada</h2>
+                <div class="form-group">
+                    <label for="custom-session-name">Nombre de la Sesión:</label>
+                    <input type="text" id="custom-session-name" placeholder="Ej: Práctica de retroceso">
+                </div>
+                <div id="create-session-shot-list"></div>
+                <button id="btn-save-custom-session" class="btn-generate-session" style="width: 100%; margin-top: 20px;">Guardar Sesión</button>
+            </div>`;
+            htmlContentWrapper += createSessionContent;
             
             mobileNavOptions += `<option value="tab-achievements">Logros</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-achievements" class="tab-input"><label for="tab-achievements" class="tab-label">Logros</label>`;
@@ -1611,9 +1657,13 @@
             htmlTabs += `<input type="radio" name="tabs" id="tab-analysis" class="tab-input"><label for="tab-analysis" class="tab-label">Análisis</label>`;
             let analysisContent = `<div id="content-analysis" class="tab-content">
                 <h2>Análisis de Rendimiento</h2>
-                <p>Este gráfico muestra tu calificación promedio por tipo de tiro. Te ayuda a identificar visualmente tus fortalezas y áreas a mejorar.</p>
                 <div style="width: 100%; max-width: 600px; margin: 20px auto; padding: 20px; background: var(--day-section-bg); border-radius: 5px;">
+                    <h4>Calificación por Tipo de Tiro</h4>
                     <canvas id="performanceChart"></canvas>
+                </div>
+                <div id="weekly-rating-chart-container" style="width: 100%; max-width: 800px; margin: 20px auto; padding: 20px; background: var(--day-section-bg); border-radius: 5px;">
+                    <h4>Progreso de Calificación Semanal</h4>
+                    <canvas id="weeklyRatingChart"></canvas>
                 </div>
             </div>`;
             htmlContentWrapper += analysisContent;
@@ -1872,13 +1922,85 @@
             });
         }
 
+        function generateWeeklyRatingChart(totalWeeks) {
+            const profiles = getProfiles();
+            if (!currentProfile || !profiles[currentProfile]) return;
+            const progress = profiles[currentProfile].progress || {};
+            const ratings = progress.ratings || {};
+            const userConfig = profiles[currentProfile].config;
+            const daysPerWeek = userConfig.selectedDays.length;
+
+            const labels = [];
+            const data = [];
+            let dayIndexOffset = 0;
+
+            for (let i = 1; i <= totalWeeks; i++) {
+                const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
+                if (daysInThisWeek.length === 0) break;
+                
+                const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
+                let weekTotalRating = 0;
+                let ratedTasksCount = 0;
+
+                tasksInWeek.forEach(taskId => {
+                    if (ratings[taskId]) {
+                        weekTotalRating += ratings[taskId];
+                        ratedTasksCount++;
+                    }
+                });
+
+                if (ratedTasksCount > 0) {
+                    labels.push(`Semana ${i}`);
+                    data.push(weekTotalRating / ratedTasksCount);
+                }
+                
+                dayIndexOffset += daysPerWeek;
+            }
+
+            const ctx = document.getElementById('weeklyRatingChart').getContext('2d');
+            if (weeklyRatingChart) {
+                weeklyRatingChart.destroy();
+            }
+
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            const fontColor = isDarkMode ? '#e0e0e0' : '#333';
+            
+            weeklyRatingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Calificación Promedio',
+                        data: data,
+                        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: { beginAtZero: true, max: 5, ticks: { color: fontColor, stepSize: 1 }, grid: { color: gridColor } },
+                        x: { ticks: { color: fontColor }, grid: { color: 'transparent' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                    }
+                }
+            });
+        }
+
         function initializePlanLogic(totalWeeks) {
             const themeToggle = document.getElementById('theme-toggle');
             themeToggle.addEventListener('change', () => {
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('tiroMaestroTheme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
                 if(document.getElementById('tab-progress').checked) { generateProgressChart(totalWeeks); generateHeatmap(); }
-                if(document.getElementById('tab-analysis').checked) { generatePerformanceChart(totalWeeks); }
+                if(document.getElementById('tab-analysis').checked) { generatePerformanceChart(totalWeeks); generateWeeklyRatingChart(totalWeeks); }
             });
             if (localStorage.getItem('tiroMaestroTheme') === 'dark') { document.body.classList.add('dark-mode'); themeToggle.checked = true; }
 
@@ -1894,7 +2016,7 @@
                     document.getElementById(contentId).style.display = 'block';
                     mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis') || tabId.includes('mental-game') || tabId.includes('notes')) {
+                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis') || tabId.includes('mental-game') || tabId.includes('notes') || tabId.includes('create-session')) {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
@@ -1906,8 +2028,9 @@
                     if (tabId === 'tab-progress') { generateProgressChart(totalWeeks); generateHeatmap(); }
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
                     if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
-                    if (tabId === 'tab-analysis') generatePerformanceChart(totalWeeks);
+                    if (tabId === 'tab-analysis') { generatePerformanceChart(totalWeeks); generateWeeklyRatingChart(totalWeeks); }
                     if (tabId === 'tab-notes') populateAllNotesList(totalWeeks);
+                    if (tabId === 'tab-create-session') populateCreateSessionList(totalWeeks);
                 }
             }
             tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
@@ -1930,7 +2053,17 @@
 
                 const assessmentSection = weekContent.querySelector('.assessment-section');
                 if (assessmentSection) {
-                    assessmentSection.style.display = (checkedCount === totalCount && totalCount > 0) ? 'block' : 'none';
+                    const profiles = getProfiles();
+                    const progress = profiles[currentProfile].progress || {};
+                    const isWeekComplete = (checkedCount === totalCount && totalCount > 0);
+                    const weekKey = `week${weekNumber}Completed`;
+
+                    if (isWeekComplete && !progress[weekKey]) {
+                        addPoints(50); // Bonus for completing a day
+                        progress[weekKey] = true;
+                        saveProfiles(profiles);
+                    }
+                    assessmentSection.style.display = isWeekComplete ? 'block' : 'none';
                 }
             }
             
@@ -1982,6 +2115,13 @@
                     const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
                     btn.classList.toggle('has-note', hasNote);
                 });
+
+                document.querySelectorAll('.btn-ghost-mode').forEach(btn => {
+                    const bestScores = progress.bestScores || {};
+                    btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
+                });
+                
+                updatePointsUI();
             }
 
             loadState();
@@ -2066,7 +2206,12 @@
                     const taskId = e.target.dataset.taskId;
                     const taskText = e.target.dataset.taskText;
                     const taskGoal = e.target.dataset.taskGoal;
-                    startExerciseSession(taskId, taskText, taskGoal);
+                    startExerciseSession(taskId, taskText, taskGoal, false);
+                } else if (e.target.classList.contains('btn-ghost-mode')) {
+                    const taskId = e.target.dataset.taskId;
+                    const taskText = e.target.dataset.taskText;
+                    const taskGoal = e.target.dataset.taskGoal;
+                    startExerciseSession(taskId, taskText, taskGoal, true);
                 } else if (e.target.classList.contains('btn-task-note')) {
                     const taskId = e.target.dataset.taskId;
                     const taskText = e.target.dataset.taskText;
@@ -2112,6 +2257,9 @@
 
             document.querySelectorAll('input[type="checkbox"]').forEach(item => {
                 item.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        addPoints(10);
+                    }
                     saveState(e.target.id, e.target.checked);
                     const weekNumber = item.id.split('-')[0].replace('w','');
                     updateProgressForWeek(parseInt(weekNumber, 10));
@@ -2122,7 +2270,8 @@
              document.querySelectorAll('.diary-textarea').forEach(item => {
                 item.addEventListener('blur', e => {
                     const currentValue = e.target.value;
-                    const previousValue = getProfiles()[currentProfile]?.progress[e.target.id] || '';
+                    const profiles = getProfiles();
+                    const previousValue = profiles[currentProfile]?.progress[e.target.id] || '';
                     if (currentValue !== previousValue) {
                          saveState(e.target.id, currentValue);
                          showToast('Diario guardado');
@@ -2154,7 +2303,9 @@
                 } else if (resetScope === 'all') {
                     const profiles = getProfiles();
                     if (profiles[currentProfile]) {
-                        profiles[currentProfile].progress = {};
+                        profiles[currentProfile].progress = {
+                            config: profiles[currentProfile].config // Keep config
+                        };
                         saveProfiles(profiles);
                     }
                     window.location.reload();
@@ -2352,6 +2503,10 @@
              showModal(null);
         });
 
+        document.getElementById('level-up-ok-btn').addEventListener('click', () => {
+             showModal(null);
+        });
+
         const importFileInput = document.getElementById('import-file-input');
         const overwriteModal = document.getElementById('overwrite-modal');
         let pendingImport = null;
@@ -2455,7 +2610,7 @@
                     nameError.style.display = 'block';
                     return;
                 }
-                profiles[userName] = { config: userConfig, progress: {} };
+                profiles[userName] = { config: userConfig, progress: { points: 0, level: 1 } };
                 saveProfiles(profiles);
                 startSession(userName, isGuest ? userConfig : null);
             }
@@ -2525,49 +2680,72 @@
             showModal(sessionModal);
         }
 
-        function startExerciseSession(taskId, taskText, taskGoal) {
+        function startExerciseSession(taskId, taskText, taskGoal, isGhostMode) {
             const sessionModal = document.getElementById('session-modal');
             const timerView = document.getElementById('timer-view');
             const loggerView = document.getElementById('shot-logger-ui');
-            
+            const bestScoreEl = document.getElementById('shot-logger-best-score');
+            const selector = document.getElementById('shot-logger-shot-selector');
+            const nextPrompt = document.getElementById('shot-logger-next-prompt');
+
             const attemptsMatch = taskGoal.match(/(\d+)\s*Intentos/i);
-            const rangeMatch = taskText.match(/Shots? #(\d+)-(\d+)/i);
+            const rangeMatch = taskText.match(/<b>(\d+)-(\d+):/);
 
             if (!attemptsMatch) {
-                startTimerSession(15); 
+                startTimerSession(15);
                 return;
             }
-            
+
             shotLoggerState = {
                 hits: 0,
                 attempts: 0,
                 totalAttempts: parseInt(attemptsMatch[1], 10),
                 taskId: taskId,
-                isRange: false,
-                rangeBaseText: '',
+                isGhostMode: isGhostMode,
+                isRange: !!rangeMatch,
                 rangeShots: [],
                 currentRangeIndex: 0,
-                rangeResults: []
+                rangeBaseText: ''
             };
 
-            if (rangeMatch) {
-                shotLoggerState.isRange = true;
+            selector.style.display = 'none';
+            selector.innerHTML = '';
+            nextPrompt.style.display = 'none';
+
+            if (shotLoggerState.isRange) {
                 const start = parseInt(rangeMatch[1]);
                 const end = parseInt(rangeMatch[2]);
                 for (let i = start; i <= end; i++) {
                     shotLoggerState.rangeShots.push(i);
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Tiro #${i}`;
+                    selector.appendChild(option);
                 }
                 shotLoggerState.rangeBaseText = taskText.split(':')[0];
-                document.getElementById('session-modal-title').textContent = 'Práctica de Rango de Tiros';
+                selector.style.display = 'block';
+            }
+            
+            if (isGhostMode) {
+                // Ghost mode logic is simpler, doesn't handle ranges yet
+                const profiles = getProfiles();
+                const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
+                const bestScore = bestScores[taskId] || 0;
+                bestScoreEl.textContent = `👻 Récord a batir: ${bestScore} / ${shotLoggerState.totalAttempts}`;
+                bestScoreEl.style.display = 'block';
+                document.getElementById('session-modal-title').textContent = 'Modo Fantasma';
             } else {
-                 document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
+                bestScoreEl.style.display = 'none';
+                document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
             }
             
             timerView.style.display = 'none';
             loggerView.style.display = 'block';
+            document.querySelector('#shot-logger-ui .shot-logger-buttons').style.display = 'flex';
             updateLoggerUI();
             showModal(sessionModal);
         }
+
 
         function updateLoggerUI() {
             if (shotLoggerState.isRange) {
@@ -2579,47 +2757,65 @@
                     document.getElementById('shot-logger-task-text').innerHTML = parseGlossaryTerms(taskButton.dataset.taskText);
                  }
             }
-            document.getElementById('shot-logger-counter').textContent = `${shotLoggerState.hits} Aciertos / ${shotLoggerState.attempts} Intentos`;
+            document.getElementById('shot-logger-counter').textContent = `${shotLoggerState.hits} / ${shotLoggerState.totalAttempts}`;
         }
         
         function handleShotLoggerClick(isHit) {
+            const nextPrompt = document.getElementById('shot-logger-next-prompt');
+            const loggerButtons = document.querySelector('#shot-logger-ui .shot-logger-buttons');
+
             if(shotLoggerState.attempts >= shotLoggerState.totalAttempts) return;
 
             shotLoggerState.attempts++;
             if (isHit) {
                 shotLoggerState.hits++;
             }
-            updateLoggerUI();
+            document.getElementById('shot-logger-counter').textContent = `${shotLoggerState.hits} / ${shotLoggerState.attempts}`;
+
 
             if (shotLoggerState.attempts === shotLoggerState.totalAttempts) {
-                if (shotLoggerState.isRange) {
-                    shotLoggerState.rangeResults.push({ hits: shotLoggerState.hits, attempts: shotLoggerState.attempts });
-                    shotLoggerState.currentRangeIndex++;
+                loggerButtons.style.display = 'none';
 
-                    if (shotLoggerState.currentRangeIndex < shotLoggerState.rangeShots.length) {
-                        shotLoggerState.hits = 0;
-                        shotLoggerState.attempts = 0;
-                        setTimeout(updateLoggerUI, 500);
-                    } else {
-                        const totalHits = shotLoggerState.rangeResults.reduce((sum, result) => sum + result.hits, 0);
-                        const totalAttempts = shotLoggerState.rangeResults.reduce((sum, result) => sum + result.attempts, 0);
-                        
-                        shotLoggerState.hits = totalHits;
-                        shotLoggerState.totalAttempts = totalAttempts;
-
-                        setTimeout(() => {
-                            showModal(null); 
-                            showRatingSuggestion();
-                        }, 500);
-                    }
+                if(shotLoggerState.isRange) {
+                     if (shotLoggerState.currentRangeIndex < shotLoggerState.rangeShots.length - 1) {
+                        nextPrompt.style.display = 'block';
+                     } else {
+                        // Last shot in range, finish up
+                        setTimeout(() => finishShotLogging(), 500);
+                     }
                 } else {
-                    setTimeout(() => {
-                        showModal(null); 
-                        showRatingSuggestion();
-                    }, 500);
+                    setTimeout(() => finishShotLogging(), 500);
                 }
             }
         }
+        
+        function finishShotLogging() {
+            showModal(null);
+            if (shotLoggerState.isGhostMode) {
+                const profiles = getProfiles();
+                const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
+                const oldBest = bestScores[shotLoggerState.taskId] || 0;
+                if (shotLoggerState.hits > oldBest) {
+                    saveState(shotLoggerState.taskId, shotLoggerState.hits, 'bestScores');
+                    showCustomAlert('¡Nuevo Récord!', `¡Felicidades! Has superado tu récord anterior de ${oldBest} con ${shotLoggerState.hits} aciertos.`);
+                } else {
+                        showCustomAlert('¡Casi!', `Tu puntuación fue de ${shotLoggerState.hits}. Tu récord sigue siendo ${oldBest}. ¡Sigue intentando!`);
+                }
+            } else {
+                    showRatingSuggestion();
+            }
+        }
+
+        function setupNextShot() {
+            shotLoggerState.currentRangeIndex++;
+            document.getElementById('shot-logger-shot-selector').selectedIndex = shotLoggerState.currentRangeIndex;
+            shotLoggerState.hits = 0;
+            shotLoggerState.attempts = 0;
+            document.getElementById('shot-logger-next-prompt').style.display = 'none';
+            document.querySelector('#shot-logger-ui .shot-logger-buttons').style.display = 'flex';
+            updateLoggerUI();
+        }
+
         
         function calculateStars(hits, total) {
             if (total === 0) return 0;
@@ -2643,6 +2839,15 @@
             acceptBtn.onclick = () => {
                 saveRating(taskId, suggestedStars);
                 updateStarsUI(taskId, suggestedStars);
+
+                const profiles = getProfiles();
+                const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
+                const oldBest = bestScores[taskId] || 0;
+                if (hits > oldBest) {
+                    saveState(taskId, hits, 'bestScores');
+                }
+                document.querySelector(`.btn-ghost-mode[data-task-id="${taskId}"]`).style.display = 'inline-block';
+
                 showModal(null);
             };
 
@@ -2652,6 +2857,15 @@
         function initializeNewFeatures(totalWeeks) {
             document.getElementById('btn-hit').addEventListener('click', () => handleShotLoggerClick(true));
             document.getElementById('btn-miss').addEventListener('click', () => handleShotLoggerClick(false));
+            document.getElementById('btn-next-shot').addEventListener('click', setupNextShot);
+            document.getElementById('btn-finish-session').addEventListener('click', finishShotLogging);
+            document.getElementById('shot-logger-shot-selector').addEventListener('change', (e) => {
+                shotLoggerState.currentRangeIndex = e.target.selectedIndex;
+                shotLoggerState.hits = 0;
+                shotLoggerState.attempts = 0;
+                updateLoggerUI();
+            });
+
             document.getElementById('btn-generate-session').addEventListener('click', () => {
                 showModal(document.getElementById('session-duration-modal'));
             });
@@ -2672,11 +2886,7 @@
                 document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.trim().length > 0);
                 
                 if (document.getElementById('tab-notes').checked) {
-                    const profiles = getProfiles();
-                    const userConfig = profiles[currentProfile]?.config;
-                    const daysPerWeek = userConfig?.selectedDays.length || 1;
-                    const actualTotalWeeks = Math.ceil(allTrainingDays.length / daysPerWeek);
-                    populateAllNotesList(actualTotalWeeks);
+                    populateAllNotesList(totalWeeks);
                 }
                 
                 showModal(null);
@@ -2693,6 +2903,29 @@
                     dt.style.display = isVisible ? '' : 'none';
                     dds[index].style.display = isVisible ? '' : 'none';
                 });
+            });
+
+             document.getElementById('btn-my-sessions').addEventListener('click', () => {
+                populateMySessionsList();
+                showModal(document.getElementById('my-sessions-modal'));
+            });
+
+            document.getElementById('btn-save-custom-session').addEventListener('click', () => {
+                const name = document.getElementById('custom-session-name').value.trim();
+                if (!name) {
+                    showCustomAlert('Error', 'Por favor, dale un nombre a tu sesión.');
+                    return;
+                }
+                const selectedShots = Array.from(document.querySelectorAll('#create-session-shot-list input:checked')).map(cb => cb.value);
+                if (selectedShots.length === 0) {
+                    showCustomAlert('Error', 'Selecciona al menos un tiro para tu sesión.');
+                    return;
+                }
+                const newSession = { name, shots: selectedShots, id: `custom-${Date.now()}` };
+                saveState(newSession.id, newSession, 'customSessions');
+                showToast('Sesión guardada');
+                document.getElementById('custom-session-name').value = '';
+                document.querySelectorAll('#create-session-shot-list input:checked').forEach(cb => cb.checked = false);
             });
 
             function generateDynamicSession(duration) {
@@ -2713,10 +2946,11 @@
 
                  for(const day of allTrainingDays) {
                     for(const task of day.tasks) {
+                        if (!task.type) continue;
                         const taskInfo = findTaskById(`w1-d${day.id}-${task.id}`);
                         if (!taskInfo) continue;
                         const taskId = `w${taskInfo.weekNum}-d${day.id}-${task.id}`;
-                        if (!progress[taskId] && task.type) {
+                        if (!progress[taskId]) {
                              p2_task = taskInfo;
                              break;
                         }
@@ -2890,10 +3124,9 @@
             const progress = profiles[currentProfile].progress || {};
             const today = new Date().toISOString().split('T')[0];
 
-            if (!progress.practiceDates) progress.practiceDates = {};
-            
-            if (progress.practiceDates[today]) return; 
+            if (progress.lastPracticeDate === today) return;
 
+            if (!progress.practiceDates) progress.practiceDates = {};
             progress.practiceDates[today] = (progress.practiceDates[today] || 0) + 1;
 
             const lastPractice = progress.lastPracticeDate;
@@ -2905,6 +3138,7 @@
 
             if (lastPractice === yesterdayStr) {
                 streak++;
+                addPoints(20); // Streak bonus
             } else if (lastPractice !== today) {
                 streak = 1;
             }
@@ -2912,6 +3146,105 @@
             progress.currentStreak = streak;
             progress.lastPracticeDate = today;
             saveProfiles(profiles);
+        }
+
+        function addPoints(points) {
+            const profiles = getProfiles();
+            const progress = profiles[currentProfile].progress;
+            if (!progress.points) progress.points = 0;
+            if (!progress.level) progress.level = 1;
+
+            const oldLevel = progress.level;
+            progress.points += points;
+            
+            const newLevel = Math.floor(progress.points / 500) + 1;
+            if (newLevel > oldLevel) {
+                progress.level = newLevel;
+                document.getElementById('level-up-name').textContent = `¡Alcanzaste el Nivel ${newLevel}!`;
+                document.getElementById('level-up-icon').textContent = '⭐';
+                showModal(document.getElementById('level-up-modal'));
+            }
+            saveProfiles(profiles);
+            updatePointsUI();
+        }
+
+        function updatePointsUI() {
+            const profiles = getProfiles();
+            const progress = profiles[currentProfile].progress;
+            const level = progress.level || 1;
+            const points = progress.points || 0;
+            const pointsForNextLevel = 500;
+            const pointsInCurrentLevel = points % pointsForNextLevel;
+            const xpPercentage = (pointsInCurrentLevel / pointsForNextLevel) * 100;
+            
+            document.getElementById('player-level-info').textContent = `Nivel ${level} (${points} XP)`;
+            document.getElementById('xp-bar').style.width = `${xpPercentage}%`;
+        }
+
+        function populateCreateSessionList(totalWeeks) {
+            const listContainer = document.getElementById('create-session-shot-list');
+            listContainer.innerHTML = '';
+            let currentWeek = 0;
+            
+            allTrainingDays.forEach(day => {
+                const weekNum = Math.floor(allTrainingDays.findIndex(d => d.id === day.id) / getProfiles()[currentProfile].config.selectedDays.length) + 1;
+                if (weekNum !== currentWeek) {
+                    currentWeek = weekNum;
+                    const h4 = document.createElement('h4');
+                    h4.textContent = `Semana ${currentWeek}`;
+                    listContainer.appendChild(h4);
+                }
+                day.tasks.forEach(task => {
+                    if (!task.type) return;
+                    const taskId = `w${weekNum}-d${day.id}-${task.id}`;
+                    const li = document.createElement('li');
+                    li.innerHTML = `<label><input type="checkbox" value="${taskId}"> ${parseGlossaryTerms(task.text)}</label>`;
+                    listContainer.appendChild(li);
+                });
+            });
+        }
+        
+        function populateMySessionsList() {
+            const list = document.getElementById('my-sessions-list');
+            list.innerHTML = '';
+            const profiles = getProfiles();
+            const sessions = profiles[currentProfile]?.progress?.customSessions || {};
+
+            if (Object.keys(sessions).length === 0) {
+                list.innerHTML = '<p>No tienes sesiones personalizadas. ¡Crea una en la pestaña "Crear Sesión"!</p>';
+                return;
+            }
+
+            for(const sessionId in sessions) {
+                const session = sessions[sessionId];
+                const li = document.createElement('li');
+                li.className = 'my-session-item';
+                li.innerHTML = `
+                    <div class="my-session-item-text">
+                        <strong>${session.name}</strong><br>
+                        <small>${session.shots.length} tiros</small>
+                    </div>
+                    <div class="my-session-item-actions">
+                        <button class="btn-start-custom-session" data-session-id="${session.id}">Iniciar</button>
+                        <button class="btn-delete-custom-session" data-session-id="${session.id}" style="background-color:var(--danger-color)">Borrar</button>
+                    </div>`;
+                list.appendChild(li);
+            }
+
+            list.querySelectorAll('.btn-delete-custom-session').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const sessionId = e.target.dataset.sessionId;
+                    saveState(sessionId, null, 'customSessions');
+                    populateMySessionsList();
+                });
+            });
+
+             list.querySelectorAll('.btn-start-custom-session').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    showCustomAlert("Próximamente", "La funcionalidad para iniciar sesiones personalizadas aún está en desarrollo. ¡Vuelve pronto!");
+                    // TODO: Implement custom session starter
+                });
+            });
         }
 
     });
