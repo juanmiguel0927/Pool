@@ -9,6 +9,8 @@
     <!-- Cal-Heatmap for activity calendar -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.min.js"></script>
+    <!-- PDF.js library for custom PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -391,7 +393,7 @@
 
         #tooltip { position: absolute; display: none; background-color: var(--container-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1001; max-width: 300px; font-size: 0.9em; }
 
-        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content, #pdf-viewer-modal .modal-content {
+        #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #diagram-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content {
             max-width: 700px; text-align: left; height: auto; max-height: 85vh; display: flex; flex-direction: column;
         }
         
@@ -401,11 +403,47 @@
             width: 90vw;
             max-height: 90vh;
         }
-        #pdf-iframe {
+        #pdf-canvas-container {
+            position: relative;
             flex-grow: 1;
-            width: 100%;
-            height: 100%;
+            overflow-y: auto;
+            text-align: center;
+            padding: 10px;
+            background: var(--day-section-bg);
+        }
+        #pdf-canvas {
+             border: 1px solid var(--border-color);
+        }
+        #pdf-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+        .pdf-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 15px;
+            gap: 20px;
+        }
+        .pdf-nav button {
+            background-color: var(--accent-color);
+            color: white;
             border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .pdf-nav button:disabled {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+        }
+        #pdf-page-info {
+            font-weight: bold;
         }
 
 
@@ -754,16 +792,21 @@
         </div>
     </div>
     
-    <!-- NEW PDF VIEWER MODAL -->
+    <!-- NEW PDF VIEWER MODAL with Canvas -->
     <div id="pdf-viewer-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
              <div class="modal-header">
                 <h2 id="pdf-modal-title">Diagrama del Tiro</h2>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <div style="flex-grow: 1; display: flex; flex-direction: column;">
-                <!-- Google Docs Viewer para incrustar PDF sin descarga directa -->
-                <iframe id="pdf-iframe" src="" allowfullscreen></iframe>
+            <div id="pdf-canvas-container">
+                <div id="pdf-loader">Cargando diagrama...</div>
+                <canvas id="pdf-canvas"></canvas>
+            </div>
+            <div class="pdf-nav">
+                <button id="pdf-prev-page">&lt; Anterior</button>
+                <span id="pdf-page-info">Página <span id="pdf-current-page"></span> de <span id="pdf-total-pages"></span></span>
+                <button id="pdf-next-page">Siguiente &gt;</button>
             </div>
         </div>
     </div>
@@ -910,8 +953,7 @@
     const proPoolPlayers = ["Efren Reyes", "Shane Van Boening", "Earl Strickland", "Jayson Shaw", "Mike Sigel", "Francisco Bustamante"];
     
     // --- PASO IMPORTANTE ---
-    // REEMPLAZA LA SIGUIENTE URL con el enlace "raw" de tu archivo PDF subido a GitHub.
-    // Ejemplo: 'https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/En%20orden.pdf'
+    // URL al archivo PDF "raw" en tu repositorio de GitHub.
     const basePdfUrl = 'https://raw.githubusercontent.com/juanmiguel0927/Pool/main/En%20orden.pdf';
 
     const glossaryData = {
@@ -963,8 +1005,7 @@
             content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuando perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros tener éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
         }
     ];
-    // NOTA IMPORTANTE: Se han rellenado las URLs de los diagramas con la URL proporcionada 
-    // en el archivo ejercicios_url.md.
+    
     const allTrainingDays = [
         { 
             id: 1, 
@@ -1012,27 +1053,6 @@
         { id: 27, originalWeek: 7, title: 'Jueves: Juego Mental y Presión', focus: 'Practicar la ejecución perfecta bajo presión simulada. <strong>El rendimiento es mental.</strong>', estTime: '60 min', tasks: [ { id: 't1', text: '<b>Visualización de Torneo:</b> Imagínese en la mesa, con público. Visualice su rutina.'}, { id: 't2', text: '<b>Reinicio Bajo Presión:</b> Faille un tiro a propósito. Use su mantra ("Siguiente tiro") y reinicie la rutina.'}]},
         { id: 28, originalWeek: 7, title: 'Viernes: Competencia y Cierre del Ciclo', focus: 'Integrar todos los componentes de la "Torre de Entrenamiento".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Juego Competitivo:</b> Compita. <strong>Objetivo:</strong> No ganar, sino mantener el proceso.'}, { id: 't2', text: '<b>Análisis Post-Juego:</b> ¿En qué momento se rompió su rutina? Esos son los tiros que debe repetir.'}, { id: 't3', text: '<b>Cierre del Ciclo:</b> Vuelva a la Semana 1. La maestría requiere práctica continua.'}], criteria: 'Mantener un <strong>rendimiento constante</strong> bajo presión y aplicar la <strong>rutina completa</strong> en el 90% de los tiros.'}
     ];
-
-    // Asigna dinámicamente las URLs de los diagramas con el número de página correcto
-    allTrainingDays.forEach(day => {
-        let shotNumber = null;
-        // Busca el número del tiro clave en el título
-        if (day.keyShot && day.keyShot.title) {
-            const match = day.keyShot.title.match(/#(\d+)/);
-            if (match) shotNumber = match[1];
-        }
-        // Si no lo encuentra, lo busca en la primera tarea del día
-        if (!shotNumber && day.tasks.length > 0) {
-            const match = day.tasks[0].text.match(/<b>(\d+)/);
-            if (match) shotNumber = match[1];
-        }
-
-        if (shotNumber) {
-            day.diagrama = `${basePdfUrl}#page=${shotNumber}`;
-        } else {
-            day.diagrama = basePdfUrl; // Si no encuentra número, abre el PDF en la primera página
-        }
-    });
 
     const weekThemes = {
         1: "Fundamentos del Golpeo", 2: "Posicionamiento con Stun y Follow", 3: "Dominio del Tiro de Retroceso (Draw)", 4: "Introducción al Efecto Lateral (Sidespin)", 5: "Posicionamiento Avanzado y Control de Faltas", 6: "Juego de Bandas y Tiros Complejos", 7: "Estrategia y Mente Competitiva"
@@ -1084,6 +1104,9 @@
         let sessionTimerInterval = null;
         let shotLoggerState = { hits: 0, attempts: 0, totalAttempts: 10, taskId: null };
         let cal = new CalHeatmap();
+        // PDF Viewer state
+        let pdfDoc = null;
+        let currentPageNum = 1;
         
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
@@ -1106,6 +1129,72 @@
             document.getElementById('alert-modal-text').textContent = message;
             document.getElementById('alert-modal').style.display = 'flex';
         }
+        
+        // --- PDF Viewer Logic ---
+        const pdfViewerModal = document.getElementById('pdf-viewer-modal');
+        const pdfCanvas = document.getElementById('pdf-canvas');
+        const pdfLoader = document.getElementById('pdf-loader');
+        const pdfPrevBtn = document.getElementById('pdf-prev-page');
+        const pdfNextBtn = document.getElementById('pdf-next-page');
+        const pdfCurrentPageSpan = document.getElementById('pdf-current-page');
+        const pdfTotalPagesSpan = document.getElementById('pdf-total-pages');
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+
+        async function renderPdfPage(num) {
+            if (!pdfDoc) return;
+            
+            const page = await pdfDoc.getPage(num);
+            const viewport = page.getViewport({ scale: 1.5 });
+            const context = pdfCanvas.getContext('2d');
+            
+            pdfCanvas.height = viewport.height;
+            pdfCanvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+            };
+            await page.render(renderContext).promise;
+            
+            currentPageNum = num;
+            pdfCurrentPageSpan.textContent = currentPageNum;
+            pdfPrevBtn.disabled = currentPageNum <= 1;
+            pdfNextBtn.disabled = currentPageNum >= pdfDoc.numPages;
+        }
+
+        async function showPdfDiagram(initialPage) {
+            showModal(pdfViewerModal);
+            pdfLoader.style.display = 'block';
+            pdfCanvas.style.display = 'none';
+
+            try {
+                if (!pdfDoc) { // Load the document only once
+                    const loadingTask = pdfjsLib.getDocument(basePdfUrl);
+                    pdfDoc = await loadingTask.promise;
+                }
+                
+                pdfTotalPagesSpan.textContent = pdfDoc.numPages;
+                await renderPdfPage(initialPage);
+
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                pdfLoader.textContent = 'Error al cargar el diagrama.';
+            } finally {
+                pdfLoader.style.display = 'none';
+                pdfCanvas.style.display = 'block';
+            }
+        }
+
+        pdfPrevBtn.addEventListener('click', () => {
+            if (currentPageNum <= 1) return;
+            renderPdfPage(currentPageNum - 1);
+        });
+
+        pdfNextBtn.addEventListener('click', () => {
+            if (currentPageNum >= pdfDoc.numPages) return;
+            renderPdfPage(currentPageNum + 1);
+        });
         
         // NEW GLOBAL FUNCTION: findTaskById (moved from initializePlanLogic)
         function findTaskById(taskId) {
@@ -1393,20 +1482,12 @@
                     });
                     dayHTML += `</ul></div>`;
                     
-                    if (day.diagrama) {
-                        dayHTML += `
-                            <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" data-pdf-url="${day.diagrama}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
-                                Ver Diagrama del Tiro Clave
-                            </button>
-                        `;
-                    } else {
-                         // Mostrar un botón inactivo si no hay diagrama para no romper el layout
-                        dayHTML += `
-                            <button class="btn-view-diagram" style="background-color: var(--secondary-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: not-allowed; margin-top: -5px; margin-bottom: 10px; opacity: 0.7;">
-                                Diagrama No Disponible
-                            </button>
-                        `;
-                    }
+                    // Button is always added, logic to show diagram is handled in click event
+                    dayHTML += `
+                        <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
+                            Ver Diagrama del Tiro Clave
+                        </button>
+                    `;
                     
                     if(day.keyShot) dayHTML += `<div class="shot-description"><h5>${parseGlossaryTerms(day.keyShot.title)}</h5><p>${parseGlossaryTerms(day.keyShot.desc)}</p></div>`;
                     const diaryId = `w${i}-d${day.id}-notes`;
@@ -1959,7 +2040,6 @@
                     const taskText = e.target.dataset.taskText;
                     const profiles = getProfiles();
                     
-                    // MODIFIED: Fetch note object, not just content string
                     const noteEntry = profiles[currentProfile]?.progress?.taskNotes?.[taskId] || { content: '', lastModified: null };
                     
                     const notesModal = document.getElementById('task-notes-modal');
@@ -1979,21 +2059,24 @@
 
                     showModal(notesModal);
                 } else if (e.target.classList.contains('btn-view-diagram')) {
-                    const pdfUrl = e.target.dataset.pdfUrl;
-                    const title = e.target.dataset.diagramTitle;
+                    const dayId = parseInt(e.target.dataset.dayId, 10);
+                    const dayData = allTrainingDays.find(d => d.id === dayId);
+                    if (!dayData) return;
+
+                    let shotNumber = 1; // Default to page 1
                     
-                    if (pdfUrl && pdfUrl.length > 0 && !pdfUrl.includes('TU_USUARIO')) {
-                        // La URL ya contiene el ancla de la página (ej: .../file.pdf#page=9)
-                        // Los navegadores modernos respetan esto en el iframe.
-                        document.getElementById('pdf-modal-title').textContent = title;
-                        document.getElementById('pdf-iframe').src = pdfUrl;
-                        
-                        showModal(document.getElementById('pdf-viewer-modal'));
-                    } else if (pdfUrl.includes('TU_USUARIO')) {
-                         showCustomAlert('Configuración Requerida', 'Por favor, actualiza la variable "basePdfUrl" en el código con el enlace a tu archivo PDF en GitHub.');
-                    } else {
-                        showCustomAlert('Diagrama', 'No hay un diagrama asociado a este ejercicio.');
+                    // Prioritize keyShot
+                    if (dayData.keyShot && dayData.keyShot.title) {
+                        const match = dayData.keyShot.title.match(/#(\d+)/);
+                        if (match) shotNumber = parseInt(match[1], 10);
+                    } else if (dayData.tasks.length > 0) {
+                        // Fallback to first task
+                        const match = dayData.tasks[0].text.match(/<b>(\d+)/);
+                        if (match) shotNumber = parseInt(match[1], 10);
                     }
+                    
+                    document.getElementById('pdf-modal-title').textContent = `Diagrama: ${dayData.title.split(': ')[1]}`;
+                    showPdfDiagram(shotNumber);
                 }
             });
 
@@ -2101,10 +2184,13 @@
             
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.target.closest('.modal-overlay').style.display = 'none';
-                    // Al cerrar el modal del PDF, limpiamos la fuente del iframe
-                    if (e.target.closest('#pdf-viewer-modal')) {
-                        document.getElementById('pdf-iframe').src = '';
+                    const modal = e.target.closest('.modal-overlay');
+                    modal.style.display = 'none';
+                    
+                    if (modal.id === 'pdf-viewer-modal') {
+                        // Optionally clear canvas to save memory
+                        const context = pdfCanvas.getContext('2d');
+                        context.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
                     }
                     if (sessionTimerInterval) {
                         clearInterval(sessionTimerInterval);
@@ -2137,24 +2223,6 @@
                 });
             });
 
-            // REMOVED old diagram modal logic and replaced with general logic above
-            // const diagramModal = document.getElementById('diagram-modal');
-            // const diagramImage = document.getElementById('diagram-modal-image');
-            // const diagramTitle = document.getElementById('diagram-modal-title');
-
-            // document.querySelectorAll('.btn-view-diagram').forEach(btn => {
-            //     btn.addEventListener('click', (e) => {
-            //         const dayId = e.target.dataset.dayId;
-            //         const dayData = allTrainingDays.find(d => d.id == dayId);
-            //         if (dayData && dayData.diagrama) {
-            //             diagramImage.src = dayData.diagrama;
-            //             diagramTitle.textContent = `Diagrama: ${e.target.dataset.diagramTitle}`;
-            //             diagramModal.style.display = 'flex';
-            //         }
-            //     });
-            // });
-
-
             document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
             document.getElementById('btn-print').addEventListener('click', () => window.print());
             
@@ -2162,6 +2230,7 @@
                 mainContainer.style.display = 'none';
                 currentProfile = null;
                 isGuest = false;
+                pdfDoc = null; // Clear loaded PDF
                 if(myProgressChart) myProgressChart.destroy();
                 if(myPerformanceChart) myPerformanceChart.destroy();
                 myProgressChart = null;
@@ -2402,7 +2471,6 @@
             const sessionModal = document.getElementById('session-modal');
             const timerView = document.getElementById('timer-view');
             const loggerView = document.getElementById('shot-logger-ui');
-            const timerDisplay = document.getElementById('timer-display');
             
             timerView.style.display = 'block';
             loggerView.style.display = 'none';
@@ -2809,7 +2877,4 @@
     </script>
 </body>
 </html>
-
-
-
 
