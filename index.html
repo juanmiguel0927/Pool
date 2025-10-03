@@ -432,7 +432,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-top: 15px;
+            flex-wrap: wrap;
+            padding-bottom: 15px;
             gap: 10px;
         }
         .pdf-nav button, .pdf-zoom button {
@@ -627,24 +628,15 @@
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
 
             #welcome-modal .modal-buttons {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 5px;
-                padding: 0 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 55px;
+                padding-top: 1rem;
+                padding-bottom: 3rem;
             }
-            #btn-guest-user {
-                grid-column: span 3;
-                margin-top: 25px;
-                margin-bottom: 50px;
-            }
-            .ball-label {
-                font-size: 0.7rem; 
-                bottom: -35px; 
-                line-height: 1.2; 
-                max-width: 100%; 
-            }
-            
-            #btn-new-user, #btn-load-user, #btn-import-profile {
+            #btn-guest-user, #btn-new-user, #btn-load-user, #btn-import-profile {
+                grid-column: auto;
                 margin: 0;
             }
 
@@ -833,10 +825,6 @@
                 <h2 id="pdf-modal-title">Diagrama del Tiro</h2>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <div id="pdf-canvas-container">
-                <div id="pdf-loader">Cargando diagrama...</div>
-                <canvas id="pdf-canvas"></canvas>
-            </div>
             <div class="pdf-nav">
                 <div class="pdf-zoom">
                     <button id="pdf-zoom-out">-</button>
@@ -845,6 +833,10 @@
                 <button id="pdf-prev-page">&lt; Anterior</button>
                 <span id="pdf-page-info">Página <span id="pdf-current-page"></span> de <span id="pdf-total-pages"></span></span>
                 <button id="pdf-next-page">Siguiente &gt;</button>
+            </div>
+            <div id="pdf-canvas-container">
+                <div id="pdf-loader">Cargando diagrama...</div>
+                <canvas id="pdf-canvas"></canvas>
             </div>
         </div>
     </div>
@@ -990,8 +982,6 @@
     // --- DATA SOURCE ---
     const proPoolPlayers = ["Efren Reyes", "Shane Van Boening", "Earl Strickland", "Jayson Shaw", "Mike Sigel", "Francisco Bustamante"];
     
-    // --- PASO IMPORTANTE ---
-    // URL al archivo PDF "raw" en tu repositorio de GitHub.
     const basePdfUrl = 'https://raw.githubusercontent.com/juanmiguel0927/Pool/main/En%20orden.pdf';
 
     const glossaryData = {
