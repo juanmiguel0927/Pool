@@ -199,70 +199,83 @@
         
         .mobile-nav { display: none; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--container-bg); color: var(--text-color); }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: var(--container-bg); padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-width: 450px; width: 90%; }
+        .modal-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content { 
+            background: var(--container-bg); 
+            padding: 30px; 
+            border-radius: 8px; 
+            text-align: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            max-width: 450px; 
+            width: 90%; 
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0);
+        }
+
         .modal-buttons { display: flex; flex-direction: column; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 0; }
         #modal-confirm { background-color: var(--danger-color); color: white; }
         #modal-cancel { background-color: var(--secondary-color); color: white; }
         
-        /* MODAL DE BIENVENIDA CON PAÑOS DINÁMICOS */
         #welcome-modal {
-            /* Fondo con animación de colores de paño */
-            background: #2a3a2f; /* Valor inicial (Verde oscuro) */
+            background: #2a3a2f;
             animation: clothColorChange 30s ease-in-out infinite alternate;
-            animation-delay: 2s; /* Start the animation a bit after load */
+            animation-delay: 2s;
             overflow: hidden;
         }
-
-        /* Keyframes para la transición de colores de paño */
         @keyframes clothColorChange {
-            0% { background-color: #2a3a2f; } /* Verde oscuro (Classic Green) */
-            25% { background-color: #274c77; } /* Azul marino (Tournament Blue) */
-            50% { background-color: #4b0082; } /* Morado oscuro (Purple) */
-            75% { background-color: #8B0000; } /* Rojo oscuro (Burgundy) */
+            0% { background-color: #2a3a2f; }
+            25% { background-color: #274c77; }
+            50% { background-color: #4b0082; }
+            75% { background-color: #8B0000; }
             100% { background-color: #2a3a2f; }
         }
-
         #welcome-modal .pool-table {
             position: absolute;
             width: 150%;
             height: 150%;
             top: 50%;
             left: 50%;
-            /* Color inicial de la mesa, que será superpuesto por el color de fondo del modal */
             background-color: transparent; 
             border: 20px solid #5d3a1a;
             border-radius: 20px;
             transform: translate(-50%, -50%) rotate(-30deg);
             box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
-            /* Animación para darle más vida al fondo */
             transition: background-color 30s ease-in-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         #welcome-modal .modal-content {
-            background: rgba(0, 0, 0, 0.7); /* Contenido semi-transparente para ver el fondo */
+            background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
             max-width: 600px;
-            animation: slideInUp 0.5s ease-out;
             padding: 2rem;
             position: relative;
             z-index: 2;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
             border-radius: 12px;
         }
-        
-        @keyframes slideInUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
         #welcome-modal h2 {
             font-family: 'Poppins', sans-serif;
             font-weight: 700;
@@ -272,14 +285,12 @@
             margin-bottom: 0.5rem;
             text-shadow: 2px 2px 15px rgba(0,0,0,0.9);
         }
-
         #welcome-modal p {
             color: #f0f0f0;
             font-size: 1.1rem;
             margin-bottom: 2.5rem;
             text-shadow: 1px 1px 5px #000;
         }
-        
         #welcome-modal .modal-buttons {
             flex-direction: row;
             flex-wrap: wrap;
@@ -300,15 +311,13 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: rotate(0deg); /* Asegurar que no giren en el menú */
+            transform: rotate(0deg);
         }
-
         .billiard-ball:hover {
             transform: scale(1.1) translateY(-5px);
             box-shadow: 0 15px 25px rgba(0,0,0,0.4), inset 0 -5px 10px rgba(0,0,0,0.4);
         }
-
-        .billiard-ball::before { /* Shine effect */
+        .billiard-ball::before {
             content: '';
             position: absolute;
             top: 10px;
@@ -320,7 +329,6 @@
             transform: rotate(-30deg);
             filter: blur(5px);
         }
-        
         .ball-number {
             position: absolute;
             background: white;
@@ -334,7 +342,6 @@
             font-weight: 700;
             font-size: 1.2rem;
         }
-
         .ball-label {
             position: absolute;
             bottom: -30px;
@@ -346,10 +353,10 @@
             letter-spacing: 0.5px;
         }
 
-        .ball-1 { background-color: #f7b32b; } /* Yellow (Nuevo Perfil) */
-        .ball-2 { background-color: #274c77; } /* Blue (Cargar Perfil) */
-        .ball-3 { background-color: #c0392b; } /* Red (Importar) */
-        .ball-8 { background-color: #1e1e1e; } /* Black (Invitado) */
+        .ball-1 { background-color: #f7b32b; }
+        .ball-2 { background-color: #274c77; }
+        .ball-3 { background-color: #c0392b; }
+        .ball-8 { background-color: #1e1e1e; }
 
         #load-user-modal .modal-content button { width: 100%; margin-bottom: 10px; font-size: 1.1em; }
         .user-profile-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -397,7 +404,6 @@
             max-width: 700px; text-align: left; height: auto; max-height: 85vh; display: flex; flex-direction: column;
         }
         
-        /* Specific PDF Modal size for better viewing */
         #pdf-viewer-modal .modal-content {
             max-width: 90vw;
             width: 90vw;
@@ -427,9 +433,9 @@
             justify-content: center;
             align-items: center;
             padding-top: 15px;
-            gap: 20px;
+            gap: 10px;
         }
-        .pdf-nav button {
+        .pdf-nav button, .pdf-zoom button {
             background-color: var(--accent-color);
             color: white;
             border: none;
@@ -437,6 +443,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: bold;
         }
         .pdf-nav button:disabled {
             background-color: var(--secondary-color);
@@ -444,6 +451,8 @@
         }
         #pdf-page-info {
             font-weight: bold;
+            min-width: 100px;
+            text-align: center;
         }
 
 
@@ -470,9 +479,20 @@
         .modal-header h2 { margin: 0; border: none; }
         .modal-close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; color: var(--text-color); }
         
-        #glossary-content, #fitness-content, #mental-game-content { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
+        #glossary-content-wrapper { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
+        #glossary-search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--day-section-bg);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
         #glossary-content dl dt { font-weight: bold; color: var(--accent-color); margin-top: 15px; }
         #glossary-content dl dd { margin-left: 20px; }
+        #fitness-content, #mental-game-content { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
         .highlight-term { background-color: var(--important-note-bg); transition: background-color 0.5s; }
 
         #reinforce-list { list-style: none; padding: 0; }
@@ -480,7 +500,6 @@
         .reinforce-item-text { flex-grow: 1; }
         .reinforce-item-source { font-size: 0.85em; color: var(--secondary-color); font-style: italic; display: block; }
         
-        /* New Style for My Notes List */
         #all-notes-list { list-style: none; padding: 0; }
         .note-item { 
             background-color: var(--day-section-bg); 
@@ -501,7 +520,7 @@
             color: var(--accent-color);
         }
         .note-content {
-            white-space: pre-wrap; /* Preserves new lines */
+            white-space: pre-wrap;
             font-size: 0.9em;
             color: var(--text-color);
             margin-bottom: 10px;
@@ -522,7 +541,6 @@
             font-size: 0.8em; 
             font-weight: bold; 
         }
-
 
         #streak-container { text-align: center; padding: 20px; background-color: var(--day-section-bg); border-radius: 8px; margin-bottom: 20px; }
         #streak-counter { font-size: 3rem; font-weight: bold; color: var(--accent-color); }
@@ -553,12 +571,30 @@
 
         #mental-game-content blockquote { border-left: 3px solid var(--accent-color); padding-left: 15px; margin-left: 0; font-style: italic; color: var(--secondary-color); }
 
-        /* Media Query para optimización móvil */
+        #save-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        #save-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-20px);
+        }
+
         @media (max-width: 768px) {
             .container { 
                 padding: 15px; 
-                margin: 10px auto; /* Ajuste para móvil */
-                max-width: 100%; /* Asegura que el contenedor use todo el ancho */
+                margin: 10px auto;
+                max-width: 100%;
             }
             .tabs-container .tab-label { display: none; }
             .mobile-nav { display: block; }
@@ -570,7 +606,7 @@
             .action-buttons {
                 width: 100%;
                 justify-content: center;
-                flex-wrap: wrap; /* Permite que los botones se envuelvan */
+                flex-wrap: wrap;
             }
             .action-buttons button {
                 flex-grow: 1;
@@ -578,7 +614,6 @@
             }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
             
-            /* Ajuste Modal de Bienvenida para centrar mejor en móvil */
             #welcome-modal .modal-content {
                 width: 90%;
                 max-width: 95%; 
@@ -590,18 +625,17 @@
 
             .billiard-ball { width: 80px; height: 80px; }
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
-            /* FIX: Asegurar que los botones no se solapen */
+
             #welcome-modal .modal-buttons {
-                /* Usar grid para un control de espacio más preciso */
                 display: grid;
-                grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-                gap: 5px; /* Reducir el gap horizontalmente */
-                padding: 0 5px; /* Reducir el padding lateral */
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+                padding: 0 5px;
             }
             #btn-guest-user {
-                grid-column: span 3; /* Hace que el botón Invitado ocupe todo el ancho */
-                margin-top: 25px; /* Aumentar espacio superior para evitar solapamiento */
-                margin-bottom: 50px; /* Asegurar espacio para su propia etiqueta */
+                grid-column: span 3;
+                margin-top: 25px;
+                margin-bottom: 50px;
             }
             .ball-label {
                 font-size: 0.7rem; 
@@ -610,19 +644,17 @@
                 max-width: 100%; 
             }
             
-            /* Ajuste de botones individuales para el layout grid */
             #btn-new-user, #btn-load-user, #btn-import-profile {
                 margin: 0;
             }
 
-            /* Asegurar que las listas y elementos de tarea se vean bien */
             .task-item {
                 flex-wrap: wrap;
                 align-items: flex-start;
                 padding: 5px 0;
             }
             .task-item label {
-                width: calc(100% - 30px); /* Deja espacio para el checkbox/star */
+                width: calc(100% - 30px);
                 order: 2;
                 margin-left: 0;
             }
@@ -648,7 +680,7 @@
     </style>
 </head>
 <body>
-    <div id="welcome-modal" class="modal-overlay">
+    <div id="welcome-modal" class="modal-overlay visible">
         <div class="pool-table"></div>
         <div class="modal-content">
             <h2>Tiro Maestro</h2>
@@ -674,7 +706,7 @@
         </div>
     </div>
 
-    <div id="load-user-modal" class="modal-overlay" style="display: none;">
+    <div id="load-user-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>Cargar Perfil</h2>
             <div id="load-user-list"></div>
@@ -684,7 +716,7 @@
         </div>
     </div>
     
-    <div id="new-user-modal" class="modal-overlay" style="display: none;">
+    <div id="new-user-modal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="new-user-title">Crear Nuevo Perfil</h2>
             <p>Personaliza tu camino hacia la maestría.</p>
@@ -718,7 +750,7 @@
         </div>
     </div>
 
-    <div id="reset-modal" class="modal-overlay" style="display: none;">
+    <div id="reset-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Confirmar Reinicio</h3>
             <p>¿Estás seguro de que quieres borrar este progreso? Esta acción no se puede deshacer.</p>
@@ -729,7 +761,7 @@
         </div>
     </div>
 
-     <div id="overwrite-modal" class="modal-overlay" style="display: none;">
+     <div id="overwrite-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Sobrescribir Perfil</h3>
             <p id="overwrite-modal-text"></p>
@@ -740,7 +772,7 @@
         </div>
     </div>
 
-    <div id="alert-modal" class="modal-overlay" style="display: none;">
+    <div id="alert-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="alert-modal-title"></h3>
             <p id="alert-modal-text"></p>
@@ -750,17 +782,20 @@
         </div>
     </div>
 
-    <div id="glossary-modal" class="modal-overlay" style="display: none;">
+    <div id="glossary-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Glosario de Billar</h2>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <div id="glossary-content"></div>
+            <input type="text" id="glossary-search" placeholder="Buscar término...">
+            <div id="glossary-content-wrapper">
+                <div id="glossary-content"></div>
+            </div>
         </div>
     </div>
 
-    <div id="term-definition-modal" class="modal-overlay" style="display: none;">
+    <div id="term-definition-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
                 <h2 id="term-modal-title"></h2>
@@ -770,7 +805,7 @@
         </div>
     </div>
 
-     <div id="recommendation-modal" class="modal-overlay" style="display: none;">
+     <div id="recommendation-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
                 <h2>Recomendación Semanal</h2>
@@ -780,7 +815,7 @@
         </div>
     </div>
 
-    <div id="diagram-modal" class="modal-overlay" style="display: none;">
+    <div id="diagram-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
                 <h2 id="diagram-modal-title">Diagrama del Tiro</h2>
@@ -792,8 +827,7 @@
         </div>
     </div>
     
-    <!-- NEW PDF VIEWER MODAL with Canvas -->
-    <div id="pdf-viewer-modal" class="modal-overlay" style="display: none;">
+    <div id="pdf-viewer-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
                 <h2 id="pdf-modal-title">Diagrama del Tiro</h2>
@@ -804,15 +838,18 @@
                 <canvas id="pdf-canvas"></canvas>
             </div>
             <div class="pdf-nav">
+                <div class="pdf-zoom">
+                    <button id="pdf-zoom-out">-</button>
+                    <button id="pdf-zoom-in">+</button>
+                </div>
                 <button id="pdf-prev-page">&lt; Anterior</button>
                 <span id="pdf-page-info">Página <span id="pdf-current-page"></span> de <span id="pdf-total-pages"></span></span>
                 <button id="pdf-next-page">Siguiente &gt;</button>
             </div>
         </div>
     </div>
-    <!-- END NEW MODAL -->
 
-    <div id="shot-of-the-day-modal" class="modal-overlay" style="display: none;">
+    <div id="shot-of-the-day-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
                 <h2>🎲 Tiro del Día</h2>
@@ -822,7 +859,7 @@
         </div>
     </div>
 
-    <div id="achievement-unlocked-modal" class="modal-overlay" style="display: none;">
+    <div id="achievement-unlocked-modal" class="modal-overlay">
         <div class="modal-content" style="text-align: center;">
             <h2 style="color: var(--warning-color);">¡Logro Desbloqueado!</h2>
             <div id="unlocked-achievement-icon" style="font-size: 4rem; margin: 15px 0;"></div>
@@ -832,7 +869,7 @@
         </div>
     </div>
 
-    <div id="generated-session-modal" class="modal-overlay" style="display: none;">
+    <div id="generated-session-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>📋 Tu Sesión Personalizada de Hoy</h2>
@@ -842,7 +879,7 @@
         </div>
     </div>
 
-    <div id="rating-suggestion-modal" class="modal-overlay" style="display: none;">
+    <div id="rating-suggestion-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>¡Buen Trabajo!</h2>
@@ -856,7 +893,7 @@
         </div>
     </div>
 
-    <div id="session-modal" class="modal-overlay" style="display: none;">
+    <div id="session-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="session-modal-title">Sesión de Práctica</h3>
@@ -880,7 +917,7 @@
         </div>
     </div>
 
-    <div id="session-duration-modal" class="modal-overlay" style="display: none;">
+    <div id="session-duration-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Duración de la Sesión</h2>
@@ -895,7 +932,7 @@
         </div>
     </div>
     
-    <div id="task-notes-modal" class="modal-overlay" style="display: none;">
+    <div id="task-notes-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Notas del Ejercicio</h2>
@@ -912,6 +949,7 @@
     </div>
 
     <div id="tooltip"></div>
+    <div id="save-toast">Guardado</div>
 
     <div class="container" id="main-container">
         <div class="header-controls">
@@ -1037,7 +1075,7 @@
         { id: 11, originalWeek: 3, title: 'Jueves: Draw Crítico y Estrategia', focus: 'Usar [[Draw]] para posicionamiento fuera de la línea recta (tiros con rail).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>69: Draw Crítico:</b> Este tiro tiene demasiado ángulo para [[Draw]] recto; debe usar el rail.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Game Shark Simple (15 min):</b> Juegue 5 tiros de un set, donde el objetivo es usar el <strong>mínimo [[Draw]]</strong> posible.'}]},
         { id: 12, originalWeek: 3, title: 'Viernes: Test de Draw y Simplicidad', focus: 'Integrar [[Draw]] en la filosofía de <strong>simplicidad</strong> ([[Follow]]/[[Stun]] > [[Draw]]).', estTime: '45 min', tasks: [ { id: 't1', text: '<b>70: Test de Draw Crítico (3x):</b> Evalúe la inmovilidad de su cuerpo.', goal: '3 Intentos | Meta: 2-3 Aciertos', type: 'Draw'}, { id: 't2', text: '<b>Principios de Simplicidad:</b> Repase los principios de simplicidad (ej. prefiera tiros como el #22 [[Follow]] o #48 [[Stun]] antes que [[Draw]] o [[Sidespin]] complejos). Use menos efecto.'}], criteria: 'Lograr <strong>[[Draw]] Shot</strong> consistentemente (7/10 veces).'},
         { id: 13, originalWeek: 4, title: 'Lunes: Sidespin Básico (Running vs. Hold-up)', focus: 'Entender el cambio de ángulo en el rebote causado por [[Sidespin]]. Usarlo solo cuando es <strong>necesario</strong>.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>71: Running English:</b> [[Sidespin]] en la dirección del rebote &rarr; el ángulo se ensancha. <strong>Enfoque:</strong> Compensar [[Squirt]].', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>72: Hold-up English:</b> [[Sidespin]] opuesto al rebote &rarr; el ángulo se acorta.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Sidespin'}]},
-        { id: 14, originalWeek: 4, title: 'Martes: Universal Positioning (Near Pocket)', focus: 'Controlar la bola blanca cuando la bola objetivo está cerca del bolsillo.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>73-75: Follow/Stun Near Pocket:</b> Usar Slow Speed para controlar la posición.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>76: Draw Near Pocket:</b> Use Bottom spin para evitar que la bola blanca se "pegue" al rail.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't3', text: '<b>77-78: Sidespin Posicional:</b> Use [[Sidespin]] para cambiar el ángulo off the rail. Compense [[Squirt]].', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Posicionamiento'}]},
+        { id: 14, originalWeek: 4, title: 'Martes: Universal Positioning (Near Pocket)', focus: 'Controlar la bola blanca quando la bola objetivo está cerca del bolsillo.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>73-75: Follow/Stun Near Pocket:</b> Usar Slow Speed para controlar la posición.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>76: Draw Near Pocket:</b> Use Bottom spin para evitar que la bola blanca se "pegue" al rail.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't3', text: '<b>77-78: Sidespin Posicional:</b> Use [[Sidespin]] para cambiar el ángulo off the rail. Compense [[Squirt]].', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Posicionamiento'}]},
         { id: 15, originalWeek: 4, title: 'Jueves: Sidespin y Draw Combinados', focus: 'Experimentar con [[Draw]] + [[Sidespin]] (que causa <strong>[[Swerve]]</strong>) y compensar el <strong>[[Squirt]]</strong>.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>79-83: Sidespin Fast:</b> [[Draw]] + [[Sidespin]] &rarr; [[Swerve]] (la bola blanca curva en la mesa). Evitar esto en juego real.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>Rutina Mental (15 min):</b> Practique la visualización de la curva de la bola blanca ([[Swerve]]) en 5 tiros imaginarios.'}]},
         { id: 16, originalWeek: 4, title: 'Viernes: Test de Consistencia y Simplicidad', focus: 'Reconfirmar la filosofía: usar [[Sidespin]] solo cuando es esencial.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>84: Test de Sidespin Bank:</b> Repita 5 veces. Evalúe si la bola blanca sigue el ángulo esperado.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Sidespin'}, { id: 't2', text: '<b>Simulación de Juego:</b> Juegue 5 sets de Shot Count. <strong>Regla:</strong> Si usa [[Sidespin]], pierda 1 punto de penalidad.'}], criteria: 'Lograr <strong>Sidespin [[Bank Shot]]</strong> y <strong>[[Universal Positioning]]</strong> (7/10 veces).'},
         { id: 17, originalWeek: 5, title: 'Lunes: Universal Positioning II - Draw y Rail', focus: 'Tiros complejos con [[Draw]], velocidad y el uso de ángulos en lugar de spin.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>85: Ángulos vs. Spin:</b> Posicionar usando ángulos y velocidad es a menudo más fácil que usar mucho spin.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>86: Draw Rápido:</b> Fast Speed. Baje el punto de contacto para generar más spin con menos velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}]},
@@ -1107,6 +1145,7 @@
         // PDF Viewer state
         let pdfDoc = null;
         let currentPageNum = 1;
+        let currentPdfScale = 1.5;
         
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
@@ -1120,32 +1159,46 @@
         function saveProfiles(profiles) { getStorage().setItem(STORAGE_PREFIX, JSON.stringify(profiles)); }
 
         function showModal(modal) {
-            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            if(modal) modal.style.display = 'flex';
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('visible'));
+            if (modal) {
+                modal.classList.add('visible');
+            }
         }
 
         function showCustomAlert(title, message) {
             document.getElementById('alert-modal-title').textContent = title;
             document.getElementById('alert-modal-text').textContent = message;
-            document.getElementById('alert-modal').style.display = 'flex';
+            showModal(document.getElementById('alert-modal'));
         }
         
+        function showToast(message) {
+            const toast = document.getElementById('save-toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
         // --- PDF Viewer Logic ---
         const pdfViewerModal = document.getElementById('pdf-viewer-modal');
         const pdfCanvas = document.getElementById('pdf-canvas');
         const pdfLoader = document.getElementById('pdf-loader');
         const pdfPrevBtn = document.getElementById('pdf-prev-page');
         const pdfNextBtn = document.getElementById('pdf-next-page');
+        const pdfZoomInBtn = document.getElementById('pdf-zoom-in');
+        const pdfZoomOutBtn = document.getElementById('pdf-zoom-out');
         const pdfCurrentPageSpan = document.getElementById('pdf-current-page');
         const pdfTotalPagesSpan = document.getElementById('pdf-total-pages');
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
 
-        async function renderPdfPage(num) {
+        async function renderPdfPage(num, scale = currentPdfScale) {
             if (!pdfDoc) return;
+            currentPdfScale = scale;
             
             const page = await pdfDoc.getPage(num);
-            const viewport = page.getViewport({ scale: 1.5 });
+            const viewport = page.getViewport({ scale: currentPdfScale });
             const context = pdfCanvas.getContext('2d');
             
             pdfCanvas.height = viewport.height;
@@ -1166,15 +1219,17 @@
         async function showPdfDiagram(initialPage) {
             showModal(pdfViewerModal);
             pdfLoader.style.display = 'block';
+            pdfLoader.textContent = 'Cargando diagrama...';
             pdfCanvas.style.display = 'none';
 
             try {
-                if (!pdfDoc) { // Load the document only once
+                if (!pdfDoc) {
                     const loadingTask = pdfjsLib.getDocument(basePdfUrl);
                     pdfDoc = await loadingTask.promise;
                 }
                 
                 pdfTotalPagesSpan.textContent = pdfDoc.numPages;
+                currentPdfScale = 1.5; // Reset zoom on new open
                 await renderPdfPage(initialPage);
 
             } catch (error) {
@@ -1196,13 +1251,19 @@
             renderPdfPage(currentPageNum + 1);
         });
         
-        // NEW GLOBAL FUNCTION: findTaskById (moved from initializePlanLogic)
+        pdfZoomInBtn.addEventListener('click', () => {
+            renderPdfPage(currentPageNum, currentPdfScale + 0.2);
+        });
+
+        pdfZoomOutBtn.addEventListener('click', () => {
+            if (currentPdfScale <= 0.5) return;
+            renderPdfPage(currentPageNum, currentPdfScale - 0.2);
+        });
+        
         function findTaskById(taskId) {
              if (!taskId) return null;
-             // taskId format is w[weekNum]-d[dayId]-[taskIdNum]
              const [weekPart, dayPart, taskPart] = taskId.split('-');
              const weekNum = parseInt(weekPart.replace('w', ''), 10);
-             // dayId corresponds to the 'id' in allTrainingDays
              const dayId = parseInt(dayPart.replace('d', ''), 10);
              const taskIdNum = taskPart;
 
@@ -1215,7 +1276,6 @@
              return null;
         }
 
-        // NEW GLOBAL FUNCTION: saveState (moved from initializePlanLogic)
         function saveState(id, value, stateKey = null) {
             if (!currentProfile) return;
             const profiles = getProfiles();
@@ -1226,15 +1286,10 @@
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
                 
                 if (value.trim() === '') {
-                     // Delete the note if it's empty
                     delete profiles[currentProfile].progress[stateKey][id];
                 } else {
-                    // Keep existing timestamp if editing or create a new note structure
-                    const existingNote = profiles[currentProfile].progress[stateKey][id] || {};
-                    
                     profiles[currentProfile].progress[stateKey][id] = {
                         content: value,
-                        // Keep previous modified date if it exists and we're just updating content
                         lastModified: new Date().toISOString()
                     };
                 }
@@ -1247,15 +1302,13 @@
             saveProfiles(profiles);
         }
 
-        // NEW GLOBAL FUNCTION: populateAllNotesList (moved from initializePlanLogic)
         function populateAllNotesList(totalWeeks) {
             const list = document.getElementById('all-notes-list');
             const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
-            // Notes are stored as an object where the key is the taskId and the value is {content, lastModified}
             const taskNotes = profiles[currentProfile].progress?.taskNotes || {}; 
             
-            list.innerHTML = ''; // Clear list
+            list.innerHTML = '';
             const hasNotes = Object.values(taskNotes).some(note => note.content && note.content.trim().length > 0);
 
             if (!hasNotes) {
@@ -1263,7 +1316,6 @@
                 return;
             }
 
-            // Get notes that actually have content and sort them by date (newest first)
             const sortedNotes = Object.entries(taskNotes)
                 .filter(([, note]) => note.content && note.content.trim().length > 0)
                 .sort(([, a], [, b]) => new Date(b.lastModified) - new Date(a.lastModified));
@@ -1290,7 +1342,6 @@
             });
         }
         
-        // --- Welcome Modal Logic ---
         document.getElementById('btn-new-user').addEventListener('click', () => {
             setupForm.dataset.mode = 'new';
             document.getElementById('new-user-title').textContent = 'Crear Nuevo Perfil';
@@ -1339,7 +1390,7 @@
                             delete profiles[name];
                             localStorage.setItem(STORAGE_PREFIX, JSON.stringify(profiles));
                             document.getElementById('btn-load-user').click();
-                            document.getElementById('alert-modal').style.display = 'none';
+                            showModal(loadUserModal);
                         };
                     };
                     item.appendChild(btn);
@@ -1355,7 +1406,6 @@
             btn.addEventListener('click', () => showModal(welcomeModal));
         });
 
-        // --- Session Start ---
         function startSession(userName, config) {
             currentProfile = userName;
             isGuest = !!config; 
@@ -1365,11 +1415,10 @@
                 userConfig = config;
             } else {
                 const profiles = getProfiles();
-                
                 if (profiles[currentProfile] && profiles[currentProfile].config) {
                     userConfig = profiles[currentProfile].config;
                 } else {
-                     console.error("Error: Could not find profile or config for:", userName);
+                    console.error("Error: Could not find profile or config for:", userName);
                     showModal(welcomeModal);
                     return;
                 }
@@ -1393,8 +1442,6 @@
             });
         }
         
-        // --- Core Application Logic Functions ---
-
         function saveRating(taskId, rating) {
             if (!currentProfile) return;
             const profiles = getProfiles();
@@ -1482,7 +1529,6 @@
                     });
                     dayHTML += `</ul></div>`;
                     
-                    // Button is always added, logic to show diagram is handled in click event
                     dayHTML += `
                         <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
                             Ver Diagrama del Tiro Clave
@@ -1535,7 +1581,6 @@
             </div>`;
             htmlContentWrapper += achievementsContent;
             
-            // NEW TAB: Mis Notas
             mobileNavOptions += `<option value="tab-notes">Mis Notas</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-notes" class="tab-input"><label for="tab-notes" class="tab-label">Mis Notas</label>`;
             let notesContent = `<div id="content-notes" class="tab-content">
@@ -1544,7 +1589,6 @@
                 <ul id="all-notes-list"></ul>
             </div>`;
             htmlContentWrapper += notesContent;
-            // END NEW TAB
 
             mobileNavOptions += `<option value="tab-mental-game">Juego Mental</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-mental-game" class="tab-input"><label for="tab-mental-game" class="tab-label">Juego Mental</label>`;
@@ -1601,7 +1645,7 @@
             mobileNav.innerHTML = mobileNavOptions;
             
             mainContainer.style.display = 'block';
-            [welcomeModal, loadUserModal, newUserModal].forEach(m => m.style.display = 'none');
+            showModal(null);
 
             initializePlanLogic(totalWeeks);
         }
@@ -1619,7 +1663,7 @@
             const user = profiles[currentProfile];
             if (!user || !user.config.selectedDays.includes(todayName)) {
                 document.getElementById('todays-focus-container').style.display = 'none';
-                return; // Not a training day
+                return;
             }
 
             const progress = user.progress || {};
@@ -1873,7 +1917,7 @@
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
                     if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
                     if (tabId === 'tab-analysis') generatePerformanceChart(totalWeeks);
-                    if (tabId === 'tab-notes') populateAllNotesList(totalWeeks); // NEW: Populate notes list
+                    if (tabId === 'tab-notes') populateAllNotesList(totalWeeks);
                 }
             }
             tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
@@ -1944,7 +1988,6 @@
 
                 const notes = progress.taskNotes || {};
                  document.querySelectorAll('.btn-task-note').forEach(btn => {
-                    // Check if the note has content (not just an empty object)
                     const noteEntry = notes[btn.dataset.taskId];
                     const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
                     btn.classList.toggle('has-note', hasNote);
@@ -1996,7 +2039,7 @@
                             }, 2000);
                         }
                     }, 100);
-                } else if (e.target.classList.contains('jump-to-note-btn')) { // NEW: Handle direct jump from Mis Notas
+                } else if (e.target.classList.contains('jump-to-note-btn')) {
                      const week = e.target.dataset.week;
                      const daySectionId = e.target.dataset.daySectionId;
                      showModal(null);
@@ -2011,7 +2054,6 @@
                          const daySection = document.getElementById(daySectionId);
                          if (daySection) {
                              daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                             // Highlight the button of the corresponding note
                              const taskId = e.target.dataset.taskId;
                              const noteButton = daySection.querySelector(`.btn-task-note[data-task-id="${taskId}"]`);
                              if (noteButton) {
@@ -2063,14 +2105,12 @@
                     const dayData = allTrainingDays.find(d => d.id === dayId);
                     if (!dayData) return;
 
-                    let shotNumber = 1; // Default to page 1
+                    let shotNumber = 1;
                     
-                    // Prioritize keyShot
                     if (dayData.keyShot && dayData.keyShot.title) {
                         const match = dayData.keyShot.title.match(/#(\d+)/);
                         if (match) shotNumber = parseInt(match[1], 10);
                     } else if (dayData.tasks.length > 0) {
-                        // Fallback to first task
                         const match = dayData.tasks[0].text.match(/<b>(\d+)/);
                         if (match) shotNumber = parseInt(match[1], 10);
                     }
@@ -2090,7 +2130,14 @@
                 });
             });
              document.querySelectorAll('.diary-textarea').forEach(item => {
-                item.addEventListener('input', e => saveState(e.target.id, e.target.value));
+                item.addEventListener('blur', e => {
+                    const currentValue = e.target.value;
+                    const previousValue = getProfiles()[currentProfile]?.progress[e.target.id] || '';
+                    if (currentValue !== previousValue) {
+                         saveState(e.target.id, currentValue);
+                         showToast('Diario guardado');
+                    }
+                });
             });
             
             const resetModal = document.getElementById('reset-modal');
@@ -2103,13 +2150,13 @@
             btnResetCurrent.addEventListener('click', (e) => {
                 weekToReset = e.currentTarget.dataset.week; resetScope = 'current';
                 modalText.textContent = `¿Estás seguro de que quieres borrar el progreso de la Semana ${weekToReset}?`;
-                resetModal.style.display = 'flex';
+                showModal(resetModal);
             });
             document.getElementById('btn-reset-all').addEventListener('click', () => {
                 resetScope = 'all'; modalText.textContent = '¿Estás seguro de que quieres borrar el progreso de TODAS las semanas? Esta acción también eliminará tus tiros marcados, notas y logros.';
-                resetModal.style.display = 'flex';
+                showModal(resetModal);
             });
-            cancelBtn.addEventListener('click', () => resetModal.style.display = 'none');
+            cancelBtn.addEventListener('click', () => showModal(null));
             
             confirmBtn.addEventListener('click', () => {
                 if (resetScope === 'current' && weekToReset) {
@@ -2122,7 +2169,7 @@
                     }
                     window.location.reload();
                 }
-                resetModal.style.display = 'none';
+                showModal(null);
             });
 
             function resetWeek(weekNum) {
@@ -2178,17 +2225,16 @@
                     const data = glossaryData[term];
                     document.getElementById('term-modal-title').textContent = `${term} / ${data.translation}`;
                     document.getElementById('term-modal-definition').textContent = data.definition;
-                    termDefinitionModal.style.display = 'flex';
+                    showModal(termDefinitionModal);
                  }
              });
             
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const modal = e.target.closest('.modal-overlay');
-                    modal.style.display = 'none';
+                    showModal(null);
                     
-                    if (modal.id === 'pdf-viewer-modal') {
-                        // Optionally clear canvas to save memory
+                    if (modal && modal.id === 'pdf-viewer-modal') {
                         const context = pdfCanvas.getContext('2d');
                         context.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
                     }
@@ -2219,18 +2265,18 @@
                     } else {
                         recommendationText.innerHTML = "<strong>Recomendación: ¡Avanzar a la siguiente semana!</strong><br>¡Excelente trabajo! Has demostrado un buen dominio de los conceptos de esta semana. Estás listo para enfrentar nuevos desafíos.";
                     }
-                    document.getElementById('recommendation-modal').style.display = 'flex';
+                    showModal(document.getElementById('recommendation-modal'));
                 });
             });
 
-            document.getElementById('btn-glossary').addEventListener('click', () => glossaryModal.style.display = 'flex');
+            document.getElementById('btn-glossary').addEventListener('click', () => showModal(glossaryModal));
             document.getElementById('btn-print').addEventListener('click', () => window.print());
             
             document.getElementById('btn-change-user').addEventListener('click', () => {
                 mainContainer.style.display = 'none';
                 currentProfile = null;
                 isGuest = false;
-                pdfDoc = null; // Clear loaded PDF
+                pdfDoc = null;
                 if(myProgressChart) myProgressChart.destroy();
                 if(myPerformanceChart) myPerformanceChart.destroy();
                 myProgressChart = null;
@@ -2282,7 +2328,7 @@
                 showModal(newUserModal);
             });
             document.getElementById('btn-cancel-edit').addEventListener('click', () => {
-                 showModal(null); // Hides all modals
+                 showModal(null);
                  mainContainer.style.display = 'block';
             });
             
@@ -2299,11 +2345,9 @@
         sortedGlossary.forEach(term => glossaryHTML += `<dt>${term} / ${glossaryData[term].translation}</dt><dd>${glossaryData[term].definition}</dd>`);
         glossaryHTML += '</dl>';
         glossaryContent.innerHTML = glossaryHTML;
-
-        // --- GLOBAL INITIALIZATION LOGIC ---
         
         document.getElementById('alert-ok').addEventListener('click', () => {
-            document.getElementById('alert-modal').style.display = 'none';
+            showModal(null);
         });
 
         document.getElementById('session-stop-btn').addEventListener('click', () => {
@@ -2315,7 +2359,7 @@
         });
 
         document.getElementById('achievement-ok-btn').addEventListener('click', () => {
-             document.getElementById('achievement-unlocked-modal').style.display = 'none';
+             showModal(null);
         });
 
         const importFileInput = document.getElementById('import-file-input');
@@ -2345,7 +2389,7 @@
                     if (profiles[profileName]) {
                         document.getElementById('overwrite-modal-text').textContent = `Ya existe un perfil llamado "${profileName}". ¿Deseas sobrescribirlo con los datos del archivo? Se perderá el progreso actual de ese perfil.`;
                         pendingImport = { profileName, profileData };
-                        overwriteModal.style.display = 'flex';
+                        showModal(overwriteModal);
                     } else {
                         profiles[profileName] = profileData;
                         saveProfiles(profiles);
@@ -2369,15 +2413,13 @@
                 showCustomAlert('Éxito', `El perfil "${profileName}" se ha sobrescrito e importado correctamente.`);
                 pendingImport = null;
             }
-            overwriteModal.style.display = 'none';
+            showModal(null);
         });
 
         document.getElementById('overwrite-cancel').addEventListener('click', () => {
             pendingImport = null;
-            overwriteModal.style.display = 'none';
+            showModal(null);
         });
-
-        showModal(welcomeModal);
 
         setupForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -2416,9 +2458,9 @@
                 saveProfiles(profiles);
                 startSession(userName);
 
-            } else { // New user mode
+            } else {
                 const profiles = getProfiles();
-                if (profiles[userName] && !isGuest) { // Check for existing name only for non-guests
+                if (profiles[userName] && !isGuest) {
                     nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
                     nameError.style.display = 'block';
                     return;
@@ -2442,7 +2484,7 @@
             if (!currentProfile || !profiles[currentProfile]) return;
             const markedShots = profiles[currentProfile].progress?.markedShots || {};
             
-            list.innerHTML = ''; // Clear list
+            list.innerHTML = '';
 
             if (Object.keys(markedShots).length === 0) {
                 list.innerHTML = '<p>Aún no has marcado ningún tiro como problemático. Haz clic en la estrella (&#9734;) junto a un ejercicio para añadirlo aquí.</p>';
@@ -2629,21 +2671,17 @@
                 }
             });
 
-            // MODIFIED: Correct call to saveState for notes
             document.getElementById('save-task-note-btn').addEventListener('click', () => {
                 const notesModal = document.getElementById('task-notes-modal');
                 const taskId = notesModal.dataset.taskId;
                 const noteText = document.getElementById('task-notes-textarea').value;
                 
-                // Key fix: Ensure we use the 'taskNotes' key
                 saveState(taskId, noteText, 'taskNotes'); 
+                showToast('Nota guardada');
                 
-                // Update the UI button status
                 document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.trim().length > 0);
                 
-                // Ensure the 'Mis Notas' tab refreshes if it is open
                 if (document.getElementById('tab-notes').checked) {
-                    // Check if totalWeeks is defined before calling
                     const profiles = getProfiles();
                     const userConfig = profiles[currentProfile]?.config;
                     const daysPerWeek = userConfig?.selectedDays.length || 1;
@@ -2652,6 +2690,19 @@
                 }
                 
                 showModal(null);
+            });
+
+            document.getElementById('glossary-search').addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const dts = document.querySelectorAll('#glossary-content dt');
+                const dds = document.querySelectorAll('#glossary-content dd');
+                dts.forEach((dt, index) => {
+                    const term = dt.textContent.toLowerCase();
+                    const definition = dds[index].textContent.toLowerCase();
+                    const isVisible = term.includes(searchTerm) || definition.includes(searchTerm);
+                    dt.style.display = isVisible ? '' : 'none';
+                    dds[index].style.display = isVisible ? '' : 'none';
+                });
             });
 
             function generateDynamicSession(duration) {
