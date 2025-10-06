@@ -1985,6 +1985,62 @@
                 }
             });
         }
+        
+        function toggleMarkedShot(taskId) {
+            if (!currentProfile) return;
+            const profiles = getProfiles();
+            if (!profiles[currentProfile]) return;
+            if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
+            if (!profiles[currentProfile].progress.markedShots) profiles[currentProfile].progress.markedShots = {};
+            
+            if (profiles[currentProfile].progress.markedShots[taskId]) {
+                delete profiles[currentProfile].progress.markedShots[taskId];
+            } else {
+                profiles[currentProfile].progress.markedShots[taskId] = true;
+            }
+            saveProfiles(profiles);
+        }
+
+        function loadState() {
+            if (!currentProfile) return;
+            const profiles = getProfiles();
+            const progress = profiles[currentProfile]?.progress || {};
+            
+            document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
+                if (progress[item.id] !== undefined) {
+                    if (item.type === 'checkbox') item.checked = progress[item.id];
+                    else item.value = progress[item.id];
+                } else {
+                    if (item.type === 'checkbox') item.checked = false;
+                    else item.value = '';
+                }
+            });
+
+            const markedShots = progress.markedShots || {};
+            document.querySelectorAll('.star-icon').forEach(star => {
+                star.classList.toggle('marked', !!markedShots[star.dataset.taskId]);
+                star.innerHTML = markedShots[star.dataset.taskId] ? '&#9733;' : '&#9734;';
+            });
+            
+            const ratings = progress.ratings || {};
+            document.querySelectorAll('.rating-stars').forEach(container => {
+                updateStarsUI(container.dataset.taskId, ratings[container.dataset.taskId] || 0);
+            });
+
+            const notes = progress.taskNotes || {};
+             document.querySelectorAll('.btn-task-note').forEach(btn => {
+                const noteEntry = notes[btn.dataset.taskId];
+                const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
+                btn.classList.toggle('has-note', hasNote);
+            });
+
+            document.querySelectorAll('.btn-ghost-mode').forEach(btn => {
+                const bestScores = progress.bestScores || {};
+                btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
+            });
+            
+            updatePointsUI();
+        }
 
         function initializePlanLogic(totalWeeks) {
             const themeToggle = document.getElementById('theme-toggle');
@@ -2059,63 +2115,6 @@
                 }
             }
             
-            
-            function toggleMarkedShot(taskId) {
-                if (!currentProfile) return;
-                const profiles = getProfiles();
-                if (!profiles[currentProfile]) return;
-                if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
-                if (!profiles[currentProfile].progress.markedShots) profiles[currentProfile].progress.markedShots = {};
-                
-                if (profiles[currentProfile].progress.markedShots[taskId]) {
-                    delete profiles[currentProfile].progress.markedShots[taskId];
-                } else {
-                    profiles[currentProfile].progress.markedShots[taskId] = true;
-                }
-                saveProfiles(profiles);
-            }
-
-            function loadState() {
-                if (!currentProfile) return;
-                const profiles = getProfiles();
-                const progress = profiles[currentProfile]?.progress || {};
-                
-                document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
-                    if (progress[item.id] !== undefined) {
-                        if (item.type === 'checkbox') item.checked = progress[item.id];
-                        else item.value = progress[item.id];
-                    } else {
-                        if (item.type === 'checkbox') item.checked = false;
-                        else item.value = '';
-                    }
-                });
-
-                const markedShots = progress.markedShots || {};
-                document.querySelectorAll('.star-icon').forEach(star => {
-                    star.classList.toggle('marked', !!markedShots[star.dataset.taskId]);
-                    star.innerHTML = markedShots[star.dataset.taskId] ? '&#9733;' : '&#9734;';
-                });
-                
-                const ratings = progress.ratings || {};
-                document.querySelectorAll('.rating-stars').forEach(container => {
-                    updateStarsUI(container.dataset.taskId, ratings[container.dataset.taskId] || 0);
-                });
-
-                const notes = progress.taskNotes || {};
-                 document.querySelectorAll('.btn-task-note').forEach(btn => {
-                    const noteEntry = notes[btn.dataset.taskId];
-                    const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
-                    btn.classList.toggle('has-note', hasNote);
-                });
-
-                document.querySelectorAll('.btn-ghost-mode').forEach(btn => {
-                    const bestScores = progress.bestScores || {};
-                    btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
-                });
-                
-                updatePointsUI();
-            }
-
             loadState();
             for(let i=1; i<=totalWeeks; i++) {
                 updateProgressForWeek(i);
