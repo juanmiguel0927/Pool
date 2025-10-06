@@ -123,6 +123,7 @@
         .btn-reset-all { background-color: var(--danger-color); }
         .btn-edit { background-color: var(--warning-color); }
         .btn-change-user { background-color: var(--secondary-color); }
+        #btn-exit-custom-session { background-color: var(--danger-color); display: none; }
         
         h1 { text-align: center; color: var(--header-color); margin-bottom: 5px; }
         .credits { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
@@ -570,6 +571,8 @@
         .btn-task-note { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 5px; opacity: 0.6; }
         .btn-task-note:hover { opacity: 1; }
         .btn-task-note.has-note { opacity: 1; color: var(--accent-color); }
+        .pdf-shot-buttons { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+        .pdf-shot-buttons button { background-color: var(--secondary-color); color: white; border: none; padding: 3px 8px; font-size: 0.8em; border-radius: 4px; cursor: pointer; }
 
         #heatmap-calendar, #weekly-rating-chart-container { margin-top: 20px; }
         .cal-heatmap .graph-label { fill: var(--text-color) !important; font-size: 12px; }
@@ -684,6 +687,7 @@
 
             #achievements-grid { grid-template-columns: 1fr; }
             .note-item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .tab-content { padding: 10px; }
         }
     </style>
 </head>
@@ -985,6 +989,7 @@
                 <button id="btn-my-sessions" class="btn-my-sessions">Mis Sesiones</button>
                 <button id="btn-generate-session" class="btn-generate-session">Generar Sesión de Hoy</button>
                 <button id="btn-shot-of-the-day" class="btn-shot-of-the-day">Tiro del Día</button>
+                <button id="btn-exit-custom-session">Salir de la Sesión</button>
                 <button id="btn-export-profile" class="btn-change-user">Exportar Perfil</button>
                 <button id="btn-change-user" class="btn-change-user">Cambiar Usuario</button>
                 <button id="btn-glossary" class="btn-glossary">Glosario</button>
@@ -1165,7 +1170,7 @@
         let myPerformanceChart = null;
         let weeklyRatingChart = null;
         let sessionTimerInterval = null;
-        let shotLoggerState = { hits: 0, attempts: 0, totalAttempts: 10, taskId: null };
+        let shotLoggerState = {};
         let cal = new CalHeatmap();
         // PDF Viewer state
         let pdfDoc = null;
@@ -1307,12 +1312,15 @@
             if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
             if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
 
-            if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores') {
+            if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores' || stateKey === 'rangeBestScores') {
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
                 
-                if (value === null || (typeof value === 'string' && value.trim() === '')) {
+                if (value === null || (typeof value === 'object' && value.content && value.content.trim() === '')) {
                     delete profiles[currentProfile].progress[stateKey][id];
-                } else {
+                } else if (value === null) {
+                    delete profiles[currentProfile].progress[stateKey][id];
+                }
+                else {
                     profiles[currentProfile].progress[stateKey][id] = value;
                 }
             } else if (stateKey) {
@@ -1331,7 +1339,7 @@
             const taskNotes = profiles[currentProfile].progress?.taskNotes || {}; 
             
             list.innerHTML = '';
-            const hasNotes = Object.values(taskNotes).some(note => note.content && note.content.trim().length > 0);
+            const hasNotes = Object.values(taskNotes).some(note => note && note.content && note.content.trim().length > 0);
 
             if (!hasNotes) {
                 list.innerHTML = '<p>Aún no has guardado ninguna nota de ejercicio. Usa el icono 📝 junto a un ejercicio para crear tu primer apunte.</p>';
@@ -1339,7 +1347,7 @@
             }
 
             const sortedNotes = Object.entries(taskNotes)
-                .filter(([, note]) => note.content && note.content.trim().length > 0)
+                .filter(([, note]) => note && note.content && note.content.trim().length > 0)
                 .sort(([, a], [, b]) => new Date(b.lastModified) - new Date(a.lastModified));
             
             sortedNotes.forEach(([taskId, noteEntry]) => {
@@ -1466,17 +1474,7 @@
         
         function saveRating(taskId, rating) {
             if (!currentProfile) return;
-            const profiles = getProfiles();
-            if (!profiles[currentProfile]) return;
-            if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
-            if (!profiles[currentProfile].progress.ratings) profiles[currentProfile].progress.ratings = {};
-            
-            if (rating === 0) {
-                delete profiles[currentProfile].progress.ratings[taskId];
-            } else {
-                profiles[currentProfile].progress.ratings[taskId] = rating;
-            }
-            saveProfiles(profiles);
+            saveState(taskId, rating, 'ratings');
         }
 
         function updateStarsUI(taskId, rating) {
@@ -1510,10 +1508,10 @@
             let dayIndex = 0;
 
             for (let i = 1; i <= totalWeeks; i++) {
-                htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input" ${i === 1 ? 'checked' : ''}><label for="tab${i}" class="tab-label">Semana ${i}</label>`;
+                htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${i===1 ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
                 mobileNavOptions += `<option value="tab${i}">Semana ${i}</option>`;
                 
-                let weekContent = `<div id="content${i}" class="tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
+                let weekContent = `<div id="content${i}" class="tab-content week-tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
                 const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + daysPerWeek);
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
                 weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
@@ -1541,7 +1539,7 @@
                                         <button class="btn-task-note" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}">📝</button>
                                         <button class="btn-practice-task" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}" data-task-goal="${task.goal || ''}">Practicar</button>
                                         <button class="btn-ghost-mode" data-task-id="${checkboxId}" data-task-text="${task.text.replace(/"/g, '&quot;')}" data-task-goal="${task.goal || ''}">👻</button>
-                                        <div class="rating-stars" data-task-id="${checkboxId}">
+                                        <div class="rating-stars" data-task-id="${checkboxId}" style="display: none;">
                                             <span data-value="5" title="5 Estrellas">&#9734;</span>
                                             <span data-value="4" title="4 Estrellas">&#9734;</span>
                                             <span data-value="3" title="3 Estrellas">&#9734;</span>
@@ -1550,13 +1548,7 @@
                                         </div>
                                     </li>`;
                     });
-                    dayHTML += `</ul></div>`;
-                    
-                    dayHTML += `
-                        <button class="btn-view-diagram" data-diagram-title="${day.title.split(': ')[1]}" data-day-id="${day.id}" style="background-color: var(--focus-color); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-top: -5px; margin-bottom: 10px;">
-                            Ver Diagrama del Tiro Clave
-                        </button>
-                    `;
+                    dayHTML += `</ul></div><div class="pdf-shot-buttons-container"></div>`;
                     
                     if(day.keyShot) dayHTML += `<div class="shot-description"><h5>${parseGlossaryTerms(day.keyShot.title)}</h5><p>${parseGlossaryTerms(day.keyShot.desc)}</p></div>`;
                     const diaryId = `w${i}-d${day.id}-notes`;
@@ -2014,9 +2006,9 @@
                     document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
                     const contentId = `content${tabId.replace('tab','')}`;
                     document.getElementById(contentId).style.display = 'block';
-                    mobileNav.value = tabId;
+                    if (mobileNav.value !== tabId) mobileNav.value = tabId;
                     
-                    if (tabId.includes('fitness') || tabId.includes('progress') || tabId.includes('reinforce') || tabId.includes('achievements') || tabId.includes('analysis') || tabId.includes('mental-game') || tabId.includes('notes') || tabId.includes('create-session')) {
+                    if (tabId.startsWith('tab-') || tabId === 'tab-custom-session') {
                         btnResetCurrent.style.display = 'none';
                     } else {
                         btnResetCurrent.style.display = 'inline-block';
@@ -2125,7 +2117,32 @@
             }
 
             loadState();
-            for(let i=1; i<=totalWeeks; i++) updateProgressForWeek(i);
+            for(let i=1; i<=totalWeeks; i++) {
+                updateProgressForWeek(i);
+                document.querySelectorAll(`#content${i} .day-section`).forEach(daySection => {
+                    const dayId = parseInt(daySection.id.replace('day-section-', ''), 10);
+                    const dayData = allTrainingDays.find(d => d.id === dayId);
+                    if(!dayData) return;
+                    
+                    const container = daySection.querySelector('.pdf-shot-buttons-container');
+                    container.innerHTML = '';
+                    let buttonsHTML = '<div class="pdf-shot-buttons"><span>Diagramas: </span>';
+                    
+                    dayData.tasks.forEach(task => {
+                         const match = task.text.match(/<b>(\d+)(?:-(\d+))?:/);
+                         if(match) {
+                             const start = parseInt(match[1]);
+                             const end = match[2] ? parseInt(match[2]) : start;
+                             for(let shotNum = start; shotNum <= end; shotNum++) {
+                                 buttonsHTML += `<button class="btn-view-diagram-single" data-shot-number="${shotNum}">${shotNum}</button>`;
+                             }
+                         }
+                    });
+                    buttonsHTML += '</div>';
+                    container.innerHTML = buttonsHTML;
+                });
+            }
+
 
             mainContainer.addEventListener('click', e => {
                 if (e.target.classList.contains('star-icon')) {
@@ -2235,23 +2252,10 @@
                     }
 
                     showModal(notesModal);
-                } else if (e.target.classList.contains('btn-view-diagram')) {
-                    const dayId = parseInt(e.target.dataset.dayId, 10);
-                    const dayData = allTrainingDays.find(d => d.id === dayId);
-                    if (!dayData) return;
-
-                    let shotNumber = 1;
-                    
-                    if (dayData.keyShot && dayData.keyShot.title) {
-                        const match = dayData.keyShot.title.match(/#(\d+)/);
-                        if (match) shotNumber = parseInt(match[1], 10);
-                    } else if (dayData.tasks.length > 0) {
-                        const match = dayData.tasks[0].text.match(/<b>(\d+)/);
-                        if (match) shotNumber = parseInt(match[1], 10);
-                    }
-                    
-                    document.getElementById('pdf-modal-title').textContent = `Diagrama: ${dayData.title.split(': ')[1]}`;
-                    showPdfDiagram(shotNumber);
+                } else if (e.target.classList.contains('btn-view-diagram-single')) {
+                     const shotNumber = parseInt(e.target.dataset.shotNumber, 10);
+                     document.getElementById('pdf-modal-title').textContent = `Diagrama: Tiro #${shotNumber}`;
+                     showPdfDiagram(shotNumber);
                 }
             });
 
@@ -2303,8 +2307,10 @@
                 } else if (resetScope === 'all') {
                     const profiles = getProfiles();
                     if (profiles[currentProfile]) {
+                        const config = profiles[currentProfile].config;
                         profiles[currentProfile].progress = {
-                            config: profiles[currentProfile].config // Keep config
+                            points: 0,
+                            level: 1
                         };
                         saveProfiles(profiles);
                     }
@@ -2414,14 +2420,17 @@
             document.getElementById('btn-print').addEventListener('click', () => window.print());
             
             document.getElementById('btn-change-user').addEventListener('click', () => {
+                exitCustomSessionMode();
                 mainContainer.style.display = 'none';
                 currentProfile = null;
                 isGuest = false;
                 pdfDoc = null;
                 if(myProgressChart) myProgressChart.destroy();
                 if(myPerformanceChart) myPerformanceChart.destroy();
+                if(weeklyRatingChart) weeklyRatingChart.destroy();
                 myProgressChart = null;
                 myPerformanceChart = null;
+                weeklyRatingChart = null;
                 showModal(welcomeModal);
             });
 
@@ -2662,11 +2671,12 @@
             timerView.style.display = 'block';
             loggerView.style.display = 'none';
             document.getElementById('session-modal-title').textContent = 'Sesión de Práctica General';
+            document.getElementById('session-stop-btn').style.display = 'block';
 
-            let duration = parseInt(minutes) * 60;
+            let duration = parseInt(minutes, 10) * 60;
             if (sessionTimerInterval) clearInterval(sessionTimerInterval);
-            
-            sessionTimerInterval = setInterval(() => {
+
+            function updateTimer() {
                 const mins = Math.floor(duration / 60).toString().padStart(2, '0');
                 const secs = (duration % 60).toString().padStart(2, '0');
                 timerDisplay.textContent = `${mins}:${secs}`;
@@ -2675,7 +2685,9 @@
                     clearInterval(sessionTimerInterval);
                     timerDisplay.textContent = "¡Listo!";
                 }
-            }, 1000);
+            }
+            updateTimer();
+            sessionTimerInterval = setInterval(updateTimer, 1000);
 
             showModal(sessionModal);
         }
@@ -2685,137 +2697,166 @@
             const timerView = document.getElementById('timer-view');
             const loggerView = document.getElementById('shot-logger-ui');
             const bestScoreEl = document.getElementById('shot-logger-best-score');
-            const selector = document.getElementById('shot-logger-shot-selector');
+            const shotSelector = document.getElementById('shot-logger-shot-selector');
             const nextPrompt = document.getElementById('shot-logger-next-prompt');
 
+            shotSelector.style.display = 'none';
+            nextPrompt.style.display = 'none';
+            document.getElementById('shot-logger-counter').style.display = 'block';
+            document.querySelector('.shot-logger-buttons').style.display = 'flex';
+            
             const attemptsMatch = taskGoal.match(/(\d+)\s*Intentos/i);
             const rangeMatch = taskText.match(/<b>(\d+)-(\d+):/);
-
+            
             if (!attemptsMatch) {
-                startTimerSession(15);
+                startTimerSession(15); 
                 return;
             }
 
+            const totalAttempts = parseInt(attemptsMatch[1], 10);
+            
             shotLoggerState = {
-                hits: 0,
-                attempts: 0,
-                totalAttempts: parseInt(attemptsMatch[1], 10),
                 taskId: taskId,
                 isGhostMode: isGhostMode,
                 isRange: !!rangeMatch,
                 rangeShots: [],
                 currentRangeIndex: 0,
-                rangeBaseText: ''
+                rangeResults: {}, // Store individual shot results
+                totalAttempts: totalAttempts,
             };
-
-            selector.style.display = 'none';
-            selector.innerHTML = '';
-            nextPrompt.style.display = 'none';
 
             if (shotLoggerState.isRange) {
                 const start = parseInt(rangeMatch[1]);
                 const end = parseInt(rangeMatch[2]);
+                shotLoggerState.rangeBaseText = taskText.split(':')[0];
                 for (let i = start; i <= end; i++) {
                     shotLoggerState.rangeShots.push(i);
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = `Tiro #${i}`;
-                    selector.appendChild(option);
                 }
-                shotLoggerState.rangeBaseText = taskText.split(':')[0];
-                selector.style.display = 'block';
-            }
+                shotSelector.innerHTML = shotLoggerState.rangeShots.map(s => `<option value="${s}">Tiro #${s}</option>`).join('');
+                shotSelector.style.display = 'block';
+                shotSelector.removeEventListener('change', setupCurrentShotInLogger); // Remove previous listener
+                shotSelector.addEventListener('change', setupCurrentShotInLogger);
+            } 
             
-            if (isGhostMode) {
-                // Ghost mode logic is simpler, doesn't handle ranges yet
-                const profiles = getProfiles();
-                const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
-                const bestScore = bestScores[taskId] || 0;
-                bestScoreEl.textContent = `👻 Récord a batir: ${bestScore} / ${shotLoggerState.totalAttempts}`;
-                bestScoreEl.style.display = 'block';
-                document.getElementById('session-modal-title').textContent = 'Modo Fantasma';
-            } else {
-                bestScoreEl.style.display = 'none';
-                document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
-            }
+            setupCurrentShotInLogger();
             
             timerView.style.display = 'none';
             loggerView.style.display = 'block';
-            document.querySelector('#shot-logger-ui .shot-logger-buttons').style.display = 'flex';
-            updateLoggerUI();
+            document.getElementById('session-stop-btn').style.display = 'none';
             showModal(sessionModal);
         }
 
+        function setupCurrentShotInLogger() {
+            const { isRange, rangeShots, currentRangeIndex, isGhostMode, taskId, totalAttempts } = shotLoggerState;
+            const bestScoreEl = document.getElementById('shot-logger-best-score');
+            
+            let currentShotNumber = null;
+            let shotBestScore = 0;
+            let currentBestScoreId = taskId; // Default for non-range tasks
+
+            if (isRange) {
+                currentShotNumber = parseInt(document.getElementById('shot-logger-shot-selector').value);
+                shotLoggerState.currentRangeIndex = rangeShots.indexOf(currentShotNumber);
+                document.getElementById('shot-logger-task-text').innerHTML = `${shotLoggerState.rangeBaseText} - <b>Tiro #${currentShotNumber}</b>`;
+                currentBestScoreId = `${taskId}-${currentShotNumber}`;
+            } else {
+                document.getElementById('shot-logger-task-text').innerHTML = parseGlossaryTerms(document.querySelector(`.btn-practice-task[data-task-id="${taskId}"]`).dataset.taskText);
+            }
+
+            const existingResult = shotLoggerState.rangeResults[currentShotNumber] || { hits: 0, attempts: 0 };
+            shotLoggerState.hits = existingResult.hits;
+            shotLoggerState.attempts = existingResult.attempts;
+
+            const profiles = getProfiles();
+            const rangeBestScores = profiles[currentProfile]?.progress?.rangeBestScores || {};
+            const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
+
+            if(isRange) {
+                shotBestScore = rangeBestScores[currentBestScoreId] || 0;
+            } else {
+                shotBestScore = bestScores[currentBestScoreId] || 0;
+            }
+
+            if(isGhostMode) {
+                 bestScoreEl.textContent = `👻 Récord a batir: ${shotBestScore} / ${totalAttempts}`;
+                 bestScoreEl.style.display = 'block';
+                 document.getElementById('session-modal-title').textContent = 'Modo Fantasma';
+            } else {
+                 bestScoreEl.textContent = `Resultado anterior: ${shotLoggerState.hits} / ${shotLoggerState.attempts}`;
+                 bestScoreEl.style.display = 'block';
+                 document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
+            }
+            
+            updateLoggerUI();
+        }
 
         function updateLoggerUI() {
-            if (shotLoggerState.isRange) {
-                const currentShot = shotLoggerState.rangeShots[shotLoggerState.currentRangeIndex];
-                document.getElementById('shot-logger-task-text').innerHTML = `${shotLoggerState.rangeBaseText} - <b>Tiro #${currentShot}</b>`;
-            } else {
-                 const taskButton = document.querySelector(`button[data-task-id="${shotLoggerState.taskId}"]`);
-                 if (taskButton) {
-                    document.getElementById('shot-logger-task-text').innerHTML = parseGlossaryTerms(taskButton.dataset.taskText);
-                 }
-            }
-            document.getElementById('shot-logger-counter').textContent = `${shotLoggerState.hits} / ${shotLoggerState.totalAttempts}`;
+            const { hits, attempts } = shotLoggerState;
+            document.getElementById('shot-logger-counter').textContent = `${hits} Aciertos / ${attempts} Intentos`;
         }
         
         function handleShotLoggerClick(isHit) {
-            const nextPrompt = document.getElementById('shot-logger-next-prompt');
-            const loggerButtons = document.querySelector('#shot-logger-ui .shot-logger-buttons');
-
-            if(shotLoggerState.attempts >= shotLoggerState.totalAttempts) return;
+            const { attempts, totalAttempts } = shotLoggerState;
+            if(attempts >= totalAttempts) return;
 
             shotLoggerState.attempts++;
             if (isHit) {
                 shotLoggerState.hits++;
             }
-            document.getElementById('shot-logger-counter').textContent = `${shotLoggerState.hits} / ${shotLoggerState.attempts}`;
-
-
-            if (shotLoggerState.attempts === shotLoggerState.totalAttempts) {
-                loggerButtons.style.display = 'none';
-
-                if(shotLoggerState.isRange) {
-                     if (shotLoggerState.currentRangeIndex < shotLoggerState.rangeShots.length - 1) {
-                        nextPrompt.style.display = 'block';
-                     } else {
-                        // Last shot in range, finish up
-                        setTimeout(() => finishShotLogging(), 500);
-                     }
-                } else {
-                    setTimeout(() => finishShotLogging(), 500);
-                }
-            }
-        }
-        
-        function finishShotLogging() {
-            showModal(null);
-            if (shotLoggerState.isGhostMode) {
-                const profiles = getProfiles();
-                const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
-                const oldBest = bestScores[shotLoggerState.taskId] || 0;
-                if (shotLoggerState.hits > oldBest) {
-                    saveState(shotLoggerState.taskId, shotLoggerState.hits, 'bestScores');
-                    showCustomAlert('¡Nuevo Récord!', `¡Felicidades! Has superado tu récord anterior de ${oldBest} con ${shotLoggerState.hits} aciertos.`);
-                } else {
-                        showCustomAlert('¡Casi!', `Tu puntuación fue de ${shotLoggerState.hits}. Tu récord sigue siendo ${oldBest}. ¡Sigue intentando!`);
-                }
-            } else {
-                    showRatingSuggestion();
-            }
-        }
-
-        function setupNextShot() {
-            shotLoggerState.currentRangeIndex++;
-            document.getElementById('shot-logger-shot-selector').selectedIndex = shotLoggerState.currentRangeIndex;
-            shotLoggerState.hits = 0;
-            shotLoggerState.attempts = 0;
-            document.getElementById('shot-logger-next-prompt').style.display = 'none';
-            document.querySelector('#shot-logger-ui .shot-logger-buttons').style.display = 'flex';
             updateLoggerUI();
+
+            if (shotLoggerState.attempts === totalAttempts) {
+                if (shotLoggerState.isRange) {
+                    const currentShotNumber = shotLoggerState.rangeShots[shotLoggerState.currentRangeIndex];
+                    shotLoggerState.rangeResults[currentShotNumber] = { hits: shotLoggerState.hits, attempts: shotLoggerState.attempts };
+                    
+                    const currentBestScoreId = `${shotLoggerState.taskId}-${currentShotNumber}`;
+                    const profiles = getProfiles();
+                    const rangeBestScores = profiles[currentProfile]?.progress?.rangeBestScores || {};
+                    const oldBest = rangeBestScores[currentBestScoreId] || 0;
+
+                    if (shotLoggerState.hits > oldBest) {
+                        saveState(currentBestScoreId, shotLoggerState.hits, 'rangeBestScores');
+                        if(shotLoggerState.isGhostMode) showToast('¡Nuevo Récord!');
+                    }
+                    
+                    const nextPrompt = document.getElementById('shot-logger-next-prompt');
+                    nextPrompt.style.display = 'block';
+                    document.getElementById('shot-logger-counter').style.display = 'none';
+                    document.querySelector('.shot-logger-buttons').style.display = 'none';
+
+                    const isLastShot = shotLoggerState.currentRangeIndex === shotLoggerState.rangeShots.length - 1;
+                    document.getElementById('btn-next-shot').style.display = isLastShot ? 'none' : 'inline-block';
+
+                } else {
+                    setTimeout(() => {
+                        showModal(null); 
+                        showRatingSuggestion();
+                    }, 500);
+                }
+            }
         }
 
+        document.getElementById('btn-next-shot').addEventListener('click', () => {
+            const nextIndex = shotLoggerState.currentRangeIndex + 1;
+            if (nextIndex < shotLoggerState.rangeShots.length) {
+                document.getElementById('shot-logger-shot-selector').selectedIndex = nextIndex;
+                setupCurrentShotInLogger();
+                 document.getElementById('shot-logger-next-prompt').style.display = 'none';
+                document.getElementById('shot-logger-counter').style.display = 'block';
+                document.querySelector('.shot-logger-buttons').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('btn-finish-session').addEventListener('click', () => {
+             // Check if all shots in range have been attempted
+             const allAttempted = shotLoggerState.rangeShots.every(shotNum => shotLoggerState.rangeResults[shotNum]);
+             if (allAttempted) {
+                showRatingSuggestion();
+             } else {
+                 showModal(null);
+             }
+        });
         
         function calculateStars(hits, total) {
             if (total === 0) return 0;
@@ -2828,9 +2869,18 @@
         }
 
         function showRatingSuggestion() {
-            const { hits, totalAttempts, taskId } = shotLoggerState;
-            const suggestedStars = calculateStars(hits, totalAttempts);
-            const text = `Tu resultado fue <strong>${hits}/${totalAttempts}</strong>. Te sugerimos una calificación de <strong>${suggestedStars} estrellas</strong>. ¿Aceptar?`;
+            const { hits, totalAttempts, taskId, isRange, rangeResults } = shotLoggerState;
+            let finalHits = hits;
+            let finalAttempts = totalAttempts;
+            let text;
+
+            if (isRange) {
+                finalHits = Object.values(rangeResults).reduce((sum, res) => sum + res.hits, 0);
+                finalAttempts = Object.values(rangeResults).reduce((sum, res) => sum + res.attempts, 0);
+            }
+            
+            const suggestedStars = calculateStars(finalHits, finalAttempts);
+            text = `Tu resultado fue <strong>${finalHits}/${finalAttempts}</strong>. Te sugerimos una calificación de <strong>${suggestedStars} estrellas</strong>. ¿Aceptar?`;
             
             document.getElementById('rating-suggestion-text').innerHTML = text;
             
@@ -2843,10 +2893,12 @@
                 const profiles = getProfiles();
                 const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
                 const oldBest = bestScores[taskId] || 0;
-                if (hits > oldBest) {
-                    saveState(taskId, hits, 'bestScores');
+                if (finalHits > oldBest) {
+                    saveState(taskId, finalHits, 'bestScores');
                 }
                 document.querySelector(`.btn-ghost-mode[data-task-id="${taskId}"]`).style.display = 'inline-block';
+                document.querySelector(`.rating-stars[data-task-id="${taskId}"]`).style.display = 'flex';
+
 
                 showModal(null);
             };
@@ -2857,15 +2909,6 @@
         function initializeNewFeatures(totalWeeks) {
             document.getElementById('btn-hit').addEventListener('click', () => handleShotLoggerClick(true));
             document.getElementById('btn-miss').addEventListener('click', () => handleShotLoggerClick(false));
-            document.getElementById('btn-next-shot').addEventListener('click', setupNextShot);
-            document.getElementById('btn-finish-session').addEventListener('click', finishShotLogging);
-            document.getElementById('shot-logger-shot-selector').addEventListener('change', (e) => {
-                shotLoggerState.currentRangeIndex = e.target.selectedIndex;
-                shotLoggerState.hits = 0;
-                shotLoggerState.attempts = 0;
-                updateLoggerUI();
-            });
-
             document.getElementById('btn-generate-session').addEventListener('click', () => {
                 showModal(document.getElementById('session-duration-modal'));
             });
@@ -2880,7 +2923,12 @@
                 const taskId = notesModal.dataset.taskId;
                 const noteText = document.getElementById('task-notes-textarea').value;
                 
-                saveState(taskId, noteText, 'taskNotes'); 
+                const noteEntry = {
+                    content: noteText,
+                    lastModified: new Date().toISOString()
+                };
+
+                saveState(taskId, noteEntry, 'taskNotes'); 
                 showToast('Nota guardada');
                 
                 document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.trim().length > 0);
@@ -2909,6 +2957,8 @@
                 populateMySessionsList();
                 showModal(document.getElementById('my-sessions-modal'));
             });
+            
+             document.getElementById('btn-exit-custom-session').addEventListener('click', exitCustomSessionMode);
 
             document.getElementById('btn-save-custom-session').addEventListener('click', () => {
                 const name = document.getElementById('custom-session-name').value.trim();
@@ -3108,6 +3158,7 @@
                     const ach = achievementsData[id];
                     if (ach.condition(progress, userConfig, totalWeeks)) {
                         progress.unlockedAchievements[id] = true;
+                        addPoints(100); // Achievement bonus
                         saveProfiles(profiles);
                         document.getElementById('unlocked-achievement-icon').textContent = ach.icon;
                         document.getElementById('unlocked-achievement-name').textContent = ach.name;
@@ -3138,7 +3189,7 @@
 
             if (lastPractice === yesterdayStr) {
                 streak++;
-                addPoints(20); // Streak bonus
+                addPoints(20 * streak); // Streak bonus
             } else if (lastPractice !== today) {
                 streak = 1;
             }
@@ -3149,6 +3200,7 @@
         }
 
         function addPoints(points) {
+            if(isGuest) return;
             const profiles = getProfiles();
             const progress = profiles[currentProfile].progress;
             if (!progress.points) progress.points = 0;
@@ -3169,8 +3221,16 @@
         }
 
         function updatePointsUI() {
+            if(isGuest) {
+                document.getElementById('player-level-info').style.display = 'none';
+                document.getElementById('xp-bar-container').style.display = 'none';
+                return;
+            }
+            document.getElementById('player-level-info').style.display = 'block';
+            document.getElementById('xp-bar-container').style.display = 'block';
+
             const profiles = getProfiles();
-            const progress = profiles[currentProfile].progress;
+            const progress = profiles[currentProfile]?.progress || {level: 1, points: 0};
             const level = progress.level || 1;
             const points = progress.points || 0;
             const pointsForNextLevel = 500;
@@ -3241,10 +3301,118 @@
 
              list.querySelectorAll('.btn-start-custom-session').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    showCustomAlert("Próximamente", "La funcionalidad para iniciar sesiones personalizadas aún está en desarrollo. ¡Vuelve pronto!");
-                    // TODO: Implement custom session starter
+                    const sessionId = e.target.dataset.sessionId;
+                    startCustomSession(sessionId);
                 });
             });
+        }
+
+        function startCustomSession(sessionId) {
+            const profiles = getProfiles();
+            const session = profiles[currentProfile]?.progress?.customSessions[sessionId];
+            if (!session) return;
+            
+            showModal(null);
+
+            // Remove existing custom session tab if it exists
+            const existingTab = document.getElementById('tab-custom-session');
+            if (existingTab) {
+                existingTab.remove();
+                document.querySelector('label[for="tab-custom-session"]').remove();
+                document.getElementById('content-custom-session').remove();
+            }
+            
+            // Create new tab elements
+            const tabsContainer = document.getElementById('tabs-container');
+            const wrapper = tabsContainer.querySelector('.tab-content-wrapper');
+
+            const tabInput = document.createElement('input');
+            tabInput.type = 'radio';
+            tabInput.name = 'tabs';
+            tabInput.id = 'tab-custom-session';
+            tabInput.className = 'tab-input';
+            
+            const tabLabel = document.createElement('label');
+            tabLabel.htmlFor = 'tab-custom-session';
+            tabLabel.className = 'tab-label';
+            tabLabel.textContent = session.name;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.id = 'content-custom-session';
+            contentDiv.className = 'tab-content';
+            
+            let sessionHTML = `<h2>${session.name}</h2>`;
+            session.shots.forEach(taskId => {
+                const taskInfo = findTaskById(taskId);
+                if (taskInfo) {
+                    sessionHTML += `<div class="day-section">
+                        <ul><li class="task-item">
+                            <span class="star-icon" data-task-id="${taskId}" title="Marcar como tiro problemático">&#9734;</span>
+                            <input type="checkbox" id="${taskId}-custom">
+                            <label for="${taskId}-custom">${parseGlossaryTerms(taskInfo.taskData.text)} ${taskInfo.taskData.goal ? `<span class="task-goal">(${taskInfo.taskData.goal})</span>` : ''}</label>
+                            <button class="btn-task-note" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}">📝</button>
+                            <button class="btn-practice-task" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}" data-task-goal="${taskInfo.taskData.goal || ''}">Practicar</button>
+                            <button class="btn-ghost-mode" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}" data-task-goal="${taskInfo.taskData.goal || ''}">👻</button>
+                            <div class="rating-stars" data-task-id="${taskId}">
+                                <span data-value="5" title="5 Estrellas">&#9734;</span><span data-value="4" title="4 Estrellas">&#9734;</span><span data-value="3" title="3 Estrellas">&#9734;</span><span data-value="2" title="2 Estrellas">&#9734;</span><span data-value="1" title="1 Estrella">&#9734;</span>
+                            </div>
+                        </li></ul>
+                        <div class="pdf-shot-buttons-container"></div>
+                    </div>`;
+                }
+            });
+            contentDiv.innerHTML = sessionHTML;
+            
+            tabsContainer.insertBefore(tabInput, wrapper);
+            tabsContainer.insertBefore(tabLabel, wrapper);
+            wrapper.appendChild(contentDiv);
+            
+            // Re-run the diagram button generation for the new content
+            contentDiv.querySelectorAll('.day-section').forEach((daySection, index) => {
+                 const taskId = session.shots[index];
+                 const taskInfo = findTaskById(taskId);
+                 if(!taskInfo) return;
+
+                 const container = daySection.querySelector('.pdf-shot-buttons-container');
+                 container.innerHTML = '';
+                 let buttonsHTML = '<div class="pdf-shot-buttons"><span>Diagramas: </span>';
+                 const match = taskInfo.taskData.text.match(/<b>(\d+)(?:-(\d+))?:/);
+                 if(match) {
+                     const start = parseInt(match[1]);
+                     const end = match[2] ? parseInt(match[2]) : start;
+                     for(let shotNum = start; shotNum <= end; shotNum++) {
+                         buttonsHTML += `<button class="btn-view-diagram-single" data-shot-number="${shotNum}">${shotNum}</button>`;
+                     }
+                 }
+                 buttonsHTML += '</div>';
+                 container.innerHTML = buttonsHTML;
+            });
+            loadState(); // Reload state to update checkboxes, stars etc in the new tab
+
+            // Hide week tabs and show exit button
+            document.querySelectorAll('.week-tab-label').forEach(el => el.style.display = 'none');
+            document.getElementById('btn-exit-custom-session').style.display = 'inline-block';
+            
+            tabInput.checked = true;
+            tabInput.dispatchEvent(new Event('change'));
+        }
+
+        function exitCustomSessionMode() {
+            document.querySelectorAll('.week-tab-label').forEach(el => el.style.display = '');
+            document.getElementById('btn-exit-custom-session').style.display = 'none';
+
+            const customTab = document.getElementById('tab-custom-session');
+             if (customTab) {
+                customTab.remove();
+                document.querySelector('label[for="tab-custom-session"]').remove();
+                document.getElementById('content-custom-session').remove();
+            }
+
+            const firstWeekTab = document.getElementById('tab1');
+            if (firstWeekTab) {
+                firstWeekTab.checked = true;
+                firstWeekTab.dispatchEvent(new Event('change'));
+            }
         }
 
     });
