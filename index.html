@@ -246,6 +246,7 @@
         
         #welcome-modal {
             background: #2a3a2f;
+            -webkit-animation: clothColorChange 30s ease-in-out infinite alternate;
             animation: clothColorChange 30s ease-in-out infinite alternate;
             animation-delay: 2s;
             overflow: hidden;
@@ -463,9 +464,37 @@
         }
 
 
-        #session-modal .modal-content { max-width: 500px; }
+        #session-modal .modal-content { max-width: 90vw; width: 950px; }
         #timer-display { font-size: 5rem; font-weight: bold; color: var(--accent-color); margin: 20px 0; }
 
+        .shot-logger-container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+        .shot-logger-diagram {
+            flex-basis: 45%;
+            position: relative;
+            background-color: var(--day-section-bg);
+            border: 1px solid var(--border-color);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #shot-logger-canvas {
+            width: 100%;
+            height: auto;
+            display: none; /* Hidden until loaded */
+        }
+        #shot-logger-pdf-loader {
+            font-size: 1rem;
+            color: var(--secondary-color);
+        }
+        .shot-logger-controls {
+            flex-basis: 55%;
+            text-align: center;
+        }
         #shot-logger-ui { text-align: center; }
         #shot-logger-task-text { font-weight: bold; margin-bottom: 10px; }
         #shot-logger-shot-selector { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background-color: var(--day-section-bg); color: var(--text-color); }
@@ -629,6 +658,9 @@
                 flex-grow: 1;
                 min-width: 120px;
             }
+            #session-modal .modal-content { max-width: 95vw; width: 95vw; }
+            .shot-logger-container { flex-direction: column; }
+            .shot-logger-diagram { min-height: 300px; width: 100%; }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
             
             #welcome-modal .modal-content {
@@ -923,21 +955,30 @@
                 <div id="timer-display">00:00</div>
             </div>
             <div id="shot-logger-ui" style="display: none;">
-                <p id="shot-logger-task-text"></p>
-                <select id="shot-logger-shot-selector" style="display: none;"></select>
-                <p id="shot-logger-best-score"></p>
-                <div id="shot-logger-counter">0 / 10</div>
-                <div class="shot-logger-buttons">
-                    <button id="btn-miss">Fallo</button>
-                    <button id="btn-hit">Acierto</button>
-                </div>
-                <div id="shot-logger-next-prompt" style="display: none;">
-                    <p>¡Ejercicio completado!</p>
-                    <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
-                    <button id="btn-finish-session" class="btn-change-user">Terminar</button>
+                <div class="shot-logger-container">
+                    <div class="shot-logger-diagram">
+                        <canvas id="shot-logger-canvas"></canvas>
+                        <div id="shot-logger-pdf-loader">Cargando diagrama...</div>
+                    </div>
+                    <div class="shot-logger-controls">
+                        <p id="shot-logger-task-text"></p>
+                        <select id="shot-logger-shot-selector" style="display: none;"></select>
+                        <p id="shot-logger-best-score"></p>
+                        <div id="shot-logger-counter">0 / 10</div>
+                        <div class="shot-logger-buttons">
+                            <button id="btn-miss">Fallo</button>
+                            <button id="btn-hit">Acierto</button>
+                        </div>
+                        <div id="shot-logger-next-prompt" style="display: none;">
+                            <p>¡Ejercicio completado!</p>
+                            <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
+                            <button id="btn-finish-session" class="btn-change-user">Terminar y Calificar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-buttons">
+                <button id="btn-save-and-exit-logger" style="background-color: var(--secondary-color); color: white; display:none;">Guardar Progreso y Salir</button>
                 <button id="session-stop-btn" style="background-color: var(--danger-color); color: white;">Terminar Sesión</button>
             </div>
         </div>
@@ -1176,6 +1217,7 @@
         let pdfDoc = null;
         let currentPageNum = 1;
         let currentPdfScale = 1.5;
+        let loggerCanvasRendered = false; // Flag to check if logger canvas is active
         
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
@@ -1222,6 +1264,51 @@
         const pdfTotalPagesSpan = document.getElementById('pdf-total-pages');
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+
+        async function renderPdfInCanvas(canvas, pageNum) {
+            const loader = document.getElementById('shot-logger-pdf-loader');
+            loggerCanvasRendered = false;
+            canvas.style.display = 'none';
+            loader.style.display = 'block';
+            loader.textContent = 'Cargando diagrama...';
+
+            try {
+                if (!pdfDoc) {
+                    const loadingTask = pdfjsLib.getDocument(basePdfUrl);
+                    pdfDoc = await loadingTask.promise;
+                }
+                if (pageNum > pdfDoc.numPages || pageNum < 1) {
+                    throw new Error('Invalid page number');
+                }
+                
+                const page = await pdfDoc.getPage(pageNum);
+                // Adjust scale to fit the container width
+                const containerWidth = canvas.parentElement.clientWidth;
+                const viewport = page.getViewport({ scale: 1 });
+                const scale = containerWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale });
+
+                const context = canvas.getContext('2d');
+                canvas.height = scaledViewport.height;
+                canvas.width = scaledViewport.width;
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: scaledViewport
+                };
+                await page.render(renderContext).promise;
+                loggerCanvasRendered = true;
+                
+            } catch (error) {
+                console.error('Error rendering logger PDF:', error);
+                loader.textContent = 'Diagrama no disponible.';
+            } finally {
+                if(loggerCanvasRendered) {
+                    loader.style.display = 'none';
+                    canvas.style.display = 'block';
+                }
+            }
+        }
 
         async function renderPdfPage(num, scale = currentPdfScale) {
             if (!pdfDoc) return;
@@ -1312,7 +1399,7 @@
             if (!profiles[currentProfile]) profiles[currentProfile] = { config: {}, progress: {} };
             if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
 
-            if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores' || stateKey === 'rangeBestScores') {
+            if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores' || stateKey === 'rangeBestScores' || stateKey === 'rangeProgress') {
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
                 
                 if (value === null || (typeof value === 'object' && value.content && value.content.trim() === '')) {
@@ -1832,12 +1919,14 @@
                 date: date,
                 value: count
             }));
+            
+            const isMobile = window.innerWidth <= 768;
 
             cal.paint({
                 itemSelector: "#heatmap-calendar",
                 domain: { type: 'month', gutter: 4, padding: [10, 15, 10, 15] },
                 subDomain: { type: 'day', radius: 2, width: 15, height: 15, gutter: 4 },
-                range: 6,
+                range: isMobile ? 3 : 6,
                 data: { source: formattedData, x: 'date', y: 'value' },
                 scale: {
                     color: {
@@ -1846,7 +1935,7 @@
                         domain: [1, 2, 3, 4],
                     },
                 },
-                date: { start: new Date(new Date().getFullYear(), new Date().getMonth() - 5) },
+                date: { start: new Date(new Date().getFullYear(), new Date().getMonth() - (isMobile ? 2 : 5)) },
                 theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
             });
         }
@@ -1887,6 +1976,7 @@
             }
             
             const isDarkMode = document.body.classList.contains('dark-mode');
+            const isMobile = window.innerWidth <= 768;
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = isDarkMode ? '#e0e0e0' : '#333';
             const angleColor = isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)';
@@ -1908,7 +1998,7 @@
                     }]
                 },
                 options: {
-                    scales: { r: { angleLines: { color: angleColor }, grid: { color: gridColor }, pointLabels: { color: fontColor, font: { size: 14 } }, ticks: { backdropColor: 'transparent', color: fontColor, stepSize: 1, max: 5, min: 0 } } },
+                    scales: { r: { angleLines: { color: angleColor }, grid: { color: gridColor }, pointLabels: { color: fontColor, font: { size: isMobile ? 10 : 14 } }, ticks: { backdropColor: 'transparent', color: fontColor, stepSize: 1, max: 5, min: 0 } } },
                     plugins: { legend: { display: false } }
                 }
             });
@@ -2672,6 +2762,7 @@
             loggerView.style.display = 'none';
             document.getElementById('session-modal-title').textContent = 'Sesión de Práctica General';
             document.getElementById('session-stop-btn').style.display = 'block';
+            document.getElementById('btn-save-and-exit-logger').style.display = 'none';
 
             let duration = parseInt(minutes, 10) * 60;
             if (sessionTimerInterval) clearInterval(sessionTimerInterval);
@@ -2699,9 +2790,11 @@
             const bestScoreEl = document.getElementById('shot-logger-best-score');
             const shotSelector = document.getElementById('shot-logger-shot-selector');
             const nextPrompt = document.getElementById('shot-logger-next-prompt');
+            const btnSaveExit = document.getElementById('btn-save-and-exit-logger');
 
             shotSelector.style.display = 'none';
             nextPrompt.style.display = 'none';
+            btnSaveExit.style.display = 'none';
             document.getElementById('shot-logger-counter').style.display = 'block';
             document.querySelector('.shot-logger-buttons').style.display = 'flex';
             
@@ -2736,6 +2829,19 @@
                 shotSelector.style.display = 'block';
                 shotSelector.removeEventListener('change', setupCurrentShotInLogger); // Remove previous listener
                 shotSelector.addEventListener('change', setupCurrentShotInLogger);
+
+                // Load partial progress for this range
+                const profiles = getProfiles();
+                const savedProgress = profiles[currentProfile]?.progress?.rangeProgress?.[taskId];
+                if (savedProgress) {
+                    shotLoggerState.rangeResults = savedProgress.results || {};
+                    const nextIndex = (savedProgress.lastIndex || -1) + 1;
+                    if (nextIndex < shotLoggerState.rangeShots.length) {
+                        shotLoggerState.currentRangeIndex = nextIndex;
+                        shotSelector.selectedIndex = nextIndex;
+                    }
+                }
+                btnSaveExit.style.display = 'block';
             } 
             
             setupCurrentShotInLogger();
@@ -2761,7 +2867,17 @@
                 currentBestScoreId = `${taskId}-${currentShotNumber}`;
             } else {
                 document.getElementById('shot-logger-task-text').innerHTML = parseGlossaryTerms(document.querySelector(`.btn-practice-task[data-task-id="${taskId}"]`).dataset.taskText);
+                const match = document.querySelector(`.btn-practice-task[data-task-id="${taskId}"]`).dataset.taskText.match(/<b>(\d+):/);
+                if (match) currentShotNumber = parseInt(match[1]);
             }
+            
+            // Render diagram in the logger canvas
+            if (currentShotNumber) {
+                renderPdfInCanvas(document.getElementById('shot-logger-canvas'), currentShotNumber);
+            } else {
+                document.getElementById('shot-logger-pdf-loader').textContent = 'Diagrama no disponible para este ejercicio.';
+            }
+
 
             const existingResult = shotLoggerState.rangeResults[currentShotNumber] || { hits: 0, attempts: 0 };
             shotLoggerState.hits = existingResult.hits;
@@ -2777,13 +2893,12 @@
                 shotBestScore = bestScores[currentBestScoreId] || 0;
             }
 
+            bestScoreEl.style.display = 'block';
             if(isGhostMode) {
                  bestScoreEl.textContent = `👻 Récord a batir: ${shotBestScore} / ${totalAttempts}`;
-                 bestScoreEl.style.display = 'block';
                  document.getElementById('session-modal-title').textContent = 'Modo Fantasma';
             } else {
-                 bestScoreEl.textContent = `Resultado anterior: ${shotLoggerState.hits} / ${shotLoggerState.attempts}`;
-                 bestScoreEl.style.display = 'block';
+                 bestScoreEl.textContent = `Mejor Puntuación: ${shotBestScore} / ${totalAttempts}`;
                  document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
             }
             
@@ -2827,6 +2942,7 @@
 
                     const isLastShot = shotLoggerState.currentRangeIndex === shotLoggerState.rangeShots.length - 1;
                     document.getElementById('btn-next-shot').style.display = isLastShot ? 'none' : 'inline-block';
+                    document.getElementById('btn-finish-session').textContent = isLastShot ? 'Terminar y Calificar' : 'Siguiente Tiro';
 
                 } else {
                     setTimeout(() => {
@@ -2849,7 +2965,8 @@
         });
 
         document.getElementById('btn-finish-session').addEventListener('click', () => {
-             // Check if all shots in range have been attempted
+             // Clear partial progress since the range is now fully completed and will be rated.
+             saveState(shotLoggerState.taskId, null, 'rangeProgress');
              const allAttempted = shotLoggerState.rangeShots.every(shotNum => shotLoggerState.rangeResults[shotNum]);
              if (allAttempted) {
                 showRatingSuggestion();
@@ -2869,7 +2986,7 @@
         }
 
         function showRatingSuggestion() {
-            const { hits, totalAttempts, taskId, isRange, rangeResults } = shotLoggerState;
+            const { hits, totalAttempts, taskId, isRange, rangeResults, isGhostMode } = shotLoggerState;
             let finalHits = hits;
             let finalAttempts = totalAttempts;
             let text;
@@ -2891,6 +3008,7 @@
                 updateStarsUI(taskId, suggestedStars);
 
                 const profiles = getProfiles();
+                // This now applies to both regular and ghost mode, saving the best score.
                 const bestScores = profiles[currentProfile]?.progress?.bestScores || {};
                 const oldBest = bestScores[taskId] || 0;
                 if (finalHits > oldBest) {
@@ -2918,6 +3036,19 @@
                 }
             });
 
+            document.getElementById('btn-save-and-exit-logger').addEventListener('click', () => {
+                const { taskId, rangeResults, currentRangeIndex, isRange } = shotLoggerState;
+                if (isRange) {
+                    const progressToSave = {
+                        results: rangeResults,
+                        lastIndex: currentRangeIndex
+                    };
+                    saveState(taskId, progressToSave, 'rangeProgress');
+                    showToast('Progreso guardado');
+                }
+                showModal(null);
+            });
+            
             document.getElementById('save-task-note-btn').addEventListener('click', () => {
                 const notesModal = document.getElementById('task-notes-modal');
                 const taskId = notesModal.dataset.taskId;
@@ -3348,8 +3479,8 @@
                     sessionHTML += `<div class="day-section">
                         <ul><li class="task-item">
                             <span class="star-icon" data-task-id="${taskId}" title="Marcar como tiro problemático">&#9734;</span>
-                            <input type="checkbox" id="${taskId}-custom">
-                            <label for="${taskId}-custom">${parseGlossaryTerms(taskInfo.taskData.text)} ${taskInfo.taskData.goal ? `<span class="task-goal">(${taskInfo.taskData.goal})</span>` : ''}</label>
+                            <input type="checkbox" id="${taskId}">
+                            <label for="${taskId}">${parseGlossaryTerms(taskInfo.taskData.text)} ${taskInfo.taskData.goal ? `<span class="task-goal">(${taskInfo.taskData.goal})</span>` : ''}</label>
                             <button class="btn-task-note" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}">📝</button>
                             <button class="btn-practice-task" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}" data-task-goal="${taskInfo.taskData.goal || ''}">Practicar</button>
                             <button class="btn-ghost-mode" data-task-id="${taskId}" data-task-text="${taskInfo.taskData.text.replace(/"/g, '&quot;')}" data-task-goal="${taskInfo.taskData.goal || ''}">👻</button>
