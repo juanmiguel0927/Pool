@@ -463,8 +463,18 @@
             text-align: center;
         }
 
-
-        #session-modal .modal-content { max-width: 90vw; width: 950px; }
+        #session-modal .modal-content { 
+            max-width: 90vw; 
+            width: 950px; 
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #session-content-wrapper {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 5px;
+        }
         #timer-display { font-size: 5rem; font-weight: bold; color: var(--accent-color); margin: 20px 0; }
 
         .shot-logger-container {
@@ -658,7 +668,10 @@
                 flex-grow: 1;
                 min-width: 120px;
             }
-            #session-modal .modal-content { max-width: 95vw; width: 95vw; }
+            #session-modal .modal-content { 
+                max-width: 95vw; 
+                width: 95vw; 
+            }
             .shot-logger-container { flex-direction: column; }
             .shot-logger-diagram { min-height: 300px; width: 100%; }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
@@ -950,29 +963,31 @@
                 <h3 id="session-modal-title">Sesión de Práctica</h3>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <div id="timer-view">
-                <p>¡Concéntrate! Cuando el tiempo termine, podrás registrar tus notas.</p>
-                <div id="timer-display">00:00</div>
-            </div>
-            <div id="shot-logger-ui" style="display: none;">
-                <div class="shot-logger-container">
-                    <div class="shot-logger-diagram">
-                        <canvas id="shot-logger-canvas"></canvas>
-                        <div id="shot-logger-pdf-loader">Cargando diagrama...</div>
-                    </div>
-                    <div class="shot-logger-controls">
-                        <p id="shot-logger-task-text"></p>
-                        <select id="shot-logger-shot-selector" style="display: none;"></select>
-                        <p id="shot-logger-best-score"></p>
-                        <div id="shot-logger-counter">0 / 10</div>
-                        <div class="shot-logger-buttons">
-                            <button id="btn-miss">Fallo</button>
-                            <button id="btn-hit">Acierto</button>
+            <div id="session-content-wrapper">
+                <div id="timer-view">
+                    <p>¡Concéntrate! Cuando el tiempo termine, podrás registrar tus notas.</p>
+                    <div id="timer-display">00:00</div>
+                </div>
+                <div id="shot-logger-ui" style="display: none;">
+                    <div class="shot-logger-container">
+                        <div class="shot-logger-diagram">
+                            <canvas id="shot-logger-canvas"></canvas>
+                            <div id="shot-logger-pdf-loader">Cargando diagrama...</div>
                         </div>
-                        <div id="shot-logger-next-prompt" style="display: none;">
-                            <p>¡Ejercicio completado!</p>
-                            <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
-                            <button id="btn-finish-session" class="btn-change-user">Terminar y Calificar</button>
+                        <div class="shot-logger-controls">
+                            <p id="shot-logger-task-text"></p>
+                            <select id="shot-logger-shot-selector" style="display: none;"></select>
+                            <p id="shot-logger-best-score"></p>
+                            <div id="shot-logger-counter">0 / 10</div>
+                            <div class="shot-logger-buttons">
+                                <button id="btn-miss">Fallo</button>
+                                <button id="btn-hit">Acierto</button>
+                            </div>
+                            <div id="shot-logger-next-prompt" style="display: none;">
+                                <p>¡Ejercicio completado!</p>
+                                <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
+                                <button id="btn-finish-session" class="btn-change-user">Terminar y Calificar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2096,7 +2111,12 @@
             const profiles = getProfiles();
             const progress = profiles[currentProfile]?.progress || {};
             
-            document.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
+            const checkedTab = document.querySelector('.tab-input:checked');
+            if (!checkedTab) return;
+            const activeTabContent = document.getElementById(`content${checkedTab.id.replace('tab','')}`);
+            if (!activeTabContent) return;
+
+            activeTabContent.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
                 if (progress[item.id] !== undefined) {
                     if (item.type === 'checkbox') item.checked = progress[item.id];
                     else item.value = progress[item.id];
@@ -2106,25 +2126,24 @@
                 }
             });
 
-            const markedShots = progress.markedShots || {};
-            document.querySelectorAll('.star-icon').forEach(star => {
-                star.classList.toggle('marked', !!markedShots[star.dataset.taskId]);
-                star.innerHTML = markedShots[star.dataset.taskId] ? '&#9733;' : '&#9734;';
+            activeTabContent.querySelectorAll('.star-icon').forEach(star => {
+                star.classList.toggle('marked', !!(progress.markedShots && progress.markedShots[star.dataset.taskId]));
+                star.innerHTML = (progress.markedShots && progress.markedShots[star.dataset.taskId]) ? '&#9733;' : '&#9734;';
             });
             
-            const ratings = progress.ratings || {};
-            document.querySelectorAll('.rating-stars').forEach(container => {
+            activeTabContent.querySelectorAll('.rating-stars').forEach(container => {
+                const ratings = progress.ratings || {};
                 updateStarsUI(container.dataset.taskId, ratings[container.dataset.taskId] || 0);
             });
 
-            const notes = progress.taskNotes || {};
-             document.querySelectorAll('.btn-task-note').forEach(btn => {
+            activeTabContent.querySelectorAll('.btn-task-note').forEach(btn => {
+                const notes = progress.taskNotes || {};
                 const noteEntry = notes[btn.dataset.taskId];
                 const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
                 btn.classList.toggle('has-note', hasNote);
             });
 
-            document.querySelectorAll('.btn-ghost-mode').forEach(btn => {
+            activeTabContent.querySelectorAll('.btn-ghost-mode').forEach(btn => {
                 const bestScores = progress.bestScores || {};
                 btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
             });
@@ -2162,6 +2181,8 @@
                         btnResetCurrent.dataset.week = weekNum;
                         btnResetCurrent.textContent = `Reiniciar Semana ${weekNum}`;
                     }
+
+                    loadState();
 
                     if (tabId === 'tab-progress') { generateProgressChart(totalWeeks); generateHeatmap(); }
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
@@ -2205,7 +2226,6 @@
                 }
             }
             
-            loadState();
             for(let i=1; i<=totalWeeks; i++) {
                 updateProgressForWeek(i);
                 document.querySelectorAll(`#content${i} .day-section`).forEach(daySection => {
@@ -3518,8 +3538,7 @@
                  buttonsHTML += '</div>';
                  container.innerHTML = buttonsHTML;
             });
-            loadState(); // Reload state to update checkboxes, stars etc in the new tab
-
+            
             // Hide week tabs and show exit button
             document.querySelectorAll('.week-tab-label').forEach(el => el.style.display = 'none');
             document.getElementById('btn-exit-custom-session').style.display = 'inline-block';
@@ -3550,4 +3569,5 @@
     </script>
 </body>
 </html>
+
 
