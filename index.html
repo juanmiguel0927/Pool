@@ -1611,7 +1611,7 @@
 
             for (let i = 1; i <= totalWeeks; i++) {
                 htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${i===1 ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
-                mobileNavOptions += `<option value="tab${i}">Semana ${i}</option>`;
+                mobileNavOptions += `<option value="tab${i}" class="week-option">Semana ${i}</option>`;
                 
                 let weekContent = `<div id="content${i}" class="tab-content week-tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
                 const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + daysPerWeek);
@@ -2113,7 +2113,7 @@
             
             const checkedTab = document.querySelector('.tab-input:checked');
             if (!checkedTab) return;
-            const activeTabContent = document.getElementById(`content${checkedTab.id.replace('tab','')}`);
+            const activeTabContent = document.getElementById(checkedTab.id.replace('tab', 'content'));
             if (!activeTabContent) return;
 
             activeTabContent.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
@@ -2162,15 +2162,21 @@
             if (localStorage.getItem('tiroMaestroTheme') === 'dark') { document.body.classList.add('dark-mode'); themeToggle.checked = true; }
 
             const mobileNav = document.getElementById('mobile-nav');
-            const tabInputs = document.querySelectorAll('.tab-input');
+            const tabsContainer = document.getElementById('tabs-container');
             const btnResetCurrent = document.getElementById('btn-reset-current-week');
             
             function handleTabChange(e) {
                 if(e.target.checked) {
                     const tabId = e.target.id;
                     document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-                    const contentId = `content${tabId.replace('tab','')}`;
-                    document.getElementById(contentId).style.display = 'block';
+                    
+                    // This logic handles both regular "contentX" IDs and custom "content-..." IDs
+                    const contentId = `content${tabId.substring(3)}`;
+                    const contentElement = document.getElementById(contentId);
+                    if (contentElement) {
+                       contentElement.style.display = 'block';
+                    }
+
                     if (mobileNav.value !== tabId) mobileNav.value = tabId;
                     
                     if (tabId.startsWith('tab-') || tabId === 'tab-custom-session') {
@@ -2192,10 +2198,17 @@
                     if (tabId === 'tab-create-session') populateCreateSessionList(totalWeeks);
                 }
             }
-            tabInputs.forEach(input => input.addEventListener('change', handleTabChange));
+
+            // Event delegation for tab changes
+            tabsContainer.addEventListener('change', (e) => {
+                if (e.target.matches('.tab-input')) {
+                    handleTabChange(e);
+                }
+            });
+
             mobileNav.addEventListener('change', (e) => {
                 const tabInput = document.getElementById(e.target.value);
-                if (tabInput) { tabInput.checked = true; tabInput.dispatchEvent(new Event('change')); }
+                if (tabInput) { tabInput.checked = true; tabInput.dispatchEvent(new Event('change', { bubbles: true })); }
             });
 
             function updateProgressForWeek(weekNumber) {
@@ -3469,8 +3482,8 @@
             const existingTab = document.getElementById('tab-custom-session');
             if (existingTab) {
                 existingTab.remove();
-                document.querySelector('label[for="tab-custom-session"]').remove();
-                document.getElementById('content-custom-session').remove();
+                document.querySelector('label[for="tab-custom-session"]')?.remove();
+                document.getElementById('content-custom-session')?.remove();
             }
             
             // Create new tab elements
@@ -3540,28 +3553,28 @@
             });
             
             // Hide week tabs and show exit button
-            document.querySelectorAll('.week-tab-label').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.week-tab-label, .week-option').forEach(el => el.style.display = 'none');
             document.getElementById('btn-exit-custom-session').style.display = 'inline-block';
             
             tabInput.checked = true;
-            tabInput.dispatchEvent(new Event('change'));
+            tabInput.dispatchEvent(new Event('change', { bubbles: true }));
         }
 
         function exitCustomSessionMode() {
-            document.querySelectorAll('.week-tab-label').forEach(el => el.style.display = '');
+            document.querySelectorAll('.week-tab-label, .week-option').forEach(el => el.style.display = '');
             document.getElementById('btn-exit-custom-session').style.display = 'none';
 
             const customTab = document.getElementById('tab-custom-session');
              if (customTab) {
                 customTab.remove();
-                document.querySelector('label[for="tab-custom-session"]').remove();
-                document.getElementById('content-custom-session').remove();
+                document.querySelector('label[for="tab-custom-session"]')?.remove();
+                document.getElementById('content-custom-session')?.remove();
             }
 
             const firstWeekTab = document.getElementById('tab1');
             if (firstWeekTab) {
                 firstWeekTab.checked = true;
-                firstWeekTab.dispatchEvent(new Event('change'));
+                firstWeekTab.dispatchEvent(new Event('change', { bubbles: true }));
             }
         }
 
@@ -3569,5 +3582,3 @@
     </script>
 </body>
 </html>
-
-
