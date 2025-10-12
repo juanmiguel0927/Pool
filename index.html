@@ -118,6 +118,7 @@
         }
         .btn-print, .btn-glossary, .btn-my-sessions { background-color: var(--accent-color); }
         .btn-shot-of-the-day { background-color: var(--accent-color); }
+        .btn-tutorial { background-color: var(--warning-color); } /* Tutorial button style */
         .btn-generate-session { background-color: var(--success-color); }
         .btn-reset-current { background-color: var(--secondary-color); }
         .btn-reset-all { background-color: var(--danger-color); }
@@ -646,7 +647,67 @@
             transform: translateX(-50%) translateY(-20px);
         }
 
+        /* --- Tutorial Styles --- */
+        #tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1999;
+            display: none;
+        }
+        .tutorial-highlight {
+            position: relative;
+            z-index: 2001;
+            box-shadow: 0 0 0 5px var(--warning-color), 0 0 15px 5px var(--warning-color);
+            border-radius: 5px;
+            transition: box-shadow 0.3s;
+        }
+        #tutorial-step-box {
+            position: fixed;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 2002;
+            max-width: 350px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+        #tutorial-step-box h4 { margin-top: 0; color: var(--accent-color); }
+        #tutorial-step-box p { margin-bottom: 15px; }
+        .tutorial-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tutorial-nav button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .tutorial-nav button:disabled { background-color: var(--secondary-color); cursor: not-allowed; }
+        #tutorial-step-counter { font-weight: bold; }
+        /* --- End Tutorial Styles --- */
+
+
         @media (max-width: 768px) {
+            #tutorial-step-box {
+                width: 90vw;
+                box-sizing: border-box;
+                /* The following rules ensure the box is always visible at the bottom on mobile */
+                bottom: 10px !important;
+                top: auto !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+            }
+
             .container { 
                 padding: 15px; 
                 margin: 10px auto;
@@ -733,6 +794,11 @@
             #achievements-grid { grid-template-columns: 1fr; }
             .note-item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
             .tab-content { padding: 10px; }
+
+            #tutorial-step-box {
+                width: 90vw;
+                box-sizing: border-box;
+            }
         }
     </style>
 </head>
@@ -1042,6 +1108,7 @@
                 <span style="margin-left: 8px;">Modo Oscuro</span>
             </div>
             <div class="action-buttons">
+                <button id="btn-tutorial" class="btn-tutorial">? Tutorial</button>
                 <button id="btn-my-sessions" class="btn-my-sessions">Mis Sesiones</button>
                 <button id="btn-generate-session" class="btn-generate-session">Generar Sesión de Hoy</button>
                 <button id="btn-shot-of-the-day" class="btn-shot-of-the-day">Tiro del Día</button>
@@ -1072,6 +1139,19 @@
     </div>
 
     <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    
+    <!-- Tutorial HTML Elements -->
+    <div id="tutorial-overlay"></div>
+    <div id="tutorial-step-box">
+        <h4 id="tutorial-title"></h4>
+        <p id="tutorial-content"></p>
+        <div class="tutorial-nav">
+            <button id="tutorial-prev">Anterior</button>
+            <span id="tutorial-step-counter"></span>
+            <button id="tutorial-next">Siguiente</button>
+        </div>
+        <button id="tutorial-end" style="width: 100%; margin-top: 10px; background-color: var(--secondary-color); color: white;">Terminar Tutorial</button>
+    </div>
 
     <script>
     // --- DATA SOURCE ---
@@ -2609,6 +2689,7 @@
 
              displayTodaysFocus(totalWeeks);
              initializeNewFeatures(totalWeeks);
+             initializeTutorial(); // Initialize the tutorial logic
         }
         
         const glossaryContent = document.getElementById('glossary-content');
@@ -3577,8 +3658,176 @@
                 firstWeekTab.dispatchEvent(new Event('change', { bubbles: true }));
             }
         }
+        
+        // --- Interactive Tutorial Logic ---
+        function initializeTutorial() {
+            const tutorialSteps = [
+                {
+                    title: '¡Bienvenido a Tiro Maestro!',
+                    content: 'Esta es una guía rápida para mostrarte las funciones principales. Puedes terminarla en cualquier momento.',
+                    position: 'center'
+                },
+                {
+                    element: '#user-welcome-container',
+                    title: 'Tu Perfil y Nivel',
+                    content: 'Aquí verás tu nombre y tu progreso. Gana puntos (XP) completando tareas, manteniendo rachas y desbloqueando logros para subir de nivel.'
+                },
+                {
+                    element: '#todays-focus-container',
+                    title: 'Foco del Día',
+                    content: 'Si es uno de tus días de entrenamiento, aquí aparecerá un resumen de tu sesión. Haz clic en "Ir al Entrenamiento" para saltar directamente a los ejercicios de hoy.'
+                },
+                {
+                    element: '.tabs-container .tab-label.week-tab-label',
+                    title: 'Plan Semanal',
+                    content: 'Tu entrenamiento está organizado en semanas. Avanza a la siguiente solo cuando cumplas el "Criterio de Avance" de la semana actual.'
+                },
+                {
+                    element: '.day-section',
+                    title: 'Sesión Diaria',
+                    content: 'Cada sesión tiene un foco, tareas específicas y, a veces, un tiro clave para estudiar. Al final del día, puedes escribir en tu diario de práctica.'
+                },
+                {
+                    element: '.task-item input[type="checkbox"]',
+                    title: 'Completar Tareas',
+                    content: 'Marca esta casilla cuando completes un ejercicio. Esto actualiza tu barra de progreso semanal y te da puntos de experiencia (XP).'
+                },
+                {
+                    element: '.task-item .star-icon',
+                    title: 'Marcar Tiros Difíciles',
+                    content: 'Si un ejercicio te resulta difícil, haz clic en la estrella. Se guardará en la pestaña "Tiros a Reforzar" para que puedas practicarlo más tarde.'
+                },
+                {
+                    element: '.task-item .btn-practice-task',
+                    title: 'Práctica Interactiva',
+                    content: 'Usa este botón para abrir el "Registrador de Tiros". Te permite llevar la cuenta de aciertos y fallos, y al final, te sugiere una calificación de estrellas.'
+                },
+                {
+                    element: '.task-item .rating-stars',
+                    title: 'Calificar tu Rendimiento',
+                    content: 'Después de practicar, califica tu desempeño de 1 a 5 estrellas. Estas calificaciones alimentan los gráficos en la pestaña "Análisis".'
+                },
+                {
+                    element: '#btn-generate-session',
+                    title: 'Generar Sesión Inteligente',
+                    content: '¿No sabes qué practicar? Esta función crea una sesión personalizada basada en tus debilidades (tiros marcados o con baja calificación) y tus fortalezas.'
+                },
+                {
+                    element: 'label[for="tab-analysis"]',
+                    title: 'Analiza tu Progreso',
+                    content: 'Esta pestaña (y otras como Logros, Juego Mental, etc.) contiene herramientas adicionales para llevar tu juego al siguiente nivel. ¡Explóralas!',
+                    action: () => document.querySelector('label[for="tab1"]').scrollIntoView()
+                },
+                {
+                    title: '¡Listo para Empezar!',
+                    content: '¡Eso es todo! Ya conoces lo básico. La maestría requiere práctica constante. ¡A la mesa!',
+                    position: 'center'
+                }
+            ];
+
+            let currentStep = 0;
+            const overlay = document.getElementById('tutorial-overlay');
+            const stepBox = document.getElementById('tutorial-step-box');
+
+            function endTutorial() {
+                overlay.style.display = 'none';
+                stepBox.style.display = 'none';
+                document.querySelector('.tutorial-highlight')?.classList.remove('tutorial-highlight');
+            }
+
+            function showTutorialStep(index) {
+                document.querySelector('.tutorial-highlight')?.classList.remove('tutorial-highlight');
+                
+                const step = tutorialSteps[index];
+
+                // ALWAYS reset inline styles to prevent conflicts between steps
+                stepBox.style.top = '';
+                stepBox.style.bottom = '';
+                stepBox.style.left = '';
+                stepBox.style.transform = '';
+                
+                const targetElement = step.element ? document.querySelector(step.element) : null;
+
+                if(step.action) {
+                    step.action();
+                }
+
+                document.getElementById('tutorial-title').textContent = step.title;
+                document.getElementById('tutorial-content').textContent = step.content;
+                document.getElementById('tutorial-step-counter').textContent = `${index + 1} / ${tutorialSteps.length}`;
+                document.getElementById('tutorial-prev').disabled = index === 0;
+                document.getElementById('tutorial-next').disabled = index === tutorialSteps.length - 1;
+
+                if (targetElement) {
+                    targetElement.classList.add('tutorial-highlight');
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                    
+                    const isMobile = window.innerWidth <= 768;
+                    if (!isMobile) {
+                        // For desktop, we calculate position after the scroll animation
+                        setTimeout(() => {
+                            const rect = targetElement.getBoundingClientRect();
+                            const boxRect = stepBox.getBoundingClientRect();
+                            
+                            let top = rect.bottom + 15;
+                            if (top + boxRect.height > window.innerHeight - 10) {
+                                top = rect.top - boxRect.height - 15;
+                            }
+                            if (top < 10) {
+                                top = 10;
+                            }
+
+                            let left = rect.left + (rect.width / 2) - (boxRect.width / 2);
+                            if (left < 10) {
+                                left = 10;
+                            }
+                            if (left + boxRect.width > window.innerWidth) {
+                                left = window.innerWidth - boxRect.width - 10;
+                            }
+                            stepBox.style.top = `${top}px`;
+                            stepBox.style.left = `${left}px`;
+                            
+                        }, 300); 
+                    }
+
+                } else if (step.position === 'center') {
+                    stepBox.style.top = '50%';
+                    stepBox.style.left = '50%';
+                    stepBox.style.transform = 'translate(-50%, -50%)';
+                }
+            }
+
+            document.getElementById('btn-tutorial').addEventListener('click', () => {
+                currentStep = 0;
+                overlay.style.display = 'block';
+                stepBox.style.display = 'block';
+                showTutorialStep(currentStep);
+            });
+            
+            document.getElementById('tutorial-next').addEventListener('click', () => {
+                if(currentStep < tutorialSteps.length - 1) {
+                    currentStep++;
+                    showTutorialStep(currentStep);
+                }
+            });
+
+             document.getElementById('tutorial-prev').addEventListener('click', () => {
+                if(currentStep > 0) {
+                    currentStep--;
+                    showTutorialStep(currentStep);
+                }
+            });
+            
+            [overlay, document.getElementById('tutorial-end')].forEach(el => el.addEventListener('click', endTutorial));
+        }
 
     });
     </script>
 </body>
 </html>
+
+
+
+
+
+
