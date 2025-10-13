@@ -654,9 +654,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            /* background-color is inherited from .modal-overlay */
             z-index: 1999;
-            display: none;
+             /* display: none; is removed, now controlled by .visible class */
         }
         .tutorial-highlight {
             position: relative;
@@ -675,7 +675,15 @@
             max-width: 350px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 1px solid var(--border-color);
-            display: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, top 0.3s ease, left 0.3s ease;
+            pointer-events: none;
+        }
+        #tutorial-step-box.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
         #tutorial-step-box h4 { margin-top: 0; color: var(--accent-color); }
         #tutorial-step-box p { margin-bottom: 15px; }
@@ -698,16 +706,6 @@
 
 
         @media (max-width: 768px) {
-            #tutorial-step-box {
-                width: 90vw;
-                box-sizing: border-box;
-                /* The following rules ensure the box is always visible at the bottom on mobile */
-                bottom: 10px !important;
-                top: auto !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-            }
-
             .container { 
                 padding: 15px; 
                 margin: 10px auto;
@@ -794,11 +792,6 @@
             #achievements-grid { grid-template-columns: 1fr; }
             .note-item-header { flex-direction: column; align-items: flex-start; gap: 10px; }
             .tab-content { padding: 10px; }
-
-            #tutorial-step-box {
-                width: 90vw;
-                box-sizing: border-box;
-            }
         }
     </style>
 </head>
@@ -1141,7 +1134,7 @@
     <input type="file" id="import-file-input" accept=".json" style="display: none;">
     
     <!-- Tutorial HTML Elements -->
-    <div id="tutorial-overlay"></div>
+    <div id="tutorial-overlay" class="modal-overlay"></div>
     <div id="tutorial-step-box">
         <h4 id="tutorial-title"></h4>
         <p id="tutorial-content"></p>
@@ -1246,7 +1239,7 @@
         { id: 17, originalWeek: 5, title: 'Lunes: Universal Positioning II - Draw y Rail', focus: 'Tiros complejos con [[Draw]], velocidad y el uso de ángulos en lugar de spin.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>85: Ángulos vs. Spin:</b> Posicionar usando ángulos y velocidad es a menudo más fácil que usar mucho spin.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>86: Draw Rápido:</b> Fast Speed. Baje el punto de contacto para generar más spin con menos velocidad.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Draw'}]},
         { id: 18, originalWeek: 5, title: 'Martes: Universal Positioning III - Maestría', focus: 'Dominar los tiros de posicionamiento donde hay múltiples soluciones. <strong>Encontrar la más simple.</strong>', estTime: '45 min', tasks: [ { id: 't1', text: '<b>87: Tiros de Variedad:</b> Cuando una bola está cerca de una tronera, puede usar una variedad de líneas, spins y velocidades.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Posicionamiento'}, { id: 't2', text: '<b>88: Tiro [[Carom]]:</b> Requiere precisión. Use un agarre y una muñeca <strong>sueltos</strong>.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Carom'}]},
         { id: 19, originalWeek: 5, title: 'Jueves: Scratches (Follow y Stun)', focus: '<strong>Aprender a no raspar</strong> ([[Scratch]]) con [[Follow]] y [[Stun]], identificando las zonas de peligro.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>89-90: Follow Scratches:</b> Practique tiros que lleven la bola blanca directamente a la tronera. <strong>Objetivo:</strong> Conocer los ángulos de peligro.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>91-92: Stun Scratches:</b> Tirar a una bola objetivo cerca del punto de cabeza o pie con [[stun]] causará un [[scratch]].', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}]},
-        { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>93-95: Draw Scratches:</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para el <strong>[[Scratch]]</strong>.'},
+        { id: 20, originalWeek: 5, title: 'Viernes: Scratches (Draw) y Manejo de Errores', focus: 'Identificar fallos comunes en el [[Draw]] que causan foul.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>93-95: Draw Scratches:</b> Después del [[stroke]], mueva su mano de [[puente]] fuera del camino de la bola blanca.', goal: '5 Intentos | Meta: 5 Aciertos', type: 'Control'}, { id: 't2', text: '<b>Análisis de Control:</b> Si accidentalmente puso demasiado Bottom spin en un [[stun shot]], la bola blanca hará [[draw]]. Aprenda a controlarlo.'}], criteria: 'Dominar la <strong>[[Universal Positioning]] Avanzada</strong> y reconocer las condiciones para il <strong>[[Scratch]]</strong>.'},
         { id: 21, originalWeek: 6, title: 'Lunes: Rail Shots (Fundamentos y Bridge)', focus: 'Mantener el taco nivelado y el [[puente]] estable cuando la bola está cerca de la banda.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>96-97: Tiros Básicos en Rail:</b> Practique golpear la bola objetivo y rail al mismo tiempo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>98-99: Rail Posicional:</b> Use [[Follow]]/[[Draw]] para posicionar. Asegure un [[puente]] estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}]},
         { id: 22, originalWeek: 6, title: 'Martes: Rail Shots (Avanzados y Sidespin)', focus: 'Usar Running English para ensanchar el ángulo y la técnica de "[[choking up]]".', estTime: '45 min', tasks: [ { id: 't1', text: '<b>100: Running English en Rail:</b> [[Sidespin]] en la dirección del rebote &rarr; aumenta velocidad y ensancha el rebote.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot'}, { id: 't2', text: '<b>101: Técnica "[[Choking up]]":</b> Coloque su mano de tiro un poco más arriba en el taco para más control.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Rail Shot'}]},
         { id: 23, originalWeek: 6, title: 'Jueves: Banks, Kicks y Combinaciones', focus: 'Tiros de riesgo: usarlos solo como <strong>último recurso</strong>. Los [[Bank Shot]] son inconsistentes.', estTime: '60 min', tasks: [ { id: 't1', text: '<b>102-105: [[Bank Shot]]:</b> Un [[stroke]] más rápido acorta el ángulo de rebote de la bola objetivo.', goal: '10 Intentos | Meta: 4-6 Aciertos', type: 'Bank Shot'}, { id: 't2', text: '<b>106-108: [[Kick Shot]]:</b> Vaya a dos bandas con la bola blanca para aterrizar lejos de la banda.', goal: '10 Intentos | Meta: 5-7 Aciertos', type: 'Kick Shot'}]},
@@ -3730,8 +3723,8 @@
             const stepBox = document.getElementById('tutorial-step-box');
 
             function endTutorial() {
-                overlay.style.display = 'none';
-                stepBox.style.display = 'none';
+                overlay.classList.remove('visible');
+                stepBox.classList.remove('visible');
                 document.querySelector('.tutorial-highlight')?.classList.remove('tutorial-highlight');
             }
 
@@ -3739,18 +3732,7 @@
                 document.querySelector('.tutorial-highlight')?.classList.remove('tutorial-highlight');
                 
                 const step = tutorialSteps[index];
-
-                // ALWAYS reset inline styles to prevent conflicts between steps
-                stepBox.style.top = '';
-                stepBox.style.bottom = '';
-                stepBox.style.left = '';
-                stepBox.style.transform = '';
-                
                 const targetElement = step.element ? document.querySelector(step.element) : null;
-
-                if(step.action) {
-                    step.action();
-                }
 
                 document.getElementById('tutorial-title').textContent = step.title;
                 document.getElementById('tutorial-content').textContent = step.content;
@@ -3758,49 +3740,69 @@
                 document.getElementById('tutorial-prev').disabled = index === 0;
                 document.getElementById('tutorial-next').disabled = index === tutorialSteps.length - 1;
 
-                if (targetElement) {
-                    targetElement.classList.add('tutorial-highlight');
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                    
-                    const isMobile = window.innerWidth <= 768;
-                    if (!isMobile) {
-                        // For desktop, we calculate position after the scroll animation
+                if (step.action) {
+                    step.action();
+                }
+
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    // On mobile, just pin to the bottom. Clear any desktop styles.
+                    stepBox.style.top = '';
+                    stepBox.style.left = '';
+                    stepBox.style.transform = '';
+                    stepBox.style.bottom = '10px';
+                    stepBox.style.left = '50%';
+                    stepBox.style.transform = 'translateX(-50%)';
+                    if (targetElement) {
+                         targetElement.classList.add('tutorial-highlight');
+                         targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    // On desktop, clear mobile style
+                    stepBox.style.bottom = '';
+
+                    if (targetElement) {
+                        // Clear centered-style transform
+                        stepBox.style.transform = '';
+
+                        targetElement.classList.add('tutorial-highlight');
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
                         setTimeout(() => {
-                            const rect = targetElement.getBoundingClientRect();
-                            const boxRect = stepBox.getBoundingClientRect();
-                            
-                            let top = rect.bottom + 15;
-                            if (top + boxRect.height > window.innerHeight - 10) {
-                                top = rect.top - boxRect.height - 15;
+                            const targetRect = targetElement.getBoundingClientRect();
+                            const boxWidth = stepBox.offsetWidth;
+                            const boxHeight = stepBox.offsetHeight;
+
+                            let top = targetRect.bottom + 15;
+                            if (top + boxHeight > window.innerHeight - 10) {
+                                top = targetRect.top - boxHeight - 15;
                             }
-                            if (top < 10) {
-                                top = 10;
+                            if (top < 10) { top = 10; }
+
+                            let left = targetRect.left + (targetRect.width / 2) - (boxWidth / 2);
+                            if (left < 10) { left = 10; }
+                            if (left + boxWidth > window.innerWidth - 10) {
+                                left = window.innerWidth - boxWidth - 10;
                             }
 
-                            let left = rect.left + (rect.width / 2) - (boxRect.width / 2);
-                            if (left < 10) {
-                                left = 10;
-                            }
-                            if (left + boxRect.width > window.innerWidth) {
-                                left = window.innerWidth - boxRect.width - 10;
-                            }
                             stepBox.style.top = `${top}px`;
                             stepBox.style.left = `${left}px`;
-                            
-                        }, 300); 
-                    }
+                        }, 300);
 
-                } else if (step.position === 'center') {
-                    stepBox.style.top = '50%';
-                    stepBox.style.left = '50%';
-                    stepBox.style.transform = 'translate(-50%, -50%)';
+                    } else if (step.position === 'center') {
+                        // Set centered styles, overriding any previous top/left in px
+                        stepBox.style.top = '50%';
+                        stepBox.style.left = '50%';
+                        stepBox.style.transform = 'translate(-50%, -50%)';
+                    }
                 }
             }
 
             document.getElementById('btn-tutorial').addEventListener('click', () => {
                 currentStep = 0;
-                overlay.style.display = 'block';
-                stepBox.style.display = 'block';
+                overlay.classList.add('visible');
+                stepBox.classList.add('visible');
                 showTutorialStep(currentStep);
             });
             
@@ -3825,9 +3827,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
 
