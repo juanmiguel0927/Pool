@@ -67,22 +67,22 @@
             --success-color: #3c8d40;
         }
 
-        body { 
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            line-height: 1.6; 
-            color: var(--text-color); 
-            margin: 0; 
-            padding: 20px; 
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
             background-color: var(--bg-color);
             transition: background-color 0.3s, color 0.3s;
         }
-        .container { 
-            max-width: 900px; 
-            margin: auto; 
-            background: var(--container-bg); 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             border: 1px solid var(--border-color);
             display: none; /* Hidden by default until setup is complete */
         }
@@ -101,7 +101,7 @@
         .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; border-radius: 50%; }
         input:checked + .slider { background-color: var(--accent-color); }
         input:checked + .slider:before { transform: translateX(24px); }
-        
+
         .action-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -125,7 +125,7 @@
         .btn-edit { background-color: var(--warning-color); }
         .btn-change-user { background-color: var(--secondary-color); }
         #btn-exit-custom-session { background-color: var(--danger-color); display: none; }
-        
+
         h1 { text-align: center; color: var(--header-color); margin-bottom: 5px; }
         .credits { text-align: center; margin-top: 0; margin-bottom: 20px; font-size: 0.9em; color: var(--secondary-color); }
         .user-welcome-container { text-align: center; margin-bottom: 20px; }
@@ -133,7 +133,7 @@
         #player-level-info { font-size: 0.9em; color: var(--secondary-color); font-weight: bold;}
         #xp-bar-container { background-color: var(--tab-bg); border-radius: 10px; margin: 5px auto 0; max-width: 200px; overflow: hidden; height: 10px; border: 1px solid var(--border-color);}
         #xp-bar { background-color: var(--warning-color); height: 100%; width: 0%; border-radius: 10px; transition: width 0.5s; }
-        
+
         h2, h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-top: 20px; color: var(--header-color); }
         h3 { border-bottom-width: 1px; }
         h4 { color: var(--accent-color); margin-top: 20px; }
@@ -143,7 +143,7 @@
         .task-item input[type="checkbox"] { margin-right: 10px; flex-shrink: 0; width: 18px; height: 18px; }
         .task-item label { flex-grow: 1; cursor: pointer; }
         .task-goal { font-size: 0.8em; color: var(--secondary-color); margin-left: 8px; font-style: italic; }
-        
+
         .star-icon {
             cursor: pointer;
             font-size: 1.5rem;
@@ -154,7 +154,7 @@
         }
         .star-icon:hover { transform: scale(1.2); }
         .star-icon.marked { color: var(--warning-color); }
-        
+
         .rating-stars {
             display: flex;
             flex-direction: row-reverse;
@@ -179,7 +179,7 @@
 
         .day-section { background-color: var(--day-section-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; border-radius: 5px; transition: background-color 0.5s; }
         .day-focus { font-weight: bold; color: var(--focus-color); }
-        
+
         .activity-block { margin-bottom: 15px; padding: 15px; border-left: 3px solid var(--activity-block-border); background-color: var(--activity-block-bg); border-radius: 4px; }
         .shot-description { margin-top: 15px; padding: 15px; border: 1px dashed var(--shot-desc-border); background-color: var(--shot-desc-bg); font-size: 0.9em; border-radius: 4px; }
         .citation { font-size: 0.8em; color: #777; vertical-align: super; }
@@ -194,7 +194,7 @@
         .tab-input:checked + .tab-label { background: var(--tab-active-bg); color: var(--tab-active-text); border: 1px solid var(--tab-active-bg); border-bottom: 1px solid var(--container-bg); z-index: 1; position: relative; margin-bottom: -1px; font-weight: bold; }
         .tab-content-wrapper { border: 1px solid var(--border-color); background: var(--container-bg); padding: 20px; border-radius: 0 0 5px 5px; clear: both; }
         .tab-content { display: none; }
-        
+
         .progress-container { margin-bottom: 20px; }
         .progress-bar { width: 100%; background-color: var(--tab-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--border-color); }
         .progress-bar-fill { height: 20px; width: 0%; background-color: var(--current-day-border); transition: width 0.5s ease-in-out; text-align: center; color: white; font-weight: bold; line-height: 20px; }
@@ -203,19 +203,19 @@
         .diary-section, .assessment-section { margin-top: 20px; }
         .diary-section label, .assessment-section h4 { font-weight: bold; color: var(--accent-color); }
         .diary-textarea { width: 100%; min-height: 120px; margin-top: 5px; background-color: var(--day-section-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; box-sizing: border-box; resize: vertical; }
-        
+
         .mobile-nav { display: none; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); background-color: var(--container-bg); color: var(--text-color); }
-        
-        .modal-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -225,14 +225,14 @@
             opacity: 1;
             visibility: visible;
         }
-        .modal-content { 
-            background: var(--container-bg); 
-            padding: 30px; 
-            border-radius: 8px; 
-            text-align: center; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
-            max-width: 450px; 
-            width: 90%; 
+        .modal-content {
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 90%;
             transform: translateY(20px);
             transition: transform 0.3s;
         }
@@ -244,7 +244,7 @@
         .modal-buttons button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 0; }
         #modal-confirm { background-color: var(--danger-color); color: white; }
         #modal-cancel { background-color: var(--secondary-color); color: white; }
-        
+
         #welcome-modal {
             background: #2a3a2f;
             -webkit-animation: clothColorChange 30s ease-in-out infinite alternate;
@@ -265,14 +265,14 @@
             height: 150%;
             top: 50%;
             left: 50%;
-            background-color: transparent; 
+            background-color: transparent;
             border: 20px solid #5d3a1a;
             border-radius: 20px;
             transform: translate(-50%, -50%) rotate(-30deg);
             box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
             transition: background-color 30s ease-in-out;
         }
-        
+
         #welcome-modal .modal-content {
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -305,7 +305,7 @@
             gap: 20px;
             justify-content: center;
         }
-        
+
         .billiard-ball {
             width: 100px;
             height: 100px;
@@ -371,7 +371,7 @@
         .user-profile-item button { flex-grow: 1; }
         .delete-profile-btn { background-color: var(--danger-color); color: white; border: none; border-radius: 5px; cursor: pointer; padding: 8px; margin-left: 10px; }
         #load-user-list p { color: var(--secondary-color); }
-        
+
         #new-user-modal .modal-content, #term-definition-modal .modal-content { text-align: left; }
         #new-user-modal h2, #term-definition-modal h2 { margin-top: 0; }
         .form-group { margin-bottom: 20px; }
@@ -380,9 +380,9 @@
         .form-group button { padding: 12px; font-size: 1.1em; border: none; border-radius: 5px; cursor: pointer; }
         .form-buttons { display: flex; gap: 10px; }
         .form-buttons button { width: 100%; }
-        
+
         .error-message { color: var(--danger-color); font-size: 0.9em; margin-top: 5px; display: none; }
-        
+
         .days-checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; background-color: var(--day-section-bg); padding: 15px; border-radius: 5px; }
         .days-checkbox-group label { display: flex; align-items: center; cursor: pointer; padding: 8px; border-radius: 4px; transition: background-color 0.2s; }
         .days-checkbox-group input { margin-right: 8px; }
@@ -390,7 +390,7 @@
         body.dark-mode .days-checkbox-group label:hover { background-color: rgba(255,255,255,0.05); }
 
         .important-note { background-color: var(--important-note-bg); border-left: 4px solid var(--important-note-border); padding: 15px; margin-top: 10px; border-radius: 4px; }
-        
+
         #todays-focus-container {
             background-color: var(--current-day-bg);
             border: 1px solid var(--current-day-border);
@@ -411,7 +411,7 @@
         #glossary-modal .modal-content, #term-definition-modal .modal-content, #recommendation-modal .modal-content, #shot-of-the-day-modal .modal-content, #achievement-unlocked-modal .modal-content, #generated-session-modal .modal-content, #rating-suggestion-modal .modal-content, #task-notes-modal .modal-content, #my-sessions-modal .modal-content, #level-up-modal .modal-content {
             max-width: 700px; text-align: left; height: auto; max-height: 85vh; display: flex; flex-direction: column;
         }
-        
+
         #pdf-viewer-modal .modal-content {
             max-width: 90vw;
             width: 90vw;
@@ -464,9 +464,9 @@
             text-align: center;
         }
 
-        #session-modal .modal-content { 
-            max-width: 90vw; 
-            width: 950px; 
+        #session-modal .modal-content {
+            max-width: 90vw;
+            width: 950px;
             max-height: 85vh;
             display: flex;
             flex-direction: column;
@@ -531,7 +531,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
         .modal-header h2 { margin: 0; border: none; }
         .modal-close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; color: var(--text-color); }
-        
+
         #glossary-content-wrapper, #create-session-shot-list { overflow-y: auto; flex-grow: 1; padding-right: 15px; }
         #glossary-search {
             width: 100%;
@@ -555,14 +555,14 @@
         .my-session-item-text small { color: var(--secondary-color); }
         .reinforce-item-source { font-size: 0.85em; color: var(--secondary-color); font-style: italic; display: block; }
         .my-session-item-actions button { margin-left: 5px; }
-        
+
         #all-notes-list { list-style: none; padding: 0; }
-        .note-item { 
-            background-color: var(--day-section-bg); 
+        .note-item {
+            background-color: var(--day-section-bg);
             border: 1px solid var(--border-color);
-            padding: 15px; 
-            margin-bottom: 15px; 
-            border-radius: 4px; 
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
         }
         .note-item-header {
             display: flex;
@@ -587,27 +587,27 @@
             font-style: italic;
             text-align: right;
         }
-        .jump-to-note-btn { 
-            background-color: var(--success-color); 
-            color: white; 
-            border: none; 
-            padding: 5px 10px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 0.8em; 
-            font-weight: bold; 
+        .jump-to-note-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
         }
 
         #streak-container { text-align: center; padding: 20px; background-color: var(--day-section-bg); border-radius: 8px; margin-bottom: 20px; }
         #streak-counter { font-size: 3rem; font-weight: bold; color: var(--accent-color); }
-        
+
         #achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .achievement-item { background-color: var(--day-section-bg); border: 1px solid var(--border-color); border-left-width: 5px; border-left-color: #ccc; padding: 20px; border-radius: 5px; opacity: 0.5; display: flex; gap: 15px; align-items: center; }
         .achievement-item.unlocked { opacity: 1; border-left-color: var(--current-day-border); }
         .achievement-icon { font-size: 3rem; line-height: 1; }
         .achievement-details h4 { margin: 0 0 5px 0; border: none; padding: 0; }
         .achievement-details p { margin: 0; font-size: 0.9em; color: var(--secondary-color); }
-        
+
         .btn-practice-task, .btn-ghost-mode { background-color: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8em; font-weight: bold; }
         .btn-ghost-mode { background-color: var(--secondary-color); display: none; }
         .btn-task-note { background: none; border: none; cursor: pointer; font-size: 1.2rem; padding: 5px; opacity: 0.6; }
@@ -708,16 +708,16 @@
 
 
         @media (max-width: 768px) {
-            .container { 
-                padding: 15px; 
+            .container {
+                padding: 15px;
                 margin: 10px auto;
                 max-width: 100%;
             }
             .tabs-container .tab-label { display: none; }
             .mobile-nav { display: block; }
-            .header-controls { 
-                flex-direction: column; 
-                align-items: center; 
+            .header-controls {
+                flex-direction: column;
+                align-items: center;
                 gap: 10px;
             }
             .action-buttons {
@@ -729,17 +729,17 @@
                 flex-grow: 1;
                 min-width: 120px;
             }
-            #session-modal .modal-content { 
-                max-width: 95vw; 
-                width: 95vw; 
+            #session-modal .modal-content {
+                max-width: 95vw;
+                width: 95vw;
             }
             .shot-logger-container { flex-direction: column; }
             .shot-logger-diagram { min-height: 300px; width: 100%; }
             .shot-logger-buttons button { width: 120px; padding: 15px; font-size: 1.2rem; }
-            
+
             #welcome-modal .modal-content {
                 width: 90%;
-                max-width: 95%; 
+                max-width: 95%;
                 padding: 1.5rem;
             }
             #welcome-modal h2 {
@@ -833,7 +833,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="new-user-modal" class="modal-overlay">
         <div class="modal-content">
             <h2 id="new-user-title">Crear Nuevo Perfil</h2>
@@ -932,7 +932,7 @@
             <p id="recommendation-text"></p>
         </div>
     </div>
-    
+
     <div id="pdf-viewer-modal" class="modal-overlay">
         <div class="modal-content">
              <div class="modal-header">
@@ -1074,7 +1074,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="task-notes-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -1082,7 +1082,7 @@
                 <button class="modal-close-btn">&times;</button>
             </div>
             <p id="task-notes-title" style="font-weight: bold;"></p>
-            <p id="task-notes-last-modified" class="note-date" style="margin-top:-10px;"></p> 
+            <p id="task-notes-last-modified" class="note-date" style="margin-top:-10px;"></p>
             <textarea id="task-notes-textarea" class="diary-textarea" placeholder="Escribe aquí tus notas, sensaciones o recordatorios para este tiro..."></textarea>
             <div class="modal-buttons">
                 <button id="save-task-note-btn" style="background-color: var(--success-color); color: white;">Guardar Nota</button>
@@ -1117,7 +1117,7 @@
                 <button id="btn-reset-all" class="btn-reset-all">Reiniciar Todo</button>
             </div>
         </div>
-        
+
         <h1>Tiro Maestro</h1>
         <div class="user-welcome-container">
             <p id="user-welcome-message" class="user-welcome"></p>
@@ -1126,7 +1126,7 @@
         </div>
         <p class="credits">Adaptado por: Juan Miguel Rios Redondo</p>
         <p class="important-note">Este plan progresa a través de la "Torre de Entrenamiento". Avance a la siguiente semana solo cuando cumpla el <strong>Criterio de Avance</strong>.</p>
-        
+
         <div id="todays-focus-container" style="display: none;"></div>
 
         <select id="mobile-nav" class="mobile-nav"></select>
@@ -1134,7 +1134,7 @@
     </div>
 
     <input type="file" id="import-file-input" accept=".json" style="display: none;">
-    
+
     <!-- Tutorial HTML Elements -->
     <div id="tutorial-overlay" class="modal-overlay"></div>
     <div id="tutorial-step-box">
@@ -1151,7 +1151,7 @@
     <script>
     // --- DATA SOURCE ---
     const proPoolPlayers = ["Efren Reyes", "Shane Van Boening", "Earl Strickland", "Jayson Shaw", "Mike Sigel", "Francisco Bustamante"];
-    
+
     const basePdfUrl = 'https://raw.githubusercontent.com/juanmiguel0927/Pool/main/En%20orden.pdf';
 
     const glossaryData = {
@@ -1182,9 +1182,9 @@
         { title: "Fuerza de Agarre y Antebrazo", content: "<strong>¿Qué es?</strong> Son ejercicios diseñados para fortalecer los músculos de tus manos, muñecas y antebrazos, permitiendo un control más fino y relajado del taco.<br><strong>¿Cómo se hace?</strong><br>1. <strong>Apretar Pelota Antiestrés:</strong> Apriétala con fuerza durante 5 segundos y relaja. Haz 3 series de 15 repeticiones con cada mano.<br>2. <strong>Curls de Muñeca:</strong> Sentado, apoya tu antebrazo en tu muslo con la palma hacia arriba. Sostén una botella de agua pequeña y, usando solo la muñeca, sube y baja la mano. Haz 3 series de 15 repeticiones.<br><strong>¿Por qué es importante?</strong> Un agarre más fuerte permite un toque más suave y sensible, ya que no necesitas apretar el taco con tensión. Esto mejora la precisión y el 'feel' del tiro." }
     ];
     const mentalGameData = [
-        { 
-            title: "El Campo de Batalla Interior: Los Dos 'Yo'", 
-            content: "Dentro de cada jugador existen dos 'yo'. El 'Yo' Nº1 es tu mente consciente, la que juzga, critica y da órdenes ('¡No falles esto!'). El 'Yo' Nº2 es tu subconsciente, tu cuerpo, el que ha practicado miles de horas y sabe perfectamente cómo ejecutar el tiro.<blockquote>'El problema no es que no sepa qué hacer, el problema es que no hago lo que sé.'</blockquote><strong>La Clave del Alto Rendimiento:</strong> Silenciar al 'Yo' Nº1 y confiar plenamente en el 'Yo' Nº2. Tu cuerpo sabe jugar; tu mente pensante a menudo solo interfiere. Cuando juegas en 'la zona' o en 'flow', es porque el 'Yo' Nº2 está al mando." 
+        {
+            title: "El Campo de Batalla Interior: Los Dos 'Yo'",
+            content: "Dentro de cada jugador existen dos 'yo'. El 'Yo' Nº1 es tu mente consciente, la que juzga, critica y da órdenes ('¡No falles esto!'). El 'Yo' Nº2 es tu subconsciente, tu cuerpo, el que ha practicado miles de horas y sabe perfectamente cómo ejecutar el tiro.<blockquote>'El problema no es que no sepa qué hacer, el problema es que no hago lo que sé.'</blockquote><strong>La Clave del Alto Rendimiento:</strong> Silenciar al 'Yo' Nº1 y confiar plenamente en el 'Yo' Nº2. Tu cuerpo sabe jugar; tu mente pensante a menudo solo interfiere. Cuando juegas en 'la zona' o en 'flow', es porque el 'Yo' Nº2 está al mando."
         },
         {
             title: "Rutina Pre-Tiro: Tu Base Inquebrantable",
@@ -1198,23 +1198,23 @@
             title: "Visualización: Ganar Antes de Tirar",
             content: "La visualización es una de las herramientas mentales más poderosas. Los mejores jugadores ven el tiro perfecto en su mente antes de ejecutarlo.<br><strong>Cómo Practicar:</strong><br>1. <strong>Lejos de la Mesa:</strong> Cierra los ojos e imagina una mesa de billar. Visualízate ejecutando un 'stop shot' perfecto. Siente el taco en tu mano, escucha el sonido del contacto, ve la bola blanca detenerse en seco.<br>2. <strong>En la Mesa:</strong> Antes de cada tiro, tómate un segundo para 'ver la película' del tiro en tu mente. Esto programa tu cerebro y tu cuerpo para el éxito. Cuanto más vívida sea la imagen, más probable es que tu cuerpo la replique."
         },
-        { 
-            title: "Post-Partido y Actitud de Campeón", 
-            content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuando perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros tener éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
+        {
+            title: "Post-Partido y Actitud de Campeón",
+            content: "<strong>1. Análisis sin Autocrítica:</strong> Después de un partido, analiza los momentos clave. ¿Cuando perdiste la concentración? ¿En qué situaciones dudaste? El objetivo es aprender, no castigarte. El valor de una victoria o derrota no define tu valor como persona.<br><strong>2. Transforma la Envidia en Admiración:</strong> Cuando veas a otros terner éxito, no te enfoques en el trofeo. Enfócate en el inmenso trabajo y sacrificio que hay detrás. Pregúntate: '¿Qué puedo aprender de su camino?'. Usa su éxito como motivación, no como una fuente de frustración.<br><strong>3. La Actitud es lo ÚNICO que Controlas:</strong> No puedes controlar un mal rebote, una mesa desnivelada o la suerte de tu rival. Lo único que siempre está bajo tu control es tu actitud. Ante la adversidad, ¿te quejas y te hundes, o buscas la mejor solución posible con calma? Tu lenguaje corporal y tu diálogo interno te fortalecen o te destruyen. Juega siempre con la actitud de un campeón, sin importar el marcador."
         }
     ];
-    
+
     const allTrainingDays = [
-        { 
-            id: 1, 
-            originalWeek: 1, 
-            title: 'Lunes: Velocidad y Stop Shot', 
-            focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].', 
-            estTime: '45 min', 
-            tasks: [ 
-                { id: 't1', text: '<b>1-8: Control de Velocidad:</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Control' }, 
-                { id: 't2', text: '<b>9: [[Stop Shot]]:</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stop Shot' } 
-            ], 
+        {
+            id: 1,
+            originalWeek: 1,
+            title: 'Lunes: Velocidad y Stop Shot',
+            focus: 'Sentir las 5 velocidades de [[stroke]] y dominar el [[Stop Shot]].',
+            estTime: '45 min',
+            tasks: [
+                { id: 't1', text: '<b>1-8: Control de Velocidad:</b> Practique las velocidades Slow, Medium y Fast.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Control' },
+                { id: 't2', text: '<b>9: [[Stop Shot]]:</b> Enfoque: Full Bottom para lograr el "[[stun]]". Mantenga el cuerpo <strong>inmóvil</strong>.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stop Shot' }
+            ],
             keyShot: { title: 'Tiro Clave: Shot #9 (Stop Shot)', desc: 'El "[[stop shot]]" es el más importante. Requiere que la bola blanca se esté "deslizando" ([[stun]]) al contacto.'}
         },
         { id: 2, originalWeek: 1, title: 'Martes: Follow y Draw (Rectos)', focus: 'Aislar la mecánica de [[Follow]] y [[Draw]] en tiros rectos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>10: [[Follow]] Slow:</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>11: [[Draw]] Slow:</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ]
@@ -1222,7 +1222,7 @@
         { id: 3, originalWeek: 1, title: 'Jueves: Fundamentos Avanzados y Rutina', focus: 'Integrar la rutina completa de 6 pasos (Set, See, Prime, Pause, Stroke, Stop).', estTime: '60 min', tasks: [ { id: 't1', text: '<b>12-13: Near Rail:</b> Practique el [[puente]] de banda estable.', goal: '10 Intentos | Meta: 6-8 Aciertos', type: 'Rail Shot' }, { id: 't2', text: '<b>14: Elevated Cue:</b> Nunca usar [[Sidespin]] al elevar.', goal: '5 Intentos | Meta: 3-4 Aciertos', type: 'Especial' }, { id: 't3', text: '<b>Rutina Completa (15 min):</b> Práctica en seco (sin bolas). Repita los 6 pasos: <strong>Set</strong> (alinearse), <strong>See</strong> (visualizar), <strong>Prime</strong> (movimientos de calentamiento), <strong>Pause</strong> (pausa de 1-2 seg antes del golpe), <strong>Stroke</strong> (golpeo fluido) y <strong>Stop</strong> (quedarse abajo inmóvil tras el golpe). Preste máxima atención a la quietud durante la <strong>Pausa</strong> y el <strong>Stop</strong>.' } ]
         },
         { id: 4, originalWeek: 1, title: 'Viernes: Test de Fundamentos y Corrección', focus: 'Autoevaluación honesta y corrección de hábitos.', estTime: '45 min', tasks: [ { id: 't1', text: '<b>Test Rápido (Around the World):</b> 5 tiros fundamentales al azar.', goal: 'Meta: 5 de 5 Aciertos' }, { id: 't2', text: '<b>Análisis de Defectos:</b> Grabe su [[Stop Shot]]. Revise si su codo cae o si su agarre se tensa.' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ], criteria: 'Lograr el <strong>[[Stop Shot]] (Parada Seca)</strong> consistentemente (8/10 veces).'},
-        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>15-18: Stun Básico:</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>19-21: Stun con Ajuste:</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ] 
+        { id: 5, originalWeek: 2, title: 'Lunes: Stun Shot y Línea Tangente (90°)', focus: 'Usar [[Stun]] para que la bola blanca viaje <strong>exactamente a 90 grados</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>15-18: Stun Básico:</b> Visualice la [[Tangent Line]]. Los [[Stun]] shots son los más consistententes.', goal: '10 Intentos | Meta: 8-10 Aciertos', type: 'Stun' }, { id: 't2', text: '<b>19-21: Stun con Ajuste:</b> Use Bottom spin y ajuste la velocidad.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Stun' } ]
         },
         { id: 6, originalWeek: 2, title: 'Martes: Follow y Regla de 30°', focus: 'Usar [[Follow]] (Topspin) para que la bola blanca se curve <strong>hacia adelante</strong> de la [[Tangent Line]].', estTime: '45 min', tasks: [ { id: 't1', text: '<b>22: [[Follow]] Slow:</b> Agarre relajado, [[stroke]] <strong>a través</strong> ([[follow-through]]) completo.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Follow' }, { id: 't2', text: '<b>23: [[Draw]] Slow:</b> Baje el [[puente]], mantenga el taco lo más <strong>nivelado</strong> posible.', goal: '10 Intentos | Meta: 7-9 Aciertos', type: 'Draw' }, { id: 't3', text: '<b>[[Off-Table Fitness]]:</b> 10 min de planchas y ejercicios de agarre.' } ]
         },
@@ -1308,13 +1308,13 @@
         let currentPageNum = 1;
         let currentPdfScale = 1.5;
         let loggerCanvasRendered = false; // Flag to check if logger canvas is active
-        
+
         const mainContainer = document.getElementById('main-container');
         const welcomeModal = document.getElementById('welcome-modal');
         const loadUserModal = document.getElementById('load-user-modal');
         const newUserModal = document.getElementById('new-user-modal');
         const setupForm = document.getElementById('setup-form');
-        
+
         // --- Utility Functions ---
         function getStorage() { return isGuest ? sessionStorage : localStorage; }
         function getProfiles() { return JSON.parse(getStorage().getItem(STORAGE_PREFIX)) || {}; }
@@ -1332,7 +1332,7 @@
             document.getElementById('alert-modal-text').textContent = message;
             showModal(document.getElementById('alert-modal'));
         }
-        
+
         function showToast(message) {
             const toast = document.getElementById('save-toast');
             toast.textContent = message;
@@ -1370,7 +1370,7 @@
                 if (pageNum > pdfDoc.numPages || pageNum < 1) {
                     throw new Error('Invalid page number');
                 }
-                
+
                 const page = await pdfDoc.getPage(pageNum);
                 // Adjust scale to fit the container width
                 const containerWidth = canvas.parentElement.clientWidth;
@@ -1388,7 +1388,7 @@
                 };
                 await page.render(renderContext).promise;
                 loggerCanvasRendered = true;
-                
+
             } catch (error) {
                 console.error('Error rendering logger PDF:', error);
                 loader.textContent = 'Diagrama no disponible.';
@@ -1403,11 +1403,11 @@
         async function renderPdfPage(num, scale = currentPdfScale) {
             if (!pdfDoc) return;
             currentPdfScale = scale;
-            
+
             const page = await pdfDoc.getPage(num);
             const viewport = page.getViewport({ scale: currentPdfScale });
             const context = pdfCanvas.getContext('2d');
-            
+
             pdfCanvas.height = viewport.height;
             pdfCanvas.width = viewport.width;
 
@@ -1416,7 +1416,7 @@
                 viewport: viewport
             };
             await page.render(renderContext).promise;
-            
+
             currentPageNum = num;
             pdfCurrentPageSpan.textContent = currentPageNum;
             pdfPrevBtn.disabled = currentPageNum <= 1;
@@ -1434,7 +1434,7 @@
                     const loadingTask = pdfjsLib.getDocument(basePdfUrl);
                     pdfDoc = await loadingTask.promise;
                 }
-                
+
                 pdfTotalPagesSpan.textContent = pdfDoc.numPages;
                 currentPdfScale = 1.5; // Reset zoom on new open
                 await renderPdfPage(initialPage);
@@ -1457,7 +1457,7 @@
             if (currentPageNum >= pdfDoc.numPages) return;
             renderPdfPage(currentPageNum + 1);
         });
-        
+
         pdfZoomInBtn.addEventListener('click', () => {
             renderPdfPage(currentPageNum, currentPdfScale + 0.2);
         });
@@ -1466,7 +1466,7 @@
             if (currentPdfScale <= 0.5) return;
             renderPdfPage(currentPageNum, currentPdfScale - 0.2);
         });
-        
+
         function findTaskById(taskId) {
              if (!taskId) return null;
              const [weekPart, dayPart, taskPart] = taskId.split('-');
@@ -1476,7 +1476,7 @@
 
              const dayData = allTrainingDays.find(d => d.id === dayId);
              const taskData = dayData?.tasks.find(t => t.id === taskIdNum);
-             
+
              if (dayData && taskData) {
                  return { dayData, taskData, weekNum };
              }
@@ -1491,7 +1491,7 @@
 
             if (stateKey === 'taskNotes' || stateKey === 'customSessions' || stateKey === 'bestScores' || stateKey === 'rangeBestScores' || stateKey === 'rangeProgress') {
                 if (!profiles[currentProfile].progress[stateKey]) profiles[currentProfile].progress[stateKey] = {};
-                
+
                 if (value === null || (typeof value === 'object' && value.content && value.content.trim() === '')) {
                     delete profiles[currentProfile].progress[stateKey][id];
                 } else if (value === null) {
@@ -1513,8 +1513,8 @@
             const list = document.getElementById('all-notes-list');
             const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
-            const taskNotes = profiles[currentProfile].progress?.taskNotes || {}; 
-            
+            const taskNotes = profiles[currentProfile].progress?.taskNotes || {};
+
             list.innerHTML = '';
             const hasNotes = Object.values(taskNotes).some(note => note && note.content && note.content.trim().length > 0);
 
@@ -1526,13 +1526,13 @@
             const sortedNotes = Object.entries(taskNotes)
                 .filter(([, note]) => note && note.content && note.content.trim().length > 0)
                 .sort(([, a], [, b]) => new Date(b.lastModified) - new Date(a.lastModified));
-            
+
             sortedNotes.forEach(([taskId, noteEntry]) => {
                 const taskInfo = findTaskById(taskId);
                 if (taskInfo) {
                     const { dayData, taskData, weekNum } = taskInfo;
                     const date = new Date(noteEntry.lastModified);
-                    
+
                     const li = document.createElement('li');
                     li.className = 'note-item';
                     li.innerHTML = `
@@ -1548,7 +1548,7 @@
                 }
             });
         }
-        
+
         document.getElementById('btn-new-user').addEventListener('click', () => {
             setupForm.dataset.mode = 'new';
             document.getElementById('new-user-title').textContent = 'Crear Nuevo Perfil';
@@ -1615,7 +1615,7 @@
 
         function startSession(userName, config) {
             currentProfile = userName;
-            isGuest = !!config; 
+            isGuest = !!config;
             let userConfig;
 
             if (isGuest) {
@@ -1630,7 +1630,7 @@
                     return;
                 }
             }
-            
+
             if (userConfig && userConfig.selectedDays) {
                 generatePlan(currentProfile, userConfig.selectedDays);
             } else {
@@ -1638,7 +1638,7 @@
                  showModal(welcomeModal);
             }
         }
-        
+
         function parseGlossaryTerms(text) {
             if(!text) return '';
             return text.replace(/\[\[(.*?)\]\]/g, (match, term) => {
@@ -1648,7 +1648,7 @@
                 return cleanTerm;
             });
         }
-        
+
         function saveRating(taskId, rating) {
             if (!currentProfile) return;
             saveState(taskId, rating, 'ratings');
@@ -1657,7 +1657,7 @@
         function updateStarsUI(taskId, rating) {
             const container = document.querySelector(`.rating-stars[data-task-id="${taskId}"]`);
             if (!container) return;
-            
+
             const allStars = container.querySelectorAll('span');
             allStars.forEach(s => {
                 s.classList.remove('filled');
@@ -1676,10 +1676,10 @@
             document.getElementById('user-welcome-message').textContent = `Plan de Entrenamiento para: ${userName}`;
             const tabsContainer = document.getElementById('tabs-container');
             const mobileNav = document.getElementById('mobile-nav');
-            
+
             tabsContainer.innerHTML = ''; mobileNav.innerHTML = '';
             let htmlTabs = '', htmlContentWrapper = '', mobileNavOptions = '';
-            
+
             const daysPerWeek = selectedDays.length;
             const totalWeeks = Math.ceil(allTrainingDays.length / daysPerWeek);
             let dayIndex = 0;
@@ -1687,7 +1687,7 @@
             for (let i = 1; i <= totalWeeks; i++) {
                 htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${i===1 ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
                 mobileNavOptions += `<option value="tab${i}" class="week-option">Semana ${i}</option>`;
-                
+
                 let weekContent = `<div id="content${i}" class="tab-content week-tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
                 const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + daysPerWeek);
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
@@ -1726,11 +1726,11 @@
                                     </li>`;
                     });
                     dayHTML += `</ul></div><div class="pdf-shot-buttons-container"></div>`;
-                    
+
                     if(day.keyShot) dayHTML += `<div class="shot-description"><h5>${parseGlossaryTerms(day.keyShot.title)}</h5><p>${parseGlossaryTerms(day.keyShot.desc)}</p></div>`;
                     const diaryId = `w${i}-d${day.id}-notes`;
                     dayHTML += `<div class="diary-section"><label for="${diaryId}">Diario de Práctica:</label><textarea id="${diaryId}" class="diary-textarea" placeholder="1. ¿Cuál fue mi mayor reto hoy?\n2. ¿Qué descubrimiento técnico o mental hice?\n3. ¿En qué me enfocaré en la próxima sesión?"></textarea></div>`;
-                    
+
                     if(index === daysInThisWeek.length - 1){
                         dayHTML += `<div class="assessment-section" style="display: none;">
                             <h4>Autoevaluación Semanal</h4>
@@ -1752,7 +1752,7 @@
                             </form>
                         </div>`;
                     }
-                    
+
                     dayHTML += `</div>`;
                     weekContent += dayHTML;
                 });
@@ -1773,7 +1773,7 @@
                 <button id="btn-save-custom-session" class="btn-generate-session" style="width: 100%; margin-top: 20px;">Guardar Sesión</button>
             </div>`;
             htmlContentWrapper += createSessionContent;
-            
+
             mobileNavOptions += `<option value="tab-achievements">Logros</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-achievements" class="tab-input"><label for="tab-achievements" class="tab-label">Logros</label>`;
             let achievementsContent = `<div id="content-achievements" class="tab-content">
@@ -1785,7 +1785,7 @@
                 <div id="achievements-grid"></div>
             </div>`;
             htmlContentWrapper += achievementsContent;
-            
+
             mobileNavOptions += `<option value="tab-notes">Mis Notas</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-notes" class="tab-input"><label for="tab-notes" class="tab-label">Mis Notas</label>`;
             let notesContent = `<div id="content-notes" class="tab-content">
@@ -1821,7 +1821,7 @@
                 <ul id="reinforce-list"></ul>
             </div>`;
             htmlContentWrapper += reinforceContent;
-            
+
             mobileNavOptions += `<option value="tab-analysis">Análisis</option>`;
             htmlTabs += `<input type="radio" name="tabs" id="tab-analysis" class="tab-input"><label for="tab-analysis" class="tab-label">Análisis</label>`;
             let analysisContent = `<div id="content-analysis" class="tab-content">
@@ -1852,7 +1852,7 @@
 
             tabsContainer.innerHTML = htmlTabs + `<div class="tab-content-wrapper">${htmlContentWrapper}</div>`;
             mobileNav.innerHTML = mobileNavOptions;
-            
+
             mainContainer.style.display = 'block';
             showModal(null);
 
@@ -1887,7 +1887,7 @@
                 // Gets task IDs for the current week
                 const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
                 const completedTasks = tasksInWeek.filter(taskId => progress[taskId] === true).length;
-                
+
                 // If not all tasks are completed, this is the current active week
                 if (completedTasks < tasksInWeek.length) {
                     currentWeek = i;
@@ -1901,24 +1901,18 @@
             if (currentWeek === -1 && totalWeeks > 0) {
                  // If all weeks are completed, reset to week 1 or show a message
                 const container = document.getElementById('todays-focus-container');
-                container.innerHTML = `<h3>¡Felicidades!</h3><p>Has completado todo el plan de entrenamiento. ¡Es hora de volver a empezar desde la Semana 1 para afianzar tu maestría!</p><button id="goto-today-btn">Ir a Semana 1</button>`; // Changed message and button text
+                container.innerHTML = `<h3>¡Felicidades!</h3><p>Has completado todo el plan de entrenamiento. ¡Es hora de volver a empezar desde la Semana 1 para afianzar tu maestría!</p><button id="goto-today-btn" data-week="1">Ir a Semana 1</button>`; // Added data-week attribute
                 container.style.display = 'block';
-                 document.getElementById('goto-today-btn').addEventListener('click', () => {
-                     const tabInput = document.getElementById(`tab1`); // Go to week 1
-                     if (tabInput) {
-                         tabInput.checked = true;
-                         tabInput.dispatchEvent(new Event('change'));
+                 document.getElementById('goto-today-btn').addEventListener('click', (e) => {
+                     const week = e.currentTarget.dataset.week;
+                     // Find the first day section of week 1 to scroll to
+                     const firstDayOfWeek1 = allTrainingDays[0];
+                     if(firstDayOfWeek1) {
+                         const daySectionId = `day-section-${firstDayOfWeek1.id}`;
+                         navigateToElement(week, daySectionId); // Use helper function
+                     } else {
+                         navigateToElement(week, `content${week}`); // Fallback to scrolling to content area
                      }
-                      setTimeout(() => {
-                         // Find the first day section of week 1 to scroll to
-                         const firstDayOfWeek1 = allTrainingDays[0]; 
-                         if(firstDayOfWeek1) {
-                            const daySection = document.getElementById(`day-section-${firstDayOfWeek1.id}`);
-                            if (daySection) {
-                                daySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                         }
-                    }, 100);
                  });
                 return; // Stop further processing
             }
@@ -1931,9 +1925,6 @@
                 const trainingDayData = allTrainingDays[dayIndexOffset + todayIndexInSchedule];
 
                 if (!trainingDayData) {
-                    // This case might happen if today isn't a training day *within the current structure*,
-                    // but since we checked selectedDays includes todayName, it should theoretically exist.
-                    // If it still fails, hide the focus container.
                      document.getElementById('todays-focus-container').style.display = 'none';
                      console.warn("Could not find trainingDayData for today, even though it's a selected day. Offset:", dayIndexOffset, "TodayIndex:", todayIndexInSchedule);
                      return;
@@ -1948,22 +1939,25 @@
                 `;
                 container.style.display = 'block';
 
-                document.getElementById('goto-today-btn').addEventListener('click', (e) => { // Added event argument
-                    const targetButton = e.currentTarget; // Use currentTarget
-                    const week = targetButton.dataset.week;
-                    const daySectionId = targetButton.dataset.daySectionId;
-                    navigateToElement(week, daySectionId); // Use the helper function
-                });
+                // Ensure the event listener is attached *after* innerHTML is set
+                const gotoButton = document.getElementById('goto-today-btn');
+                if (gotoButton) {
+                    gotoButton.addEventListener('click', (e) => {
+                        const targetButton = e.currentTarget;
+                        const week = targetButton.dataset.week;
+                        const daySectionId = targetButton.dataset.daySectionId;
+                        navigateToElement(week, daySectionId); // Use the helper function
+                    });
+                }
             } else {
-                 // No current week found and not all completed (shouldn't happen with the loop logic, but safe fallback)
                  document.getElementById('todays-focus-container').style.display = 'none';
             }
         }
-        
+
         function generateProgressChart(totalWeeks) {
             const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
-            
+
             const progress = profiles[currentProfile].progress || {};
             const userConfig = profiles[currentProfile].config;
             const daysPerWeek = userConfig.selectedDays.length;
@@ -1975,7 +1969,7 @@
             for (let i = 1; i <= totalWeeks; i++) {
                 const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
                 if (daysInThisWeek.length === 0) break;
-                
+
                 const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
                 const totalTasks = tasksInWeek.length;
                 if (totalTasks === 0) continue;
@@ -1997,7 +1991,7 @@
             const isDarkMode = document.body.classList.contains('dark-mode');
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = isDarkMode ? '#e0e0e0' : '#333';
-            
+
             myProgressChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -2035,7 +2029,7 @@
                 date: date,
                 value: count
             }));
-            
+
             const isMobile = window.innerWidth <= 768;
 
             cal.paint({
@@ -2055,15 +2049,15 @@
                 theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
             });
         }
-        
+
         function generatePerformanceChart(totalWeeks) {
             const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
             const progress = profiles[currentProfile].progress || {};
             const ratings = progress.ratings || {};
-            
+
             const performanceData = {};
-            
+
             allTrainingDays.forEach(day => {
                 day.tasks.forEach(task => {
                     if (task.type) {
@@ -2090,7 +2084,7 @@
             if (myPerformanceChart) {
                 myPerformanceChart.destroy();
             }
-            
+
             const isDarkMode = document.body.classList.contains('dark-mode');
             const isMobile = window.innerWidth <= 768;
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
@@ -2135,7 +2129,7 @@
             for (let i = 1; i <= totalWeeks; i++) {
                 const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
                 if (daysInThisWeek.length === 0) break;
-                
+
                 const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
                 let weekTotalRating = 0;
                 let ratedTasksCount = 0;
@@ -2151,7 +2145,7 @@
                     labels.push(`Semana ${i}`);
                     data.push(weekTotalRating / ratedTasksCount);
                 }
-                
+
                 dayIndexOffset += daysPerWeek;
             }
 
@@ -2163,7 +2157,7 @@
             const isDarkMode = document.body.classList.contains('dark-mode');
             const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
             const fontColor = isDarkMode ? '#e0e0e0' : '#333';
-            
+
             weeklyRatingChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -2191,14 +2185,14 @@
                 }
             });
         }
-        
+
         function toggleMarkedShot(taskId) {
             if (!currentProfile) return;
             const profiles = getProfiles();
             if (!profiles[currentProfile]) return;
             if (!profiles[currentProfile].progress) profiles[currentProfile].progress = {};
             if (!profiles[currentProfile].progress.markedShots) profiles[currentProfile].progress.markedShots = {};
-            
+
             if (profiles[currentProfile].progress.markedShots[taskId]) {
                 delete profiles[currentProfile].progress.markedShots[taskId];
             } else {
@@ -2211,7 +2205,7 @@
             if (!currentProfile) return;
             const profiles = getProfiles();
             const progress = profiles[currentProfile]?.progress || {};
-            
+
             const checkedTab = document.querySelector('.tab-input:checked');
             if (!checkedTab) return;
             const activeTabContent = document.getElementById(checkedTab.id.replace('tab', 'content'));
@@ -2231,7 +2225,7 @@
                 star.classList.toggle('marked', !!(progress.markedShots && progress.markedShots[star.dataset.taskId]));
                 star.innerHTML = (progress.markedShots && progress.markedShots[star.dataset.taskId]) ? '&#9733;' : '&#9734;';
             });
-            
+
             activeTabContent.querySelectorAll('.rating-stars').forEach(container => {
                 const ratings = progress.ratings || {};
                 updateStarsUI(container.dataset.taskId, ratings[container.dataset.taskId] || 0);
@@ -2248,7 +2242,7 @@
                 const bestScores = progress.bestScores || {};
                 btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
             });
-            
+
             updatePointsUI();
         }
 
@@ -2259,16 +2253,13 @@
                  // Check if the tab is already active to avoid unnecessary event dispatch
                 if (!tabInput.checked) {
                     tabInput.checked = true;
-                    // Dispatch change event to ensure content is displayed and state loaded
-                    // Use setTimeout to ensure the event dispatch completes and content becomes visible
-                    setTimeout(() => {
-                        tabInput.dispatchEvent(new Event('change', { bubbles: true })); 
-                        // Now schedule the scrolling within another setTimeout or requestAnimationFrame
-                        // to ensure the content is definitely rendered after the tab change logic runs
-                        requestAnimationFrame(() => { // Using rAF is generally preferred
-                            scrollAndHighlight(elementId, highlightElementSelector);
-                        });
-                    }, 0); // 0ms timeout often works, but adjust if needed
+                    // Dispatch change event *synchronously* first to ensure content is made visible
+                    tabInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    // Use requestAnimationFrame to schedule the scroll+highlight *after* the browser
+                    // has had a chance to render the newly displayed content.
+                    requestAnimationFrame(() => {
+                        scrollAndHighlight(elementId, highlightElementSelector);
+                    });
                 } else {
                      // If tab is already active, just scroll and highlight immediately
                      scrollAndHighlight(elementId, highlightElementSelector);
@@ -2285,31 +2276,34 @@
              const targetElement = document.getElementById(elementId);
              if (targetElement) {
                  targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                 
+
                  // Highlight the main target element (day section)
-                 targetElement.style.transition = 'background-color 0.5s'; 
-                 targetElement.style.backgroundColor = 'var(--current-day-bg)'; 
+                 targetElement.style.transition = 'background-color 0.5s';
+                 targetElement.style.backgroundColor = 'var(--current-day-bg)';
                  setTimeout(() => {
-                     targetElement.style.backgroundColor = ''; 
+                     targetElement.style.backgroundColor = '';
                  }, 2000);
 
                  // If a specific element within the day needs highlighting (like the note button)
                  if (highlightElementSelector) {
-                     const elementToHighlight = targetElement.querySelector(highlightElementSelector);
-                     if (elementToHighlight) {
-                          // Optional: scroll the specific element into view if needed
-                          // elementToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
-                          
-                          elementToHighlight.style.transition = 'outline 0.5s'; 
-                          elementToHighlight.style.outline = '3px solid var(--focus-color)';
-                          elementToHighlight.style.borderRadius = '5px'; 
-                          
-                          setTimeout(() => {
-                              elementToHighlight.style.outline = 'none'; 
-                          }, 3000);
-                     } else {
-                         console.warn(`Highlight element "${highlightElementSelector}" not found within #${elementId}`);
-                     }
+                     // Need a slight delay here too, for the scroll to potentially finish
+                     setTimeout(() => {
+                         const elementToHighlight = targetElement.querySelector(highlightElementSelector);
+                         if (elementToHighlight) {
+                              // Optional: scroll the specific element into view if needed
+                              // elementToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                              elementToHighlight.style.transition = 'outline 0.5s';
+                              elementToHighlight.style.outline = '3px solid var(--focus-color)';
+                              elementToHighlight.style.borderRadius = '5px';
+
+                              setTimeout(() => {
+                                  elementToHighlight.style.outline = 'none';
+                              }, 3000);
+                         } else {
+                             console.warn(`Highlight element "${highlightElementSelector}" not found within #${elementId}`);
+                         }
+                     }, 300); // Small delay after scrolling day section
                  }
              } else {
                   console.error(`Target element with ID ${elementId} not found after tab switch attempt.`);
@@ -2330,21 +2324,22 @@
             const mobileNav = document.getElementById('mobile-nav');
             const tabsContainer = document.getElementById('tabs-container');
             const btnResetCurrent = document.getElementById('btn-reset-current-week');
-            
+
             function handleTabChange(e) {
                 if(e.target.checked) {
                     const tabId = e.target.id;
+                    // Hide all content immediately
                     document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-                    
-                    // This logic handles both regular "contentX" IDs and custom "content-..." IDs
+
+                    // Find and display the correct content
                     const contentId = `content${tabId.substring(3)}`;
                     const contentElement = document.getElementById(contentId);
                     if (contentElement) {
-                       contentElement.style.display = 'block';
+                       contentElement.style.display = 'block'; // Make it visible
                     }
 
                     if (mobileNav.value !== tabId) mobileNav.value = tabId;
-                    
+
                     if (tabId.startsWith('tab-') || tabId === 'tab-custom-session') {
                         btnResetCurrent.style.display = 'none';
                     } else {
@@ -2354,8 +2349,10 @@
                         btnResetCurrent.textContent = `Reiniciar Semana ${weekNum}`;
                     }
 
+                    // Load state for the now visible tab
                     loadState();
 
+                    // Update charts/lists if necessary for the specific tab
                     if (tabId === 'tab-progress') { generateProgressChart(totalWeeks); generateHeatmap(); }
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
                     if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
@@ -2364,6 +2361,7 @@
                     if (tabId === 'tab-create-session') populateCreateSessionList(totalWeeks);
                 }
             }
+
 
             // Event delegation for tab changes
             tabsContainer.addEventListener('change', (e) => {
@@ -2392,30 +2390,34 @@
                 const assessmentSection = weekContent.querySelector('.assessment-section');
                 if (assessmentSection) {
                     const profiles = getProfiles();
+                    if (!currentProfile || !profiles[currentProfile]) return; // Check profile exists
                     const progress = profiles[currentProfile].progress || {};
                     const isWeekComplete = (checkedCount === totalCount && totalCount > 0);
                     const weekKey = `week${weekNumber}Completed`;
 
+                    // Only add points and save if it's the first time completing
                     if (isWeekComplete && !progress[weekKey]) {
-                        addPoints(50); // Bonus for completing a day
+                        addPoints(50); // Bonus for completing the week
                         progress[weekKey] = true;
-                        saveProfiles(profiles);
+                        saveProfiles(profiles); // Save the updated progress
                     }
+                    // Always update display based on current completion status
                     assessmentSection.style.display = isWeekComplete ? 'block' : 'none';
                 }
             }
-            
+
+
             for(let i=1; i<=totalWeeks; i++) {
-                updateProgressForWeek(i);
+                updateProgressForWeek(i); // Update progress display on initial load
                 document.querySelectorAll(`#content${i} .day-section`).forEach(daySection => {
                     const dayId = parseInt(daySection.id.replace('day-section-', ''), 10);
                     const dayData = allTrainingDays.find(d => d.id === dayId);
                     if(!dayData) return;
-                    
+
                     const container = daySection.querySelector('.pdf-shot-buttons-container');
                     container.innerHTML = '';
                     let buttonsHTML = '<div class="pdf-shot-buttons"><span>Diagramas: </span>';
-                    
+
                     dayData.tasks.forEach(task => {
                          const match = task.text.match(/<b>(\d+)(?:-(\d+))?:/);
                          if(match) {
@@ -2442,7 +2444,7 @@
                     const star = e.target;
                     const container = e.target.closest('.rating-stars');
                     if (star.tagName !== 'SPAN') return;
-                    
+
                     const newRating = parseInt(star.dataset.value, 10);
                     const taskId = container.dataset.taskId;
 
@@ -2465,7 +2467,7 @@
                      const taskId = e.target.dataset.taskId;
                      showModal(null); // Close any open modal
                      // Use the helper, passing the selector for the note button
-                     navigateToElement(week, daySectionId, `.btn-task-note[data-task-id="${taskId}"]`); 
+                     navigateToElement(week, daySectionId, `.btn-task-note[data-task-id="${taskId}"]`);
 
                 } else if (e.target.classList.contains('btn-start-session')) {
                     const time = e.target.dataset.time;
@@ -2484,12 +2486,12 @@
                     const taskId = e.target.dataset.taskId;
                     const taskText = e.target.dataset.taskText;
                     const profiles = getProfiles();
-                    
+
                     const noteEntry = profiles[currentProfile]?.progress?.taskNotes?.[taskId] || { content: '', lastModified: null };
-                    
+
                     const notesModal = document.getElementById('task-notes-modal');
                     notesModal.dataset.taskId = taskId;
-                    
+
                     document.getElementById('task-notes-title').textContent = taskText;
                     document.getElementById('task-notes-textarea').value = noteEntry.content || '';
 
@@ -2517,11 +2519,12 @@
                     }
                     saveState(e.target.id, e.target.checked);
                     const weekNumber = item.id.split('-')[0].replace('w','');
-                    updateProgressForWeek(parseInt(weekNumber, 10));
+                    updateProgressForWeek(parseInt(weekNumber, 10)); // Update display after change
                     updatePracticeStreak(totalWeeks);
                     checkAndAwardAchievements(totalWeeks);
                 });
             });
+
              document.querySelectorAll('.diary-textarea').forEach(item => {
                 item.addEventListener('blur', e => {
                     const currentValue = e.target.value;
@@ -2533,7 +2536,7 @@
                     }
                 });
             });
-            
+
             const resetModal = document.getElementById('reset-modal');
             const modalText = resetModal.querySelector('p');
             const confirmBtn = document.getElementById('modal-confirm');
@@ -2551,7 +2554,7 @@
                 showModal(resetModal);
             });
             cancelBtn.addEventListener('click', () => showModal(null));
-            
+
             confirmBtn.addEventListener('click', () => {
                 if (resetScope === 'current' && weekToReset) {
                     resetWeek(weekToReset);
@@ -2562,47 +2565,71 @@
                         profiles[currentProfile].progress = {
                             points: 0,
                             level: 1
-                        };
+                        }; // Reset progress but keep config
                         saveProfiles(profiles);
                     }
-                    window.location.reload();
+                    // Reload or re-generate plan instead of full page reload
+                    startSession(currentProfile); // Re-initialize with cleared progress
                 }
                 showModal(null);
             });
+
 
             function resetWeek(weekNum) {
                 const weekContent = document.getElementById(`content${weekNum}`);
                 if(!weekContent) return;
                 const profiles = getProfiles();
                 if (!profiles[currentProfile]?.progress) return;
-                
-                weekContent.querySelectorAll('input[type="checkbox"], .diary-textarea, .star-icon, .rating-stars, .btn-task-note').forEach(item => {
-                    const progress = profiles[currentProfile].progress;
-                    const taskId = item.dataset.taskId;
-                    if(item.classList.contains('star-icon')) {
-                         if (progress.markedShots && progress.markedShots[taskId]) delete progress.markedShots[taskId];
-                        item.classList.remove('marked');
-                        item.innerHTML = '&#9734;';
-                    } else if (item.classList.contains('rating-stars')) {
-                        if(progress.ratings && progress.ratings[taskId]) delete progress.ratings[taskId];
-                        item.querySelectorAll('span').forEach(star => { star.classList.remove('filled'); star.innerHTML = '&#9734;'; });
-                    } else if (item.classList.contains('btn-task-note')) {
-                        if (progress.taskNotes && progress.taskNotes[taskId]) delete progress.taskNotes[taskId];
-                        item.classList.remove('has-note');
-                    }
-                    else {
-                        if (progress[item.id]) delete progress[item.id];
-                        if(item.type === 'checkbox') item.checked = false; else item.value = '';
-                    }
+                const progress = profiles[currentProfile].progress;
+
+                weekContent.querySelectorAll('input[type="checkbox"]').forEach(item => {
+                     if (progress[item.id]) delete progress[item.id];
+                     item.checked = false;
                 });
+                 weekContent.querySelectorAll('.diary-textarea').forEach(item => {
+                     if (progress[item.id]) delete progress[item.id];
+                     item.value = '';
+                });
+                weekContent.querySelectorAll('.star-icon').forEach(item => {
+                     const taskId = item.dataset.taskId;
+                     if (progress.markedShots && progress.markedShots[taskId]) delete progress.markedShots[taskId];
+                    item.classList.remove('marked');
+                    item.innerHTML = '&#9734;';
+                });
+                weekContent.querySelectorAll('.rating-stars').forEach(item => {
+                    const taskId = item.dataset.taskId;
+                    if(progress.ratings && progress.ratings[taskId]) delete progress.ratings[taskId];
+                    item.querySelectorAll('span').forEach(star => { star.classList.remove('filled'); star.innerHTML = '&#9734;'; });
+                    item.style.display = 'none'; // Hide stars again
+                });
+                 weekContent.querySelectorAll('.btn-task-note').forEach(item => {
+                    const taskId = item.dataset.taskId;
+                    if (progress.taskNotes && progress.taskNotes[taskId]) delete progress.taskNotes[taskId];
+                    item.classList.remove('has-note');
+                });
+                 weekContent.querySelectorAll('.btn-ghost-mode').forEach(item => {
+                    const taskId = item.dataset.taskId;
+                    // Reset best scores specifically for this week's tasks if needed,
+                    // or decide if resetting a week should reset best scores at all.
+                    // For now, let's keep best scores unless it's a full reset.
+                    // If bestScores[taskId] exists, keep the button visible.
+                     const bestScores = progress.bestScores || {};
+                     item.style.display = bestScores[taskId] !== undefined ? 'inline-block' : 'none';
+                 });
+
+                 // Remove the week completion flag
+                 const weekKey = `week${weekNum}Completed`;
+                 if (progress[weekKey]) delete progress[weekKey];
+
                 saveProfiles(profiles);
-                updateProgressForWeek(weekNum);
+                updateProgressForWeek(weekNum); // Update UI for the reset week
             }
+
 
             const glossaryModal = document.getElementById('glossary-modal');
             const termDefinitionModal = document.getElementById('term-definition-modal');
             const tooltip = document.getElementById('tooltip');
-            
+
             mainContainer.addEventListener('mouseover', (e) => {
                 if (e.target.classList.contains('glossary-term')) {
                     const term = e.target.dataset.term;
@@ -2626,12 +2653,12 @@
                     showModal(termDefinitionModal);
                  }
              });
-            
+
             document.querySelectorAll('.modal-close-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const modal = e.target.closest('.modal-overlay');
                     showModal(null);
-                    
+
                     if (modal && modal.id === 'pdf-viewer-modal') {
                         const context = pdfCanvas.getContext('2d');
                         context.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
@@ -2642,13 +2669,13 @@
                     }
                 });
             });
-            
+
             document.querySelectorAll('.btn-get-recommendation').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const form = e.target.closest('form');
                     const errorMessage = form.querySelector('.error-message');
                     const criteriaMet = form.querySelector('input[name="criteria-met"]:checked');
-                    
+
                     errorMessage.style.display = 'none';
 
                     if (!criteriaMet) {
@@ -2674,10 +2701,10 @@
                             if (nextTab) {
                                 nextTab.checked = true;
                                 nextTab.dispatchEvent(new Event('change', { bubbles: true }));
-                                
+
                                 // The `totalWeeks` variable is available from the parent scope of initializePlanLogic
-                                displayTodaysFocus(totalWeeks); 
-                                
+                                displayTodaysFocus(totalWeeks);
+
                                 // Scroll to the top of the main container to show the new week
                                 mainContainer.scrollIntoView({ behavior: 'smooth' });
                             }
@@ -2688,7 +2715,7 @@
 
             document.getElementById('btn-glossary').addEventListener('click', () => showModal(glossaryModal));
             document.getElementById('btn-print').addEventListener('click', () => window.print());
-            
+
             document.getElementById('btn-change-user').addEventListener('click', () => {
                 exitCustomSessionMode();
                 mainContainer.style.display = 'none';
@@ -2725,20 +2752,20 @@
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
             });
-            
+
             document.getElementById('btn-edit-plan').addEventListener('click', () => {
                 if (isGuest) { window.location.reload(); return; }
-                
+
                 const profiles = getProfiles();
                 const userConfig = profiles[currentProfile].config;
-                
+
                 setupForm.dataset.mode = 'edit';
                 setupForm.dataset.originalName = currentProfile;
                 document.getElementById('new-user-title').textContent = `Editar Perfil de ${currentProfile}`;
                 document.getElementById('user-name').value = currentProfile;
                 document.getElementById('user-name').disabled = false;
                 setupForm.querySelector('button[type="submit"]').textContent = 'Actualizar Mi Plan';
-                
+
                 document.querySelectorAll('#training-days-group input').forEach(cb => {
                     cb.checked = userConfig.selectedDays.includes(cb.value);
                 });
@@ -2751,7 +2778,7 @@
                  showModal(null);
                  mainContainer.style.display = 'block';
             });
-            
+
              const firstTab = document.querySelector('.tab-input');
              if(firstTab) firstTab.dispatchEvent(new Event('change'));
 
@@ -2759,14 +2786,14 @@
              initializeNewFeatures(totalWeeks);
              initializeTutorial(); // Initialize the tutorial logic
         }
-        
+
         const glossaryContent = document.getElementById('glossary-content');
         const sortedGlossary = Object.keys(glossaryData).sort((a, b) => a.localeCompare(b));
         let glossaryHTML = '<dl>';
         sortedGlossary.forEach(term => glossaryHTML += `<dt>${term} / ${glossaryData[term].translation}</dt><dd>${glossaryData[term].definition}</dd>`);
         glossaryHTML += '</dl>';
         glossaryContent.innerHTML = glossaryHTML;
-        
+
         document.getElementById('alert-ok').addEventListener('click', () => {
             showModal(null);
         });
@@ -2867,18 +2894,18 @@
             if (isEditMode) {
                 const originalName = setupForm.dataset.originalName;
                 const profiles = getProfiles();
-                
+
                 if (originalName !== userName && profiles[userName]) {
                     nameError.textContent = 'Este nombre de perfil ya existe. Por favor, elige otro.';
                     nameError.style.display = 'block';
                     return;
                 }
-                
+
                 const currentProgress = profiles[originalName] ? profiles[originalName].progress : {};
                 if (originalName !== userName) {
                     delete profiles[originalName];
                 }
-                
+
                 profiles[userName] = { config: userConfig, progress: currentProgress };
                 saveProfiles(profiles);
                 startSession(userName);
@@ -2894,7 +2921,7 @@
                 saveProfiles(profiles);
                 startSession(userName, isGuest ? userConfig : null);
             }
-            
+
             const submitButton = setupForm.querySelector('button[type="submit"]');
             submitButton.textContent = 'Crear Mi Plan';
             userNameInput.disabled = false;
@@ -2908,7 +2935,7 @@
             const profiles = getProfiles();
             if (!currentProfile || !profiles[currentProfile]) return;
             const markedShots = profiles[currentProfile].progress?.markedShots || {};
-            
+
             list.innerHTML = '';
 
             if (Object.keys(markedShots).length === 0) {
@@ -2933,13 +2960,13 @@
                 }
             }
         }
-        
+
         function startTimerSession(minutes) {
             const sessionModal = document.getElementById('session-modal');
             const timerView = document.getElementById('timer-view');
             const loggerView = document.getElementById('shot-logger-ui');
             const timerDisplay = document.getElementById('timer-display');
-            
+
             timerView.style.display = 'block';
             loggerView.style.display = 'none';
             document.getElementById('session-modal-title').textContent = 'Sesión de Práctica General';
@@ -2953,7 +2980,7 @@
                 const mins = Math.floor(duration / 60).toString().padStart(2, '0');
                 const secs = (duration % 60).toString().padStart(2, '0');
                 timerDisplay.textContent = `${mins}:${secs}`;
-                
+
                 if (--duration < 0) {
                     clearInterval(sessionTimerInterval);
                     timerDisplay.textContent = "¡Listo!";
@@ -2979,17 +3006,17 @@
             btnSaveExit.style.display = 'none';
             document.getElementById('shot-logger-counter').style.display = 'block';
             document.querySelector('.shot-logger-buttons').style.display = 'flex';
-            
+
             const attemptsMatch = taskGoal.match(/(\d+)\s*Intentos/i);
             const rangeMatch = taskText.match(/<b>(\d+)-(\d+):/);
-            
+
             if (!attemptsMatch) {
-                startTimerSession(15); 
+                startTimerSession(15);
                 return;
             }
 
             const totalAttempts = parseInt(attemptsMatch[1], 10);
-            
+
             shotLoggerState = {
                 taskId: taskId,
                 isGhostMode: isGhostMode,
@@ -3024,10 +3051,10 @@
                     }
                 }
                 btnSaveExit.style.display = 'block';
-            } 
-            
+            }
+
             setupCurrentShotInLogger();
-            
+
             timerView.style.display = 'none';
             loggerView.style.display = 'block';
             document.getElementById('session-stop-btn').style.display = 'none';
@@ -3037,7 +3064,7 @@
         function setupCurrentShotInLogger() {
             const { isRange, rangeShots, currentRangeIndex, isGhostMode, taskId, totalAttempts } = shotLoggerState;
             const bestScoreEl = document.getElementById('shot-logger-best-score');
-            
+
             let currentShotNumber = null;
             let shotBestScore = 0;
             let currentBestScoreId = taskId; // Default for non-range tasks
@@ -3052,7 +3079,7 @@
                 const match = document.querySelector(`.btn-practice-task[data-task-id="${taskId}"]`).dataset.taskText.match(/<b>(\d+):/);
                 if (match) currentShotNumber = parseInt(match[1]);
             }
-            
+
             // Render diagram in the logger canvas
             if (currentShotNumber) {
                 renderPdfInCanvas(document.getElementById('shot-logger-canvas'), currentShotNumber);
@@ -3083,7 +3110,7 @@
                  bestScoreEl.textContent = `Mejor Puntuación: ${shotBestScore} / ${totalAttempts}`;
                  document.getElementById('session-modal-title').textContent = 'Práctica de Ejercicio';
             }
-            
+
             updateLoggerUI();
         }
 
@@ -3091,7 +3118,7 @@
             const { hits, attempts } = shotLoggerState;
             document.getElementById('shot-logger-counter').textContent = `${hits} Aciertos / ${attempts} Intentos`;
         }
-        
+
         function handleShotLoggerClick(isHit) {
             const { attempts, totalAttempts } = shotLoggerState;
             if(attempts >= totalAttempts) return;
@@ -3106,7 +3133,7 @@
                 if (shotLoggerState.isRange) {
                     const currentShotNumber = shotLoggerState.rangeShots[shotLoggerState.currentRangeIndex];
                     shotLoggerState.rangeResults[currentShotNumber] = { hits: shotLoggerState.hits, attempts: shotLoggerState.attempts };
-                    
+
                     const currentBestScoreId = `${shotLoggerState.taskId}-${currentShotNumber}`;
                     const profiles = getProfiles();
                     const rangeBestScores = profiles[currentProfile]?.progress?.rangeBestScores || {};
@@ -3116,7 +3143,7 @@
                         saveState(currentBestScoreId, shotLoggerState.hits, 'rangeBestScores');
                         if(shotLoggerState.isGhostMode) showToast('¡Nuevo Récord!');
                     }
-                    
+
                     const nextPrompt = document.getElementById('shot-logger-next-prompt');
                     nextPrompt.style.display = 'block';
                     document.getElementById('shot-logger-counter').style.display = 'none';
@@ -3128,7 +3155,7 @@
 
                 } else {
                     setTimeout(() => {
-                        showModal(null); 
+                        showModal(null);
                         showRatingSuggestion();
                     }, 500);
                 }
@@ -3156,7 +3183,7 @@
                  showModal(null);
              }
         });
-        
+
         function calculateStars(hits, total) {
             if (total === 0) return 0;
             const ratio = hits / total;
@@ -3177,14 +3204,14 @@
                 finalHits = Object.values(rangeResults).reduce((sum, res) => sum + res.hits, 0);
                 finalAttempts = Object.values(rangeResults).reduce((sum, res) => sum + res.attempts, 0);
             }
-            
+
             const suggestedStars = calculateStars(finalHits, finalAttempts);
             text = `Tu resultado fue <strong>${finalHits}/${finalAttempts}</strong>. Te sugerimos una calificación de <strong>${suggestedStars} estrellas</strong>. ¿Aceptar?`;
-            
+
             document.getElementById('rating-suggestion-text').innerHTML = text;
-            
+
             const acceptBtn = document.getElementById('accept-rating-btn');
-            
+
             acceptBtn.onclick = () => {
                 saveRating(taskId, suggestedStars);
                 updateStarsUI(taskId, suggestedStars);
@@ -3230,26 +3257,26 @@
                 }
                 showModal(null);
             });
-            
+
             document.getElementById('save-task-note-btn').addEventListener('click', () => {
                 const notesModal = document.getElementById('task-notes-modal');
                 const taskId = notesModal.dataset.taskId;
                 const noteText = document.getElementById('task-notes-textarea').value;
-                
+
                 const noteEntry = {
                     content: noteText,
                     lastModified: new Date().toISOString()
                 };
 
-                saveState(taskId, noteEntry, 'taskNotes'); 
+                saveState(taskId, noteEntry, 'taskNotes');
                 showToast('Nota guardada');
-                
+
                 document.querySelector(`.btn-task-note[data-task-id="${taskId}"]`).classList.toggle('has-note', noteText.trim().length > 0);
-                
+
                 if (document.getElementById('tab-notes').checked) {
                     populateAllNotesList(totalWeeks);
                 }
-                
+
                 showModal(null);
             });
 
@@ -3270,7 +3297,7 @@
                 populateMySessionsList();
                 showModal(document.getElementById('my-sessions-modal'));
             });
-            
+
              document.getElementById('btn-exit-custom-session').addEventListener('click', exitCustomSessionMode);
 
             document.getElementById('btn-save-custom-session').addEventListener('click', () => {
@@ -3310,10 +3337,10 @@
                  for(const day of allTrainingDays) {
                     for(const task of day.tasks) {
                         if (!task.type) continue;
-                        const taskInfo = findTaskById(`w1-d${day.id}-${task.id}`);
+                        const taskInfo = findTaskById(`w1-d${day.id}-${task.id}`); // Correctly find task info using any week structure
                         if (!taskInfo) continue;
-                        const taskId = `w${taskInfo.weekNum}-d${day.id}-${task.id}`;
-                        if (!progress[taskId]) {
+                        const taskId = `w${taskInfo.weekNum}-d${day.id}-${task.id}`; // Construct correct taskId
+                        if (!progress[taskId]) { // Check progress using correct taskId
                              p2_task = taskInfo;
                              break;
                         }
@@ -3321,11 +3348,12 @@
                     if (p2_task) break;
                  }
 
+
                 const strongTasks = ratedTasks.filter(([,rating]) => rating >= 4);
                 if (strongTasks.length > 0) {
                     p3_task = findTaskById(strongTasks[Math.floor(Math.random() * strongTasks.length)][0]);
                 }
-                
+
                 const sessionContent = document.getElementById('generated-session-content');
                 let sessionHTML = '';
                 const timeRatios = { p1: 0.45, p2: 0.35, p3: 0.20 };
@@ -3362,11 +3390,11 @@
                 } else {
                      sessionHTML += `<div class="session-part priority-3"><h4>Prioridad #3: Mantener Fortaleza (${p3_time} min)</h4><p>Completa más ejercicios con 4-5 estrellas para que aparezcan aquí.</p></div>`;
                 }
-                
+
                 sessionContent.innerHTML = sessionHTML;
                 showModal(document.getElementById('generated-session-modal'));
             }
-            
+
             document.getElementById('btn-shot-of-the-day').addEventListener('click', () => {
                 const profiles = getProfiles();
                 const progress = profiles[currentProfile]?.progress || {};
@@ -3385,7 +3413,7 @@
                 for (let i = 1; i <= totalWeeks; i++) {
                     const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + (profiles[currentProfile].config.selectedDays.length || 0));
                     if (daysInThisWeek.length === 0) break;
-                    
+
                     const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => ({ taskId: `w${i}-d${d.id}-${t.id}`, day: d, task: t, week: i })));
                     const totalTasks = tasksInWeek.length;
                     const completedTasksCount = tasksInWeek.filter(t => progress[t.taskId]).length;
@@ -3430,7 +3458,7 @@
                 }
             }
         }
-        
+
         function populateAchievementsTab(totalWeeks) {
             const grid = document.getElementById('achievements-grid');
             const profiles = getProfiles();
@@ -3465,7 +3493,7 @@
             const progress = profiles[currentProfile].progress || {};
             const userConfig = profiles[currentProfile].config;
             if (!progress.unlockedAchievements) progress.unlockedAchievements = {};
-            
+
             for (const id in achievementsData) {
                 if (!progress.unlockedAchievements[id]) {
                     const ach = achievementsData[id];
@@ -3503,9 +3531,10 @@
             if (lastPractice === yesterdayStr) {
                 streak++;
                 addPoints(20 * streak); // Streak bonus
-            } else if (lastPractice !== today) {
+            } else if (lastPractice !== today) { // Only reset if the last practice wasn't today either
                 streak = 1;
             }
+
 
             progress.currentStreak = streak;
             progress.lastPracticeDate = today;
@@ -3515,13 +3544,18 @@
         function addPoints(points) {
             if(isGuest) return;
             const profiles = getProfiles();
+            if (!currentProfile || !profiles[currentProfile]) return; // Add safety check
             const progress = profiles[currentProfile].progress;
+            if (!progress) { // Initialize progress if it doesn't exist
+                 profiles[currentProfile].progress = { points: 0, level: 1 };
+            }
             if (!progress.points) progress.points = 0;
             if (!progress.level) progress.level = 1;
 
+
             const oldLevel = progress.level;
             progress.points += points;
-            
+
             const newLevel = Math.floor(progress.points / 500) + 1;
             if (newLevel > oldLevel) {
                 progress.level = newLevel;
@@ -3533,6 +3567,7 @@
             updatePointsUI();
         }
 
+
         function updatePointsUI() {
             if(isGuest) {
                 document.getElementById('player-level-info').style.display = 'none';
@@ -3543,13 +3578,15 @@
             document.getElementById('xp-bar-container').style.display = 'block';
 
             const profiles = getProfiles();
+            // Add safety checks for profile and progress existence
             const progress = profiles[currentProfile]?.progress || {level: 1, points: 0};
             const level = progress.level || 1;
             const points = progress.points || 0;
             const pointsForNextLevel = 500;
             const pointsInCurrentLevel = points % pointsForNextLevel;
-            const xpPercentage = (pointsInCurrentLevel / pointsForNextLevel) * 100;
-            
+            const xpPercentage = (pointsForNextLevel > 0) ? (pointsInCurrentLevel / pointsForNextLevel) * 100 : 0; // Avoid division by zero
+
+
             document.getElementById('player-level-info').textContent = `Nivel ${level} (${points} XP)`;
             document.getElementById('xp-bar').style.width = `${xpPercentage}%`;
         }
@@ -3558,9 +3595,17 @@
             const listContainer = document.getElementById('create-session-shot-list');
             listContainer.innerHTML = '';
             let currentWeek = 0;
-            
+
             allTrainingDays.forEach(day => {
-                const weekNum = Math.floor(allTrainingDays.findIndex(d => d.id === day.id) / getProfiles()[currentProfile].config.selectedDays.length) + 1;
+                const profileData = getProfiles()[currentProfile];
+                if (!profileData || !profileData.config || !profileData.config.selectedDays) return; // Add check
+
+                const daysPerWeek = profileData.config.selectedDays.length;
+                if (daysPerWeek === 0) return; // Avoid division by zero
+
+                const weekNum = Math.floor(allTrainingDays.findIndex(d => d.id === day.id) / daysPerWeek) + 1;
+
+
                 if (weekNum !== currentWeek) {
                     currentWeek = weekNum;
                     const h4 = document.createElement('h4');
@@ -3576,7 +3621,7 @@
                 });
             });
         }
-        
+
         function populateMySessionsList() {
             const list = document.getElementById('my-sessions-list');
             list.innerHTML = '';
@@ -3624,7 +3669,7 @@
             const profiles = getProfiles();
             const session = profiles[currentProfile]?.progress?.customSessions[sessionId];
             if (!session) return;
-            
+
             showModal(null);
 
             // Remove existing custom session tab if it exists
@@ -3634,7 +3679,7 @@
                 document.querySelector('label[for="tab-custom-session"]')?.remove();
                 document.getElementById('content-custom-session')?.remove();
             }
-            
+
             // Create new tab elements
             const tabsContainer = document.getElementById('tabs-container');
             const wrapper = tabsContainer.querySelector('.tab-content-wrapper');
@@ -3644,7 +3689,7 @@
             tabInput.name = 'tabs';
             tabInput.id = 'tab-custom-session';
             tabInput.className = 'tab-input';
-            
+
             const tabLabel = document.createElement('label');
             tabLabel.htmlFor = 'tab-custom-session';
             tabLabel.className = 'tab-label';
@@ -3653,7 +3698,7 @@
             const contentDiv = document.createElement('div');
             contentDiv.id = 'content-custom-session';
             contentDiv.className = 'tab-content';
-            
+
             let sessionHTML = `<h2>${session.name}</h2>`;
             session.shots.forEach(taskId => {
                 const taskInfo = findTaskById(taskId);
@@ -3675,11 +3720,11 @@
                 }
             });
             contentDiv.innerHTML = sessionHTML;
-            
+
             tabsContainer.insertBefore(tabInput, wrapper);
             tabsContainer.insertBefore(tabLabel, wrapper);
             wrapper.appendChild(contentDiv);
-            
+
             // Re-run the diagram button generation for the new content
             contentDiv.querySelectorAll('.day-section').forEach((daySection, index) => {
                  const taskId = session.shots[index];
@@ -3700,11 +3745,11 @@
                  buttonsHTML += '</div>';
                  container.innerHTML = buttonsHTML;
             });
-            
+
             // Hide week tabs and show exit button
             document.querySelectorAll('.week-tab-label, .week-option').forEach(el => el.style.display = 'none');
             document.getElementById('btn-exit-custom-session').style.display = 'inline-block';
-            
+
             tabInput.checked = true;
             tabInput.dispatchEvent(new Event('change', { bubbles: true }));
         }
@@ -3726,7 +3771,7 @@
                 firstWeekTab.dispatchEvent(new Event('change', { bubbles: true }));
             }
         }
-        
+
         // --- Interactive Tutorial Logic ---
         function initializeTutorial() {
             const tutorialSteps = [
@@ -3805,7 +3850,7 @@
 
             function showTutorialStep(index) {
                 document.querySelector('.tutorial-highlight')?.classList.remove('tutorial-highlight');
-                
+
                 const step = tutorialSteps[index];
                 const targetElement = step.element ? document.querySelector(step.element) : null;
 
@@ -3880,7 +3925,7 @@
                 stepBox.classList.add('visible');
                 showTutorialStep(currentStep);
             });
-            
+
             document.getElementById('tutorial-next').addEventListener('click', () => {
                 if(currentStep < tutorialSteps.length - 1) {
                     currentStep++;
@@ -3894,7 +3939,7 @@
                     showTutorialStep(currentStep);
                 }
             });
-            
+
             [overlay, document.getElementById('tutorial-end')].forEach(el => el.addEventListener('click', endTutorial));
         }
 
