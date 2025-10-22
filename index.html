@@ -1952,29 +1952,7 @@
                     const targetButton = e.currentTarget; // Use currentTarget
                     const week = targetButton.dataset.week;
                     const daySectionId = targetButton.dataset.daySectionId;
-
-                    // Finds the correct week tab using the data attribute
-                    const tabInput = document.getElementById(`tab${week}`);
-                    if (tabInput) {
-                        tabInput.checked = true;
-                        tabInput.dispatchEvent(new Event('change')); // Switches tab
-                    }
-                    
-                    setTimeout(() => {
-                        // Uses the correct day ID from the data attribute
-                        const daySection = document.getElementById(daySectionId);
-                        if (daySection) {
-                            daySection.scrollIntoView({ behavior: 'smooth', block: 'center' }); // Scrolls
-                            // Highlight the section
-                            daySection.style.transition = 'background-color 0.5s'; // Ensure transition is set
-                            daySection.style.backgroundColor = 'var(--current-day-bg)';
-                            setTimeout(() => {
-                                daySection.style.backgroundColor = ''; // Reset background
-                            }, 2000);
-                        } else {
-                             console.error(`Could not find daySection with ID: ${daySectionId}`);
-                        }
-                    }, 150); // Increased timeout slightly
+                    navigateToElement(week, daySectionId); // Use the helper function
                 });
             } else {
                  // No current week found and not all completed (shouldn't happen with the loop logic, but safe fallback)
@@ -2278,52 +2256,64 @@
         function navigateToElement(week, elementId, highlightElementSelector = null) {
             const tabInput = document.getElementById(`tab${week}`);
             if (tabInput) {
-                // Check if the tab is already active to avoid unnecessary event dispatch
+                 // Check if the tab is already active to avoid unnecessary event dispatch
                 if (!tabInput.checked) {
                     tabInput.checked = true;
                     // Dispatch change event to ensure content is displayed and state loaded
-                    tabInput.dispatchEvent(new Event('change', { bubbles: true })); 
+                    // Use setTimeout to ensure the event dispatch completes and content becomes visible
+                    setTimeout(() => {
+                        tabInput.dispatchEvent(new Event('change', { bubbles: true })); 
+                        // Now schedule the scrolling within another setTimeout or requestAnimationFrame
+                        // to ensure the content is definitely rendered after the tab change logic runs
+                        requestAnimationFrame(() => { // Using rAF is generally preferred
+                            scrollAndHighlight(elementId, highlightElementSelector);
+                        });
+                    }, 0); // 0ms timeout often works, but adjust if needed
+                } else {
+                     // If tab is already active, just scroll and highlight immediately
+                     scrollAndHighlight(elementId, highlightElementSelector);
                 }
+
             } else {
                 console.error(`Tab input for week ${week} not found.`);
                 return; // Exit if tab doesn't exist
             }
-        
-            // Use requestAnimationFrame to ensure the tab content is visible before scrolling
-            requestAnimationFrame(() => {
-                const targetElement = document.getElementById(elementId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    // Highlight the main target element (day section)
-                    targetElement.style.transition = 'background-color 0.5s'; 
-                    targetElement.style.backgroundColor = 'var(--current-day-bg)'; 
-                    setTimeout(() => {
-                        targetElement.style.backgroundColor = ''; 
-                    }, 2000);
+        }
 
-                    // If a specific element within the day needs highlighting (like the note button)
-                    if (highlightElementSelector) {
-                        const elementToHighlight = targetElement.querySelector(highlightElementSelector);
-                        if (elementToHighlight) {
-                             // Optional: scroll the specific element into view if needed
-                             // elementToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
-                             
-                             elementToHighlight.style.transition = 'outline 0.5s'; 
-                             elementToHighlight.style.outline = '3px solid var(--focus-color)';
-                             elementToHighlight.style.borderRadius = '5px'; 
-                             
-                             setTimeout(() => {
-                                 elementToHighlight.style.outline = 'none'; 
-                             }, 3000);
-                        } else {
-                            console.warn(`Highlight element "${highlightElementSelector}" not found within #${elementId}`);
-                        }
-                    }
-                } else {
-                     console.error(`Target element with ID ${elementId} not found.`);
-                }
-            });
+        // Separated scroll and highlight logic for clarity
+        function scrollAndHighlight(elementId, highlightElementSelector) {
+             const targetElement = document.getElementById(elementId);
+             if (targetElement) {
+                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 
+                 // Highlight the main target element (day section)
+                 targetElement.style.transition = 'background-color 0.5s'; 
+                 targetElement.style.backgroundColor = 'var(--current-day-bg)'; 
+                 setTimeout(() => {
+                     targetElement.style.backgroundColor = ''; 
+                 }, 2000);
+
+                 // If a specific element within the day needs highlighting (like the note button)
+                 if (highlightElementSelector) {
+                     const elementToHighlight = targetElement.querySelector(highlightElementSelector);
+                     if (elementToHighlight) {
+                          // Optional: scroll the specific element into view if needed
+                          // elementToHighlight.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
+                          
+                          elementToHighlight.style.transition = 'outline 0.5s'; 
+                          elementToHighlight.style.outline = '3px solid var(--focus-color)';
+                          elementToHighlight.style.borderRadius = '5px'; 
+                          
+                          setTimeout(() => {
+                              elementToHighlight.style.outline = 'none'; 
+                          }, 3000);
+                     } else {
+                         console.warn(`Highlight element "${highlightElementSelector}" not found within #${elementId}`);
+                     }
+                 }
+             } else {
+                  console.error(`Target element with ID ${elementId} not found after tab switch attempt.`);
+             }
         }
 
 
