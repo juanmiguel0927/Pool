@@ -516,6 +516,8 @@
         .shot-logger-buttons button:active { transform: scale(0.95); }
         #btn-hit { background-color: var(--success-color); }
         #btn-miss { background-color: var(--danger-color); }
+        #shot-logger-next-prompt { display: none; }
+        #shot-logger-next-prompt p { margin-top: 0; }
         #shot-logger-next-prompt button { margin: 0 5px; }
 
 
@@ -1042,7 +1044,7 @@
                                 <button id="btn-miss">Fallo</button>
                                 <button id="btn-hit">Acierto</button>
                             </div>
-                            <div id="shot-logger-next-prompt" style="display: none;">
+                            <div id="shot-logger-next-prompt">
                                 <p>¡Ejercicio completado!</p>
                                 <button id="btn-next-shot" class="btn-generate-session">Siguiente Tiro</button>
                                 <button id="btn-finish-session" class="btn-change-user">Terminar y Calificar</button>
@@ -2600,14 +2602,33 @@
                         return;
                     }
 
+                    const weekNum = parseInt(e.target.dataset.week, 10);
                     const confidence = form.querySelector('select[name="confidence"]');
                     const recommendationText = document.getElementById('recommendation-text');
+
                     if (criteriaMet.value === 'no' || (criteriaMet.value === 'somewhat' && parseInt(confidence.value) < 3)) {
                         recommendationText.innerHTML = "<strong>Recomendación: Repetir la semana.</strong><br>Parece que todavía hay conceptos clave que necesitan refuerzo. Repetir los ejercicios te ayudará a construir una base más sólida antes de avanzar. ¡La consistencia es la clave!";
+                        showModal(document.getElementById('recommendation-modal'));
                     } else {
-                        recommendationText.innerHTML = "<strong>Recomendación: ¡Avanzar a la siguiente semana!</strong><br>¡Excelente trabajo! Has demostrado un buen dominio de los conceptos de esta semana. Estás listo para enfrentar nuevos desafíos.";
+                        recommendationText.innerHTML = "<strong>Recomendación: ¡Avanzar a la siguiente semana!</strong><br>¡Excelente trabajo! Has demostrado un buen dominio de los conceptos de esta semana. Estás listo para enfrentar nuevos desafíos.<br><br><i>Avanzando automáticamente...</i>";
+                        showModal(document.getElementById('recommendation-modal'));
+
+                        setTimeout(() => {
+                            showModal(null); // Close modal first
+                            const nextWeek = weekNum + 1;
+                            const nextTab = document.getElementById(`tab${nextWeek}`);
+                            if (nextTab) {
+                                nextTab.checked = true;
+                                nextTab.dispatchEvent(new Event('change', { bubbles: true }));
+                                
+                                // The `totalWeeks` variable is available from the parent scope of initializePlanLogic
+                                displayTodaysFocus(totalWeeks); 
+                                
+                                // Scroll to the top of the main container to show the new week
+                                mainContainer.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }, 2500);
                     }
-                    showModal(document.getElementById('recommendation-modal'));
                 });
             });
 
@@ -3827,4 +3848,3 @@
     </script>
 </body>
 </html>
-
