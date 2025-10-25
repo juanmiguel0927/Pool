@@ -594,8 +594,7 @@
             font-size: 0.8em;
             font-weight: bold;
         }
-
-        #streak-container { text-align: center; padding: 20px; background-color: var(--day-section-bg); border-radius: 8px; margin-bottom: 20px; }
+#streak-container { text-align: center; padding: 20px; background-color: var(--day-section-bg); border-radius: 8px; margin-bottom: 20px; }
         #streak-counter { font-size: 3rem; font-weight: bold; color: var(--accent-color); }
 
         #achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
@@ -896,8 +895,7 @@
             </div>
         </div>
     </div>
-
-    <div id="glossary-modal" class="modal-overlay">
+<div id="glossary-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Glosario de Billar</h2>
@@ -1149,8 +1147,7 @@
     const proPoolPlayers = ["Efren Reyes", "Shane Van Boening", "Earl Strickland", "Jayson Shaw", "Mike Sigel", "Francisco Bustamante"];
 
     const basePdfUrl = 'https://raw.githubusercontent.com/juanmiguel0927/Pool/main/En%20orden.pdf';
-
-    const glossaryData = {
+const glossaryData = {
         "Stop Shot": { translation: "Parada Seca", definition: "Un tiro donde la bola blanca se detiene completamente después de impactar la bola objetivo. Se logra golpeando la bola blanca en su centro vertical exacto para que llegue deslizándose (sin rotación) al punto de contacto." },
         "Stun": { translation: "Deslizamiento / Bola Aturdida", definition: "El estado de la bola blanca cuando se desliza sobre el paño sin rotación hacia adelante o hacia atrás. Es la base para el Stop Shot y para controlar la línea tangente." },
         "Follow": { translation: "Seguida / Correr la bola", definition: "Un tiro donde la bola blanca continúa moviéndose hacia adelante después de contactar la bola objetivo. Se logra golpeando la bola blanca por encima de su centro (topspin)." },
@@ -1711,8 +1708,7 @@
             const totalWeeks = Math.ceil(allTrainingDays.length / selectedDays.length);
             const { week: currentActiveWeek } = findCurrentActiveWeekInfo(totalWeeks); // <-- Use the helper
             let dayIndex = 0;
-
-            for (let i = 1; i <= totalWeeks; i++) {
+for (let i = 1; i <= totalWeeks; i++) {
                 // Use currentActiveWeek to set 'checked' and 'display: block'
                 const isChecked = (i === currentActiveWeek);
                 htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${isChecked ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
@@ -2269,7 +2265,7 @@ weekContent += `</div>`;
                 } else {
                      // If tab is already active, just scroll and highlight immediately
                      scrollAndHighlight(elementId, highlightElementSelector);
-                }
+                 }
 
             } else {
                 console.error(`Tab input for week ${week} not found.`);
@@ -2391,6 +2387,8 @@ weekContent += `</div>`;
                 if(progressBarFill) { progressBarFill.style.width = `${percentage}%`; progressBarFill.textContent = `${Math.round(percentage)}%`; }
                 if(taskCounter) taskCounter.textContent = `Tareas: ${checkedCount} / ${totalCount}`;
 
+                // --- INICIO DE LA MODIFICACIÓN 3 ---
+                // Modificado para añadir/quitar bonus semanal
                 const assessmentSection = weekContent.querySelector('.assessment-section');
                 if (assessmentSection) {
                     const profiles = getProfiles();
@@ -2398,43 +2396,23 @@ weekContent += `</div>`;
                     const progress = profiles[currentProfile].progress || {};
                     const isWeekComplete = (checkedCount === totalCount && totalCount > 0);
                     const weekKey = `week${weekNumber}Completed`;
+                    const wasWeekComplete = progress[weekKey] === true; // Comprobar estado anterior
 
-                    // Only add points and save if it's the first time completing
-                    if (isWeekComplete && !progress[weekKey]) {
-                        addPoints(50); // Bonus for completing the week
+                    // Solo añadir o quitar puntos si el estado ha cambiado
+                    if (isWeekComplete && !wasWeekComplete) {
+                        addPoints(50); // Bonus por completar la semana
                         progress[weekKey] = true;
-                        saveProfiles(profiles); // Save the updated progress
+                        saveProfiles(profiles); // Guardar el progreso actualizado
+                    } else if (!isWeekComplete && wasWeekComplete) {
+                        removePoints(50); // Quitar bonus si se descompleta la semana
+                        progress[weekKey] = false;
+                        saveProfiles(profiles); // Guardar el progreso actualizado
                     }
-                    // Always update display based on current completion status
+                    
+                    // Siempre actualizar la visualización basado en el estado actual
                     assessmentSection.style.display = isWeekComplete ? 'block' : 'none';
                 }
-            }
-
-
-            for(let i=1; i<=totalWeeks; i++) {
-                updateProgressForWeek(i); // Update progress display on initial load
-                document.querySelectorAll(`#content${i} .day-section`).forEach(daySection => {
-                    const dayId = parseInt(daySection.id.replace('day-section-', ''), 10);
-                    const dayData = allTrainingDays.find(d => d.id === dayId);
-                    if(!dayData) return;
-
-                    const container = daySection.querySelector('.pdf-shot-buttons-container');
-                    container.innerHTML = '';
-                    let buttonsHTML = '<div class="pdf-shot-buttons"><span>Diagramas: </span>';
-
-                    dayData.tasks.forEach(task => {
-                         const match = task.text.match(/<b>(\d+)(?:-(\d+))?:/);
-                         if(match) {
-                             const start = parseInt(match[1]);
-                             const end = match[2] ? parseInt(match[2]) : start;
-                             for(let shotNum = start; shotNum <= end; shotNum++) {
-                                 buttonsHTML += `<button class="btn-view-diagram-single" data-shot-number="${shotNum}">${shotNum}</button>`;
-                             }
-                         }
-                    });
-                    buttonsHTML += '</div>';
-                    container.innerHTML = buttonsHTML;
-                });
+                // --- FIN DE LA MODIFICACIÓN 3 ---
             }
 
 
@@ -2516,11 +2494,16 @@ weekContent += `</div>`;
                 }
             });
 
+            // --- INICIO DE LA MODIFICACIÓN 2 ---
+            // Modificado para sumar o restar puntos
             document.querySelectorAll('input[type="checkbox"]').forEach(item => {
                 item.addEventListener('change', (e) => {
                     if (e.target.checked) {
-                        addPoints(10);
+                        addPoints(10); // Sumar 10 puntos al marcar
+                    } else {
+                        removePoints(10); // Restar 10 puntos al desmarcar
                     }
+
                     saveState(e.target.id, e.target.checked);
                     const weekNumber = item.id.split('-')[0].replace('w','');
                     updateProgressForWeek(parseInt(weekNumber, 10)); // Update display after change
@@ -2528,6 +2511,7 @@ weekContent += `</div>`;
                     checkAndAwardAchievements(totalWeeks);
                 });
             });
+            // --- FIN DE LA MODIFICACIÓN 2 ---
 
              document.querySelectorAll('.diary-textarea').forEach(item => {
                 item.addEventListener('blur', e => {
@@ -2785,6 +2769,37 @@ weekContent += `</div>`;
 
             // Load the state for all weeks *before* displaying
             loadState();
+
+            // --- INICIO DE LA MODIFICACIÓN 4 ---
+            // Este bucle se movió aquí (desde arriba)
+            // Se ejecuta DESPUÉS de loadState() para que las barras de progreso
+            // se inicialicen con los valores correctos guardados.
+            for(let i=1; i<=totalWeeks; i++) {
+                updateProgressForWeek(i); // Actualizar la UI de progreso al cargar
+                document.querySelectorAll(`#content${i} .day-section`).forEach(daySection => {
+                    const dayId = parseInt(daySection.id.replace('day-section-', ''), 10);
+                    const dayData = allTrainingDays.find(d => d.id === dayId);
+                    if(!dayData) return;
+
+                    const container = daySection.querySelector('.pdf-shot-buttons-container');
+                    container.innerHTML = '';
+                    let buttonsHTML = '<div class="pdf-shot-buttons"><span>Diagramas: </span>';
+
+                    dayData.tasks.forEach(task => {
+                         const match = task.text.match(/<b>(\d+)(?:-(\d+))?:/);
+                         if(match) {
+                             const start = parseInt(match[1]);
+                             const end = match[2] ? parseInt(match[2]) : start;
+                             for(let shotNum = start; shotNum <= end; shotNum++) {
+                                 buttonsHTML += `<button class="btn-view-diagram-single" data-shot-number="${shotNum}">${shotNum}</button>`;
+                             }
+                         }
+                    });
+                    buttonsHTML += '</div>';
+                    container.innerHTML = buttonsHTML;
+                });
+            }
+            // --- FIN DE LA MODIFICACIÓN 4 ---
 
             const checkedTab = document.querySelector('.tab-input:checked');
             if (checkedTab) {
@@ -3583,6 +3598,27 @@ weekContent += `</div>`;
             updatePointsUI();
         }
 
+        // --- INICIO DE LA MODIFICACIÓN 1 ---
+        // Nueva función para restar puntos de experiencia
+        function removePoints(points) {
+            if(isGuest) return; // No hacer nada si es invitado
+            const profiles = getProfiles();
+            if (!currentProfile || !profiles[currentProfile] || !profiles[currentProfile].progress) return;
+            
+            const progress = profiles[currentProfile].progress;
+
+            const oldLevel = progress.level;
+            progress.points = Math.max(0, progress.points - points); // Asegurarse de que los puntos no sean negativos
+
+            const newLevel = Math.floor(progress.points / 500) + 1;
+            if (newLevel < oldLevel) {
+                progress.level = newLevel;
+                // Opcional: Podrías mostrar una notificación de "bajada de nivel" aquí
+            }
+            saveProfiles(profiles);
+            updatePointsUI(); // Actualizar la barra de XP y Nivel
+        }
+        // --- FIN DE LA MODIFICACIÓN 1 ---
 
         function updatePointsUI() {
             if(isGuest) {
