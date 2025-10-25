@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tiro Maestro: Plan de Entrenamiento de Billar</title>
-    <!-- Chart.js for progress visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Cal-Heatmap for activity calendar -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.min.js"></script>
-    <!-- PDF.js library for custom PDF rendering -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.3/dist/cal-heatmap.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1135,7 +1132,6 @@
 
     <input type="file" id="import-file-input" accept=".json" style="display: none;">
 
-    <!-- Tutorial HTML Elements -->
     <div id="tutorial-overlay" class="modal-overlay"></div>
     <div id="tutorial-step-box">
         <h4 id="tutorial-title"></h4>
@@ -1672,6 +1668,38 @@
             }
         }
 
+        function findCurrentActiveWeekInfo(totalWeeks) {
+            const defaultInfo = { week: 1, dayIndexOffset: 0, allComplete: false };
+            if (!currentProfile) return defaultInfo;
+            const profiles = getProfiles();
+            const user = profiles[currentProfile];
+            if (!user || !user.config || !user.config.selectedDays) return defaultInfo;
+
+            const progress = user.progress || {};
+            const daysPerWeek = user.config.selectedDays.length;
+            if (daysPerWeek === 0) return defaultInfo;
+
+            let dayIndexOffset = 0;
+            for (let i = 1; i <= totalWeeks; i++) {
+                const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, dayIndexOffset + daysPerWeek);
+                if (daysInThisWeek.length === 0) break;
+
+                const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
+                if (tasksInWeek.length === 0) {
+                    dayIndexOffset += daysPerWeek;
+                    continue;
+                }
+                const completedTasks = tasksInWeek.filter(taskId => progress[taskId] === true).length;
+                if (completedTasks < tasksInWeek.length) {
+                    return { week: i, dayIndexOffset: dayIndexOffset, allComplete: false }; // Found it
+                }
+                dayIndexOffset += daysPerWeek;
+            }
+            
+            // If loop finishes, all weeks are complete.
+            return { week: 1, dayIndexOffset: 0, allComplete: true };
+        }
+
         function generatePlan(userName, selectedDays) {
             document.getElementById('user-welcome-message').textContent = `Plan de Entrenamiento para: ${userName}`;
             const tabsContainer = document.getElementById('tabs-container');
@@ -1680,16 +1708,18 @@
             tabsContainer.innerHTML = ''; mobileNav.innerHTML = '';
             let htmlTabs = '', htmlContentWrapper = '', mobileNavOptions = '';
 
-            const daysPerWeek = selectedDays.length;
-            const totalWeeks = Math.ceil(allTrainingDays.length / daysPerWeek);
+            const totalWeeks = Math.ceil(allTrainingDays.length / selectedDays.length);
+            const { week: currentActiveWeek } = findCurrentActiveWeekInfo(totalWeeks); // <-- Use the helper
             let dayIndex = 0;
 
             for (let i = 1; i <= totalWeeks; i++) {
-                htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${i===1 ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
+                // Use currentActiveWeek to set 'checked' and 'display: block'
+                const isChecked = (i === currentActiveWeek);
+                htmlTabs += `<input type="radio" name="tabs" id="tab${i}" class="tab-input week-tab-input" ${isChecked ? "checked":""}><label for="tab${i}" class="tab-label week-tab-label">Semana ${i}</label>`;
                 mobileNavOptions += `<option value="tab${i}" class="week-option">Semana ${i}</option>`;
 
-                let weekContent = `<div id="content${i}" class="tab-content week-tab-content" style="${i === 1 ? 'display: block;' : ''}">`;
-                const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + daysPerWeek);
+                let weekContent = `<div id="content${i}" class="tab-content week-tab-content" style="${isChecked ? 'display: block;' : ''}">`;
+                const daysInThisWeek = allTrainingDays.slice(dayIndex, dayIndex + selectedDays.length);
                 const uniqueThemes = [...new Set(daysInThisWeek.map(d => weekThemes[d.originalWeek]))];
                 weekContent += `<h2>Semana ${i}: ${uniqueThemes.join(' y ')}</h2>`;
 
@@ -1756,8 +1786,8 @@
                     dayHTML += `</div>`;
                     weekContent += dayHTML;
                 });
-                dayIndex += daysPerWeek;
-                weekContent += `</div>`;
+                dayIndex += selectedDays.length;
+weekContent += `</div>`;
                 htmlContentWrapper += weekContent;
             }
 
@@ -1876,29 +1906,9 @@
             }
 
             const progress = user.progress || {};
-            let currentWeek = -1;
-            let dayIndexOffset = 0; // Tracks the start index of the current week in allTrainingDays
+            const { week: currentWeek, dayIndexOffset, allComplete } = findCurrentActiveWeekInfo(totalWeeks);
 
-            for (let i = 1; i <= totalWeeks; i++) {
-                // Gets days for the current week based on offset and selectedDays length
-                const daysInThisWeek = allTrainingDays.slice(dayIndexOffset, user.config.selectedDays.length ? dayIndexOffset + user.config.selectedDays.length : allTrainingDays.length);
-                if (daysInThisWeek.length === 0) break;
-
-                // Gets task IDs for the current week
-                const tasksInWeek = daysInThisWeek.flatMap(d => d.tasks.map(t => `w${i}-d${d.id}-${t.id}`));
-                const completedTasks = tasksInWeek.filter(taskId => progress[taskId] === true).length;
-
-                // If not all tasks are completed, this is the current active week
-                if (completedTasks < tasksInWeek.length) {
-                    currentWeek = i;
-                    break; // Stop searching
-                }
-                // Move offset to the start of the next week
-                dayIndexOffset += user.config.selectedDays.length;
-            }
-
-
-            if (currentWeek === -1 && totalWeeks > 0) {
+            if (allComplete && totalWeeks > 0) {
                  // If all weeks are completed, reset to week 1 or show a message
                 const container = document.getElementById('todays-focus-container');
                 container.innerHTML = `<h3>¡Felicidades!</h3><p>Has completado todo el plan de entrenamiento. ¡Es hora de volver a empezar desde la Semana 1 para afianzar tu maestría!</p><button id="goto-today-btn" data-week="1">Ir a Semana 1</button>`; // Added data-week attribute
@@ -1932,11 +1942,9 @@
 
                 const container = document.getElementById('todays-focus-container');
                 container.innerHTML = `
-                    <h3>Foco de Hoy: ${todayName} (Semana ${currentWeek})</h3> <!-- Added week number -->
-                    <p><strong>Sesión:</strong> ${trainingDayData.title.split(': ')[1]}</p>
+                    <h3>Foco de Hoy: ${todayName} (Semana ${currentWeek})</h3> <p><strong>Sesión:</strong> ${trainingDayData.title.split(': ')[1]}</p>
                     <p><strong>Meta:</strong> ${parseGlossaryTerms(trainingDayData.focus)}</p>
-                    <button id="goto-today-btn" data-week="${currentWeek}" data-day-section-id="day-section-${trainingDayData.id}">Ir al Entrenamiento</button> <!-- Added data attributes -->
-                `;
+                    <button id="goto-today-btn" data-week="${currentWeek}" data-day-section-id="day-section-${trainingDayData.id}">Ir al Entrenamiento</button> `;
                 container.style.display = 'block';
 
                 // Ensure the event listener is attached *after* innerHTML is set
@@ -2206,12 +2214,10 @@
             const profiles = getProfiles();
             const progress = profiles[currentProfile]?.progress || {};
 
-            const checkedTab = document.querySelector('.tab-input:checked');
-            if (!checkedTab) return;
-            const activeTabContent = document.getElementById(checkedTab.id.replace('tab', 'content'));
-            if (!activeTabContent) return;
+            const container = document.getElementById('main-container');
+            if (!container) return;
 
-            activeTabContent.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
+            container.querySelectorAll('input[type="checkbox"], .diary-textarea').forEach(item => {
                 if (progress[item.id] !== undefined) {
                     if (item.type === 'checkbox') item.checked = progress[item.id];
                     else item.value = progress[item.id];
@@ -2221,24 +2227,24 @@
                 }
             });
 
-            activeTabContent.querySelectorAll('.star-icon').forEach(star => {
+            container.querySelectorAll('.star-icon').forEach(star => {
                 star.classList.toggle('marked', !!(progress.markedShots && progress.markedShots[star.dataset.taskId]));
                 star.innerHTML = (progress.markedShots && progress.markedShots[star.dataset.taskId]) ? '&#9733;' : '&#9734;';
             });
 
-            activeTabContent.querySelectorAll('.rating-stars').forEach(container => {
+            container.querySelectorAll('.rating-stars').forEach(container => {
                 const ratings = progress.ratings || {};
                 updateStarsUI(container.dataset.taskId, ratings[container.dataset.taskId] || 0);
             });
 
-            activeTabContent.querySelectorAll('.btn-task-note').forEach(btn => {
+            container.querySelectorAll('.btn-task-note').forEach(btn => {
                 const notes = progress.taskNotes || {};
                 const noteEntry = notes[btn.dataset.taskId];
                 const hasNote = noteEntry && noteEntry.content && noteEntry.content.trim().length > 0;
                 btn.classList.toggle('has-note', hasNote);
             });
 
-            activeTabContent.querySelectorAll('.btn-ghost-mode').forEach(btn => {
+            container.querySelectorAll('.btn-ghost-mode').forEach(btn => {
                 const bestScores = progress.bestScores || {};
                 btn.style.display = bestScores[btn.dataset.taskId] !== undefined ? 'inline-block' : 'none';
             });
@@ -2350,9 +2356,7 @@
                     }
 
                     // Load state for the now visible tab
-                    loadState();
-
-                    // Update charts/lists if necessary for the specific tab
+                    // This is kept here to optimize loading non-week tabs
                     if (tabId === 'tab-progress') { generateProgressChart(totalWeeks); generateHeatmap(); }
                     if (tabId === 'tab-reinforce') populateReinforceList(totalWeeks);
                     if (tabId === 'tab-achievements') populateAchievementsTab(totalWeeks);
@@ -2779,8 +2783,20 @@
                  mainContainer.style.display = 'block';
             });
 
-             const firstTab = document.querySelector('.tab-input');
-             if(firstTab) firstTab.dispatchEvent(new Event('change'));
+            // Load the state for all weeks *before* displaying
+            loadState();
+
+            const checkedTab = document.querySelector('.tab-input:checked');
+            if (checkedTab) {
+                checkedTab.dispatchEvent(new Event('change', { bubbles: true }));
+            } else {
+                // Fallback just in case
+                const firstTab = document.querySelector('.tab-input');
+                if (firstTab) {
+                    firstTab.checked = true;
+                    firstTab.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
 
              displayTodaysFocus(totalWeeks);
              initializeNewFeatures(totalWeeks);
@@ -3947,4 +3963,3 @@
     </script>
 </body>
 </html>
-
