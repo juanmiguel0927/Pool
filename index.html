@@ -766,14 +766,27 @@
             .billiard-ball { width: 80px; height: 80px; }
             .ball-number { width: 30px; height: 30px; font-size: 1rem; }
 
+            /* --- MODIFICACIÓN PARA MÓVILES: GRID 2x2 --- */
             #welcome-modal .modal-buttons {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 55px;
+                display: grid; /* Usamos Grid en lugar de Flex */
+                grid-template-columns: repeat(2, 1fr); /* 2 Columnas iguales */
+                justify-items: center; /* Centrar las bolas en sus celdas */
+                gap: 45px 10px; /* Espacio vertical para las etiquetas, espacio horizontal menor */
                 padding-top: 1rem;
-                padding-bottom: 3rem;
+                padding-bottom: 1.5rem; /* Reducido el padding inferior */
+                margin-bottom: 0;
             }
+            
+            /* Ajuste específico para el enlace en móviles para que suba y se vea */
+            .btn-exam-link {
+                margin-top: 15px; /* Reducir drásticamente el margen en móviles */
+                width: 100%;      /* Que ocupe el ancho disponible */
+                box-sizing: border-box;
+                font-size: 0.95rem; /* Ajustar tamaño de letra */
+                padding: 10px 15px;
+            }
+
+            /* Asegurarnos que los botones no tengan márgenes extraños */
             #btn-guest-user, #btn-new-user, #btn-load-user, #btn-import-profile {
                 grid-column: auto;
                 margin: 0;
